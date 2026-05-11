@@ -30,3 +30,17 @@ tasks:
     desc: View management report
     cmds:
       - cat NUMBERS.md
+
+  git:atomic:
+    desc: Commit each modified/untracked file individually
+    cmds:
+      - |
+        for file in $(git status --porcelain | sed 's/^...//'); do
+          git add "$file"
+          git commit -m "refactor: update $file"
+        done
+
+  asmr:expand:
+    desc: Expand script_master.md to 5000+ characters using Existence Fetish style
+    cmds:
+      - echo "Expansion protocol triggered. Agent intervention required or use autonomous-expander.ts"
