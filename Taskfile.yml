@@ -4,42 +4,29 @@ tasks:
   default:
     cmds:
       - task --list
-  
-  bootstrap:
-    desc: Install all dependencies
-    cmds:
-      - bun install
-      - uv venv
-
-  validate:audio:
-    desc: Validate audio artifacts for semantic fidelity
-    summary: |
-      Validates a given audio file against expected text using ASR.
-      Usage: task validate:audio -- <audio_path> "<expected_text>"
-    cmds:
-      - bun src/validation/cli.ts {{.CLI_ARGS}}
-
-  lint:
-    desc: Run linters
-    cmds:
-      - bun x biome check .
 
   run:
-    desc: Run the full Resonance pipeline
+    desc: Execute the autonomous resonance production loop
     cmds:
       - bun index.ts
 
-  pulse:
-    desc: Start the daily pulse observation
+  validate:audio:
+    desc: Perform standalone ASR validation
     cmds:
-      - echo "Pulse observation not yet implemented in yt4."
+      - bun src/validation/cli.ts
+
+  lint:
+    desc: Ensure zero-fat and code quality standards
+    cmds:
+      - bun x biome check --write src/
+      - npx tsc --noEmit
 
   clean:
-    desc: Remove temporary artifacts
+    desc: Purge all local artifacts
     cmds:
-      - rm -rf runs/*
+      - rm -rf transcripts/* runs/* NUMBERS.md
 
-  test:
-    desc: Run tests
+  numbers:
+    desc: View management report
     cmds:
-      - bun test
+      - cat NUMBERS.md
