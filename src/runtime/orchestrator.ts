@@ -4,9 +4,10 @@ import * as path from "node:path";
 import { ASRValidator } from "../validation/asr";
 import { VideoComposer } from "./composer";
 import { IdentityEngine } from "./identity";
+import { PulseManager } from "./pulse";
 import type { AssetStore } from "./storage";
 import { IrodoriTtsEngine } from "./tts";
-import type { ScriptLine } from "./types";
+import type { EmotionalState, ScriptLine } from "./types";
 
 export class Orchestrator {
 	constructor(
@@ -21,6 +22,13 @@ export class Orchestrator {
 			};
 			script_path: string;
 			image_path: string;
+			runtime?: {
+				chunk_length?: number;
+				seed_base?: number;
+				pause_min?: number;
+				pause_max?: number;
+				max_retries?: number;
+			};
 		},
 	) {}
 
@@ -34,9 +42,18 @@ export class Orchestrator {
 			voice_id: this.config.identity.voice_id,
 			...this.config.identity.overrides,
 		};
-		const identity = new IdentityEngine(baseIdentity).getContract();
+		const idEngine = new IdentityEngine(baseIdentity);
+		const identity = idEngine.getContract();
 		const tts = new IrodoriTtsEngine();
 		const asr = new ASRValidator();
+		const pulse = new PulseManager();
+
+		let currentEmotion: EmotionalState = {
+			valence: 0,
+			arousal: 0,
+			softness: 0.8,
+			atmosphere: identity.preferred_atmosphere,
+		};
 
 		const fullScriptPath = path.resolve(this.assetDir, this.config.script_path);
 		console.log(`[RESONANCE] Loading script from ${fullScriptPath}...`);
@@ -51,24 +68,39 @@ export class Orchestrator {
 		const verifiedLines: ScriptLine[] = [];
 		const allSegments: any[] = [];
 		let currentOffset = 0;
-		const chunks = this.chunkLines(lines, 750);
+		const chunks = this.chunkLines(
+			lines,
+			this.config.runtime?.chunk_length || 750,
+		);
 
 		for (let i = 0; i < chunks.length; i++) {
+			const progress = i / chunks.length;
+			const targetEmotion = await pulse.observe(progress);
+			currentEmotion = idEngine.smooth(currentEmotion, targetEmotion as any);
+
 			let pth = "";
 			let segments: any[] = [];
-			for (let v = 1; v <= 3; v++) {
+			const maxRetries = this.config.runtime?.max_retries || 3;
+			for (let v = 1; v <= maxRetries; v++) {
 				const p = this.store.getPath(`${prefix}_p${i}_v${v}.wav`);
-				console.log(`[TTS] Chunk ${i + 1}/${chunks.length} (v${v})`);
+				console.log(
+					`[TTS] Chunk ${i + 1}/${chunks.length} (v${v}) | Emotion: v=${currentEmotion.valence.toFixed(2)} a=${currentEmotion.arousal.toFixed(2)} s=${currentEmotion.softness.toFixed(2)}`,
+				);
 
 				const cleanText = chunks[i]
 					.map((l) => l.text.replace(/（.*?）|\(.*?\)/g, ""))
 					.join(" ");
 
+				const dynamicCaption = this.generateCaption(
+					identity.voice_id,
+					currentEmotion,
+				);
+
 				await tts.synthesize({
 					text: cleanText,
-					caption: identity.voice_id,
+					caption: dynamicCaption,
 					outputPath: p,
-					seed: 2306 + i + v,
+					seed: (this.config.runtime?.seed_base || 2306) + i + v,
 				});
 
 				const report = await asr.validate(p, chunks[i]);
@@ -82,13 +114,8 @@ export class Orchestrator {
 				throw new Error(`Chunk ${i} Failure: Atmospheric Integrity Damage`);
 
 			audioParts.push(pth);
-			verifiedLines.push(
-				...chunks[i].map((l) => ({
-					...l,
-				})),
-			);
+			verifiedLines.push(...chunks[i]);
 
-			// Track segments with offset
 			for (const seg of segments) {
 				allSegments.push({
 					start: seg.start + currentOffset,
@@ -97,9 +124,8 @@ export class Orchestrator {
 				});
 			}
 
-			// Update offset for next chunk (approximate using last segment end if available, or fetch real duration)
 			if (segments.length > 0) {
-				currentOffset += segments[segments.length - 1].end + 1.0; // Adding a small buffer for pause
+				currentOffset += segments[segments.length - 1].end + 1.0;
 			}
 		}
 
@@ -162,6 +188,18 @@ export class Orchestrator {
 		console.log(`[DONE] ${sessionId}`);
 	}
 
+	private generateCaption(baseVoice: string, emotion: EmotionalState): string {
+		const softness =
+			emotion.softness > 0.95
+				? "極限まで優しく、消え入りそうなほど繊細な囁き声。"
+				: "非常に落ち着いた、安心感のある囁き声。";
+		const emotionDesc =
+			emotion.valence > 0.4
+				? "幸福感に満ちた、慈愛を感じさせるトーン。"
+				: "切なさと静かな情熱が混ざり合った、深い夜の情緒。";
+		return `${baseVoice} ${softness} ${emotionDesc}`;
+	}
+
 	private getNextAssetId(): string {
 		const outDir = this.assetDir;
 		const files = fs.readdirSync(outDir);
@@ -173,26 +211,30 @@ export class Orchestrator {
 	}
 
 	private parseScriptContent(raw: string): ScriptLine[] {
-		// Handle both raw markdown and JSON scenario files
 		try {
 			const json = JSON.parse(raw);
 			if (Array.isArray(json)) {
 				return json.map((l: any) => ({
 					text: l.text,
 					pause_after: l.pause || 5,
+					emotion: l.emotion,
 				}));
 			}
 		} catch {
-			// Fallback to markdown parser
+			// Fallback
 		}
 
 		return raw
 			.split(/\n\n+/)
 			.filter((t) => t.trim().length > 0)
-			.map((text) => ({
-				text: text.trim(),
-				pause_after: 5 + Math.random() * 5,
-			}));
+			.map((text) => {
+				const min = this.config.runtime?.pause_min || 5;
+				const max = this.config.runtime?.pause_max || 10;
+				return {
+					text: text.trim(),
+					pause_after: min + Math.random() * (max - min),
+				};
+			});
 	}
 
 	private chunkLines(ls: ScriptLine[], t: number) {
