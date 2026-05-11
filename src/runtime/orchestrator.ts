@@ -189,7 +189,7 @@ export class Orchestrator {
 		const softness =
 			emotion.softness > 0.95
 				? "極限まで優しく、消え入りそうなほど繊細な囁き声。"
-				: "非常に落ち着いた、安心感のある囁き声。";
+				: "非常に落ち着いた, 安心感のある囁き声。";
 		const emotionDesc =
 			emotion.valence > 0.4
 				? "幸福感に満ちた、慈愛を感じさせるトーン。"
