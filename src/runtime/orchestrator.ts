@@ -118,7 +118,10 @@ export class Orchestrator {
 					stats: {
 						total_chars: verifiedLines.reduce((s, l) => s + l.text.length, 0),
 					},
-					script: verifiedLines.map((l) => ({ text: l.text, pause: l.pause_after })),
+					script: verifiedLines.map((l) => ({
+						text: l.text,
+						pause: l.pause_after,
+					})),
 					transcription: allSegments.map((s) => s.text.trim()).join(" "),
 					segments: allSegments.map((s) => ({
 						start: s.start,
