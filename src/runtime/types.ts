@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-// --- Layer 1: Emotional State & Memory ---
-
 export const EmotionalStateSchema = z.object({
 	valence: z.number().min(-1).max(1),
 	arousal: z.number().min(0).max(1),
@@ -19,11 +17,9 @@ export const EmotionalMemorySchema = z.object({
 		}),
 	),
 	persistent_mood: EmotionalStateSchema,
-	drift_score: z.number().default(0), // Atmosphere Drift Score
+	drift_score: z.number().default(0),
 });
 export type EmotionalMemory = z.infer<typeof EmotionalMemorySchema>;
-
-// --- Layer 2: Identity Contract ---
 
 export const IdentityContractSchema = z.object({
 	id: z.string(),
@@ -43,19 +39,15 @@ export const IdentityContractSchema = z.object({
 });
 export type IdentityContract = z.infer<typeof IdentityContractSchema>;
 
-// --- Layer 3: Scene Runtime ---
-
 export const SceneStateSchema = z.object({
-	ambience_type: z.string(), // e.g., "rain", "room-tone", "wind"
+	ambience_type: z.string(),
 	ambience_intensity: z.number().min(0).max(1),
 	proximity: z.enum(["intimate", "near", "medium", "far"]),
-	posture: z.string().optional(), // e.g., "sitting", "lying"
+	posture: z.string().optional(),
 	silence_density: z.number().min(0).max(1),
 	room_pressure: z.number().min(0).max(1),
 });
 export type SceneState = z.infer<typeof SceneStateSchema>;
-
-// --- Layer 4: Scripting & Continuity ---
 
 export const ScriptLineSchema = z.object({
 	text: z.string(),
@@ -65,8 +57,6 @@ export const ScriptLineSchema = z.object({
 	metadata: z.record(z.string(), z.any()).optional(),
 });
 export type ScriptLine = z.infer<typeof ScriptLineSchema>;
-
-// --- Layer 5: Runtime State ---
 
 export const ResonanceStateSchema = z.object({
 	session_id: z.string(),
@@ -79,3 +69,10 @@ export const ResonanceStateSchema = z.object({
 		.default("idle"),
 });
 export type ResonanceState = z.infer<typeof ResonanceStateSchema>;
+
+export interface MetricEvent {
+	type: string;
+	status: string;
+	message?: string;
+	timestamp: number;
+}
