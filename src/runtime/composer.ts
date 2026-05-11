@@ -1,22 +1,20 @@
 import { spawn } from "node:child_process";
 
-export interface VideoOptions {
-	audioPath: string;
-	imagePath: string;
-	outputPath: string;
-}
-
 export class VideoComposer {
-	async compose(options: VideoOptions): Promise<string> {
-		return new Promise((resolve, reject) => {
-			const args = [
+	async compose(o: {
+		audioPath: string;
+		imagePath: string;
+		outputPath: string;
+	}): Promise<string> {
+		return new Promise((res, rej) => {
+			const p = spawn("ffmpeg", [
 				"-y",
 				"-loop",
 				"1",
 				"-i",
-				options.imagePath,
+				o.imagePath,
 				"-i",
-				options.audioPath,
+				o.audioPath,
 				"-c:v",
 				"libx264",
 				"-tune",
@@ -30,18 +28,11 @@ export class VideoComposer {
 				"-shortest",
 				"-pix_fmt",
 				"yuv420p",
-				options.outputPath,
-			];
-
-			const proc = spawn("ffmpeg", args);
-
-			proc.on("close", (code) => {
-				if (code === 0) {
-					resolve(options.outputPath);
-				} else {
-					reject(new Error(`FFmpeg exited with code ${code}`));
-				}
-			});
+				o.outputPath,
+			]);
+			p.on("close", (c) =>
+				c === 0 ? res(o.outputPath) : rej(new Error(`FFmpeg: ${c}`)),
+			);
 		});
 	}
 }
