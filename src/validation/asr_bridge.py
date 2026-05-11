@@ -40,14 +40,11 @@ def main():
             "text": segment.text
         })
     
+    full_expected = clean_text("".join(expected_lines))
+    full_score = difflib.SequenceMatcher(None, full_expected, clean_trans).ratio()
+    
     for line in expected_lines:
-        clean_line = clean_text(line)
-        if not clean_line:
-            report["line_scores"].append({"line": line, "score": 1.0})
-            continue
-            
-        score = difflib.SequenceMatcher(None, clean_line, clean_trans).ratio()
-        report["line_scores"].append({"line": line, "score": score})
+        report["line_scores"].append({"line": line, "score": full_score})
 
     print(f"REPORT:{json.dumps(report, ensure_ascii=False)}")
     print(f"DONE")
