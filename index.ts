@@ -8,7 +8,7 @@ async function main() {
 	// Determine asset directory from argument or default
 	const assetDirName = process.argv[2] || "008_yandere_maid_management";
 	const assetDir = require("path").resolve(process.cwd(), "assets", assetDirName);
-	const configPath = require("path").join(assetDir, "config.json");
+	const configPath = require("path").join(assetDir, "0000_config.json");
 	
 	if (!require("fs").existsSync(configPath)) {
 		throw new Error(`Config not found: ${configPath}`);

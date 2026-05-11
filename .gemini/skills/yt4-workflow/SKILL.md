@@ -36,7 +36,7 @@ For each sub-task in the strategy:
 
 ## Asset Management & Audio Production
 1. **Never Nest / Simplify**: All asset files must be placed directly under the numbered asset directory (e.g., `assets/009_tsundere_kafka_maid/`). Do NOT create subdirectories (like `recordings/`).
-2. **Asset-Driven Config**: Every asset directory MUST contain a `config.json` defining `identity`, `script_path`, and `image_path`.
+2. **Asset-Driven Config**: Every asset directory MUST contain a `0000_config.json` defining `identity`, `script_path`, and `image_path`.
 3. **Zero-Fat Scripts**: Use a flat array of objects for scripts (`[{ "text": "...", "pause": 5 }]`) in `0001_situation.json`. Avoid verbose metadata or `phases`.
 4. **TTS Synthesis**: Use Irodori-TTS with ADR-0020 stability protocol.
 5. **ASR QA**: Treat as a mandatory semantic integrity check.

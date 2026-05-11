@@ -18,7 +18,7 @@ Execute the autonomous emotional media production loop for yt4 while preserving 
 ## Production Loop Workflow
 1. **Daily Pulse Observation**: Fetch or observe the daily "vibe" and global pulse.
 2. **Bias-Free State Initialization**: Initialize emotional state without predefined buckets.
-3. **Asset-Driven Config Execution**: Load the target asset directory's `config.json` to define identity, script path, and image path.
+3. **Asset-Driven Config Execution**: Load the target asset directory's `0000_config.json` to define identity, script path, and image path.
 4. **Script Parsing**: Read `0001_situation.json` (flat Zero-Fat array `[{ "text": "...", "pause": 5 }]`) as the source of truth.
 5. **Continuity Smoothing**: Use the ContinuityEngine to prevent abrupt shifts.
 6. **Semantic Validation**: Verify text aligns with the scene atmosphere.
