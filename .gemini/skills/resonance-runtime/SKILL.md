@@ -15,22 +15,31 @@ Execute the autonomous emotional media production loop for yt4 while preserving 
 4. **validation**: Ensure semantic fidelity and audio integrity via ASR.
 5. **scene**: Maintain atmosphere persistence (late-night, rain, room-tone).
 
+## Mandatory Production Sequence
+The production loop MUST follow this exact order:
+1. **JSON**: Load and parse `0001_situation.json`.
+2. **WAV**: Synthesize audio chunks via TTS.
+3. **Whisper**: Perform ASR transcription and segment analysis.
+4. **TTS (Repair)**: Re-synthesize if ASR detects reading mistakes (threshold < 0.85).
+5. **Transcript**: Write final metadata to `[prefix].json`.
+6. **VTT**: Write WebVTT subtitles with precise Whisper timestamps.
+7. **[Gate] Accuracy Verification**: Ensure **Zero Reading Mistakes** (100% semantic fidelity).
+8. **WAV (Mix)**: Concatenate verified chunks into the final masterpiece `.wav`.
+9. **MP4**: Compose final video into `.mp4`.
+
 ## Production Loop Workflow
 1. **Daily Pulse Observation**: Fetch or observe the daily "vibe" and global pulse.
 2. **Bias-Free State Initialization**: Initialize emotional state without predefined buckets.
-3. **Asset-Driven Config Execution**: Load the target asset directory's `0000_config.json` to define identity, script path, and image path.
-4. **Script Parsing**: Read `0001_situation.json` (flat Zero-Fat array `[{ "text": "...", "pause": 5 }]`) as the source of truth.
-5. **Continuity Smoothing**: Use the ContinuityEngine to prevent abrupt shifts.
-6. **Semantic Validation**: Verify text aligns with the scene atmosphere.
-7. **Continuous TTS**: Perform single-pass audio synthesis using Irodori-TTS.
-   - **Stability Protocol (ADR-0020)**: Use `Irodori-TTS-500M-v2` with 10-30s reference audio.
-8. **ASR Reverse Validation**: Transcribe generated audio to detect semantic damage.
-9. **Damage Detection**: Check for critical mismatches or audio artifacts.
-10. **Repair Loop**: Re-synthesize or fix if damage exceeds thresholds.
-11. **Transcript Generation**: Write the final metadata and transcription to `[prefix].json`.
-12. **VTT Subtitle Generation**: Write the WebVTT subtitles to `[prefix].vtt` using Whisper timestamps.
-13. **Final WAV Mixing**: Concatenate all audio parts into the final high-quality `[prefix].wav`.
-14. **Final Rendering**: Compose audio and visual assets into the final `[prefix].mp4` within the same asset directory (Never Nest).
+3. **Asset-Driven Config Execution**: Load the target asset directory's `0000_config.json`.
+4. **Script Parsing (JSON)**: Read `0001_situation.json`.
+5. **Continuous TTS (WAV)**: Perform audio synthesis using Irodori-TTS.
+6. **ASR Reverse Validation (Whisper)**: Transcribe generated audio to detect semantic damage.
+7. **Damage Detection & Repair (TTS)**: Re-synthesize if score < 0.85 (Mandatory for "Be Best" quality).
+8. **Transcript Generation**: Write final metadata to `[prefix].json`.
+9. **VTT Subtitle Generation**: Write subtitles to `[prefix].vtt`.
+10. **Accuracy Final Gate**: Confirm zero reading mistakes before final mix.
+11. **Final WAV Mixing**: Concatenate all verified audio parts into `[prefix].wav`.
+12. **Final Rendering (MP4)**: Compose final video into `[prefix].mp4`.
 
 ## Identity Invariants
 - `max_arousal`: Maximum allowed arousal level to preserve calm atmosphere.

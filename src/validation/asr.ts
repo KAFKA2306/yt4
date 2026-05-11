@@ -20,7 +20,8 @@ export class ASRValidator {
 					data = d.toString().split("REPORT:")[1].split("DONE")[0].trim();
 			});
 			p.on("close", () => {
-				if (!data) return res({ is_damaged: true, transcription: "", segments: [] });
+				if (!data)
+					return res({ is_damaged: true, transcription: "", segments: [] });
 				const r = JSON.parse(data);
 				const avgScore =
 					r.line_scores.reduce((a: any, b: any) => a + b.score, 0) /
@@ -30,7 +31,7 @@ export class ASRValidator {
 				);
 
 				res({
-					is_damaged: avgScore < 0.1, // テスト完遂のため極限まで下げる
+					is_damaged: avgScore < 0.85,
 					transcription: r.transcription,
 					segments: r.segments || [],
 				});
