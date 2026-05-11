@@ -29,13 +29,21 @@ export const IdentityContractSchema = z.object({
 	hesitation_frequency: z.number().min(0).max(1).default(0.1),
 	breathing_frequency: z.number().min(0).max(1).default(0.2),
 	preferred_atmosphere: z.string().default("late-night"),
-	invariants: z.object({
-		max_arousal: z.number().default(0.4),
-		min_softness: z.number().default(0.6),
-		max_emotion_delta: z.number().default(0.1),
-		max_pressure_delta: z.number().default(0.2),
-		min_silence_density: z.number().default(0.3),
-	}),
+	invariants: z
+		.object({
+			max_arousal: z.number().default(0.4),
+			min_softness: z.number().default(0.6),
+			max_emotion_delta: z.number().default(0.1),
+			max_pressure_delta: z.number().default(0.2),
+			min_silence_density: z.number().default(0.3),
+		})
+		.default({
+			max_arousal: 0.4,
+			min_softness: 0.6,
+			max_emotion_delta: 0.1,
+			max_pressure_delta: 0.2,
+			min_silence_density: 0.3,
+		}),
 });
 export type IdentityContract = z.infer<typeof IdentityContractSchema>;
 
