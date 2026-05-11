@@ -43,6 +43,11 @@ def main():
     full_expected = clean_text("".join(expected_lines))
     full_score = difflib.SequenceMatcher(None, full_expected, clean_trans).ratio()
     
+    # Debug info to stderr to avoid polluting REPORT
+    print(f"DEBUG: Expected: {full_expected}", file=sys.stderr)
+    print(f"DEBUG: Transcribed: {clean_trans}", file=sys.stderr)
+    print(f"DEBUG: Score: {full_score}", file=sys.stderr)
+    
     for line in expected_lines:
         report["line_scores"].append({"line": line, "score": full_score})
 
