@@ -38,12 +38,7 @@ async function main() {
 		room_pressure: 0.1,
 	};
 
-	const orchestrator = new Orchestrator(
-		store,
-		kafkaIdentity,
-		initialEmotion,
-		initialScene,
-	);
+	const orchestrator = new Orchestrator(store, kafkaIdentity);
 	await orchestrator.run();
 }
 
