@@ -5,7 +5,6 @@ import { ASRValidator } from "../validation/asr";
 import { VideoComposer } from "./composer";
 import { IdentityEngine } from "./identity";
 import { MetricsManager } from "./metrics";
-import { PulseManager } from "./pulse";
 import type { AssetStore } from "./storage";
 import { IrodoriTtsEngine } from "./tts";
 import type { ScriptLine } from "./types";
@@ -13,107 +12,153 @@ import type { ScriptLine } from "./types";
 export class Orchestrator {
 	constructor(
 		private store: AssetStore,
-		private identityData: any,
+		private assetDir: string,
+		private config: {
+			identity: {
+				id: string;
+				name: string;
+				voice_id: string;
+				overrides?: any;
+			};
+			script_path: string;
+			image_path: string;
+			output_subdir: string;
+		},
 	) {}
 
 	async run() {
 		const sessionId = path.basename(this.store.getPath("."));
-		const identity = new IdentityEngine(this.identityData).getContract();
+		const baseIdentity = {
+			...this.config.identity,
+			voice_id: this.config.identity.voice_id,
+			...this.config.identity.overrides,
+		};
+		const identity = new IdentityEngine(baseIdentity).getContract();
 		const tts = new IrodoriTtsEngine();
 		const asr = new ASRValidator();
 
-		console.log(`[RESONANCE] Loading dynamic prompt...`);
-		const promptPath = path.join(
-			process.cwd(),
-			"prompts/asmr_best_situation.json",
-		);
-		const prompt = JSON.parse(fs.readFileSync(promptPath, "utf-8"));
+		const fullScriptPath = path.resolve(this.assetDir, this.config.script_path);
+		console.log(`[RESONANCE] Loading script from ${fullScriptPath}...`);
+		if (!fs.existsSync(fullScriptPath)) {
+			throw new Error(`CRITICAL: ${fullScriptPath} missing.`);
+		}
 
-		const pulse = await new PulseManager().observe();
-		const lines = this.synthesizeFromPrompt(prompt, pulse);
+		const rawScript = fs.readFileSync(fullScriptPath, "utf-8");
+		const lines = this.parseScriptContent(rawScript);
+
+		const audioParts: string[] = [];
+		const verifiedLines: ScriptLine[] = [];
+		const chunks = this.chunkLines(lines, 750);
+
+		for (let i = 0; i < chunks.length; i++) {
+			let pth = "";
+			let transcription = "";
+			for (let v = 1; v <= 3; v++) {
+				const p = this.store.getPath(`p${i}_v${v}.wav`);
+				console.log(`[TTS] Chunk ${i + 1}/${chunks.length} (v${v})`);
+
+				const cleanText = chunks[i]
+					.map((l) => l.text.replace(/（.*?）|\(.*?\)/g, ""))
+					.join(" ");
+
+				await tts.synthesize({
+					text: cleanText,
+					caption: identity.voice_id,
+					outputPath: p,
+					seed: 2306 + i + v,
+				});
+
+				const report = await asr.validate(p, chunks[i]);
+				if (!report.is_damaged) {
+					pth = p;
+					transcription = report.transcription;
+					break;
+				}
+			}
+			if (!pth)
+				throw new Error(`Chunk ${i} Failure: Atmospheric Integrity Damage`);
+
+			audioParts.push(pth);
+			verifiedLines.push(
+				...chunks[i].map((l) => ({
+					...l,
+					metadata: {
+						...l.metadata,
+						asr_confirmed: `${transcription.substring(0, 100)}...`,
+					},
+				})),
+			);
+		}
+
+		const audio = this.store.getPath("final_mix.wav");
+		await this.concat(audioParts, audio);
+
+		const fullImagePath = path.resolve(this.assetDir, this.config.image_path);
+		await new VideoComposer().compose({
+			audioPath: audio,
+			imagePath: fullImagePath,
+			outputPath: this.store.getPath("final_video.mp4"),
+		});
+
+		// Final Transcript Generation
+		const assetId = this.getNextAssetId();
+		const outDir = path.resolve(this.assetDir, this.config.output_subdir);
+		if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
 
 		fs.writeFileSync(
-			path.join(process.cwd(), "transcripts", `${sessionId}.json`),
+			path.join(outDir, `${assetId}_${sessionId}.json`),
 			JSON.stringify(
 				{
 					sessionId,
+					voice_identity: identity.voice_id,
 					identity,
-					lines,
-					total: lines.reduce((s, l) => s + l.text.length, 0),
+					lines: verifiedLines,
+					total_chars: verifiedLines.reduce((s, l) => s + l.text.length, 0),
+					produced_at: new Date().toISOString(),
 				},
 				null,
 				2,
 			),
 		);
 
-		const audioParts: string[] = [];
-		const chunks = this.chunkLines(lines, 750);
-
-		for (let i = 0; i < chunks.length; i++) {
-			let pth = "";
-			for (let v = 1; v <= 3; v++) {
-				const p = this.store.getPath(`p${i}_v${v}.wav`);
-				console.log(`[TTS] Chunk ${i + 1}/${chunks.length} (v${v})`);
-				await tts.synthesize({
-					text: chunks[i].map((l) => l.text).join(" "),
-					caption: identity.preferred_atmosphere,
-					outputPath: p,
-					seed: 2306 + i + v,
-				});
-				if (!(await asr.validate(p, chunks[i])).is_damaged) {
-					pth = p;
-					break;
-				}
-			}
-			if (!pth) throw new Error(`Chunk ${i} Failure`);
-			audioParts.push(pth);
-		}
-
-		const audio = this.store.getPath("final_mix.wav");
-		await this.concat(audioParts, audio);
-		await new VideoComposer().compose({
-			audioPath: audio,
-			imagePath: "assets/thumbnail.png",
-			outputPath: this.store.getPath("final_video.mp4"),
-		});
-
 		new MetricsManager().exportMarkdown("NUMBERS.md");
 		console.log(`[DONE] ${sessionId}`);
 	}
 
-	private synthesizeFromPrompt(prompt: any, pulse: any): ScriptLine[] {
-		const emotion = {
-			valence: 0.15,
-			arousal: 0.05,
-			softness: 0.98,
-			atmosphere: pulse.atmosphere,
-		};
-		const script: ScriptLine[] = [];
-		const targetLength = 5000;
+	private getNextAssetId(): string {
+		const outDir = path.resolve(this.assetDir, this.config.output_subdir);
+		if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
+		const files = fs.readdirSync(outDir);
+		const max = files
+			.map((f) => Number.parseInt(f.split("_")[0], 10))
+			.filter((n) => !Number.isNaN(n))
+			.reduce((a, b) => Math.max(a, b), 0);
+		return (max + 1).toString().padStart(4, "0");
+	}
 
-		// 1. Intro
-		prompt.phases[0].lines.forEach((l: any) => {
-			script.push({ text: l.text, emotion, pause_after: l.pause });
-		});
-
-		// 2. Body Expansion (Intimacy & Connection)
-		const bodyPhases = [prompt.phases[1], prompt.phases[2]];
-		while (script.reduce((s, l) => s + l.text.length, 0) < targetLength - 500) {
-			const phase = bodyPhases[Math.floor(Math.random() * bodyPhases.length)];
-			const line = phase.lines[Math.floor(Math.random() * phase.lines.length)];
-			script.push({
-				text: line.text,
-				emotion,
-				pause_after: line.pause + Math.random() * 5,
-			});
+	private parseScriptContent(raw: string): ScriptLine[] {
+		// Handle both raw markdown and JSON scenario files
+		try {
+			const json = JSON.parse(raw);
+			if (json.phases) {
+				return json.phases.flatMap((p: any) =>
+					p.lines.map((l: any) => ({
+						text: l.text,
+						pause_after: l.pause || 5,
+					})),
+				);
+			}
+		} catch {
+			// Fallback to markdown parser
 		}
 
-		// 3. Ending
-		prompt.phases[3].lines.forEach((l: any) => {
-			script.push({ text: l.text, emotion, pause_after: l.pause });
-		});
-
-		return script;
+		return raw
+			.split(/\n\n+/)
+			.filter((t) => t.trim().length > 0)
+			.map((text) => ({
+				text: text.trim(),
+				pause_after: 5 + Math.random() * 5,
+			}));
 	}
 
 	private chunkLines(ls: ScriptLine[], t: number) {
