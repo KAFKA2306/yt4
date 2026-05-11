@@ -8,9 +8,11 @@ async function main() {
 		process.exit(1);
 	}
 
-	const report = await new ASRValidator().validate(path.resolve(audio), [
-		{ text, pause_after: 0 },
-	]);
+	const report = await new ASRValidator().validate(
+		path.resolve(audio),
+		[{ text, pause_after: 0 }],
+		0.85,
+	);
 	if (report.is_damaged) {
 		console.error(`[FAIL] ${JSON.stringify(report)}`);
 		process.exit(1);

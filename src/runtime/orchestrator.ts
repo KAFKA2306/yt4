@@ -28,6 +28,7 @@ export class Orchestrator {
 				pause_min: number;
 				pause_max: number;
 				max_retries: number;
+				asr_threshold: number;
 			};
 		},
 	) {}
@@ -88,7 +89,10 @@ export class Orchestrator {
 					.map((l) => l.text.replace(/（.*?）|\(.*?\)/g, ""))
 					.join(" ");
 
-				const dynamicCaption = this.generateCaption(identity.voice_id, currentEmotion);
+				const dynamicCaption = this.generateCaption(
+					identity.voice_id,
+					currentEmotion,
+				);
 
 				await tts.synthesize({
 					text: cleanText,
@@ -97,7 +101,11 @@ export class Orchestrator {
 					seed: this.config.runtime.seed_base + i + v,
 				});
 
-				const report = await asr.validate(p, chunks[i]);
+				const report = await asr.validate(
+					p,
+					chunks[i],
+					this.config.runtime.asr_threshold,
+				);
 				if (!report.is_damaged) {
 					pth = p;
 					segments = report.segments;

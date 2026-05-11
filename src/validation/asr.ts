@@ -6,6 +6,7 @@ export class ASRValidator {
 	async validate(
 		audioPath: string,
 		script: ScriptLine[],
+		threshold: number,
 	): Promise<{ is_damaged: boolean; transcription: string; segments: any[] }> {
 		const bridge = path.join(process.cwd(), "src/validation/asr_bridge.py");
 		const config = JSON.stringify({
@@ -31,7 +32,7 @@ export class ASRValidator {
 				);
 
 				res({
-					is_damaged: avgScore < 0.85,
+					is_damaged: avgScore < threshold,
 					transcription: r.transcription,
 					segments: r.segments || [],
 				});

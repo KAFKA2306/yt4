@@ -5,5 +5,13 @@
     "voice_id": "落ち着いた知的な女性の声。ツンデレ気味で、素直になれない不器用なトーン。突き放すような口調の裏に、隠しきれない愛情が滲む。"
   },
   "script_path": "0001_situation.json",
-  "image_path": "../001amaamaoneesan/0001_thumbnail.png"
+  "image_path": "../001amaamaoneesan/0001_thumbnail.png",
+  "runtime": {
+    "chunk_length": 750,
+    "seed_base": 2306,
+    "pause_min": 5,
+    "pause_max": 10,
+    "max_retries": 3,
+    "asr_threshold": 0.6
+  }
 }
