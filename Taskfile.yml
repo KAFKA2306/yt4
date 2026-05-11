@@ -1,0 +1,42 @@
+version: '3'
+
+tasks:
+  default:
+    cmds:
+      - task --list
+  
+  bootstrap:
+    desc: Install all dependencies
+    cmds:
+      - bun install
+      - uv venv
+
+  validate:audio:
+    desc: Validate audio artifacts for semantic fidelity
+    cmds:
+      - echo "Validation logic not yet implemented in yt4."
+
+  lint:
+    desc: Run linters
+    cmds:
+      - bun x biome check .
+
+  run:
+    desc: Run the full Resonance pipeline
+    cmds:
+      - bun index.ts
+
+  pulse:
+    desc: Start the daily pulse observation
+    cmds:
+      - echo "Pulse observation not yet implemented in yt4."
+
+  clean:
+    desc: Remove temporary artifacts
+    cmds:
+      - rm -rf runs/*
+
+  test:
+    desc: Run tests
+    cmds:
+      - bun test
