@@ -5,7 +5,7 @@ import json
 from huggingface_hub import hf_hub_download
 
 # Add Irodori-TTS path
-sys.path.append(os.path.join(os.getcwd(), "sandbox/Irodori-TTS"))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../github/Irodori-TTS")))
 
 from irodori_tts.inference_runtime import InferenceRuntime, RuntimeKey, SamplingRequest, save_wav
 
@@ -29,9 +29,9 @@ def main():
         text=text,
         caption=caption,
         seed=seed,
-        num_steps=12,
+        num_steps=24, # Quality improvement
         no_ref=True,
-        seconds=30.0
+        seconds=45.0 # Support longer chunks
     ))
     
     save_wav(output_path, result.audio, result.sample_rate)
