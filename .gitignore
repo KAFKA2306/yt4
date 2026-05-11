@@ -4,6 +4,7 @@ dist/
 transcripts/
 *.mp4
 *.wav
+ps.txt
 
 # Dependencies
 node_modules/

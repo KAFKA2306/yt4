@@ -27,7 +27,9 @@ Execute the autonomous emotional media production loop for yt4 while preserving 
 8. **ASR Reverse Validation**: Transcribe generated audio to detect semantic damage.
 9. **Damage Detection**: Check for critical mismatches or audio artifacts.
 10. **Repair Loop**: Re-synthesize or fix if damage exceeds thresholds.
-11. **Final Rendering**: Compose audio and visual assets into the final MP4 within the same asset directory (Never Nest).
+11. **Transcript Generation**: Write the final metadata and transcription to `[prefix].json`.
+12. **Final WAV Mixing**: Concatenate all audio parts into the final high-quality `[prefix].wav`.
+13. **Final Rendering**: Compose audio and visual assets into the final `[prefix].mp4` within the same asset directory (Never Nest).
 
 ## Identity Invariants
 - `max_arousal`: Maximum allowed arousal level to preserve calm atmosphere.

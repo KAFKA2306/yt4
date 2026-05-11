@@ -92,16 +92,6 @@ export class Orchestrator {
 			);
 		}
 
-		const audio = this.store.getPath(`${prefix}.wav`);
-		await this.concat(audioParts, audio);
-
-		const fullImagePath = path.resolve(this.assetDir, this.config.image_path);
-		await new VideoComposer().compose({
-			audioPath: audio,
-			imagePath: fullImagePath,
-			outputPath: this.store.getPath(`${prefix}.mp4`),
-		});
-
 		// Final Transcript Generation
 		fs.writeFileSync(
 			this.store.getPath(`${prefix}.json`),
@@ -118,6 +108,16 @@ export class Orchestrator {
 				2,
 			),
 		);
+
+		const audio = this.store.getPath(`${prefix}.wav`);
+		await this.concat(audioParts, audio);
+
+		const fullImagePath = path.resolve(this.assetDir, this.config.image_path);
+		await new VideoComposer().compose({
+			audioPath: audio,
+			imagePath: fullImagePath,
+			outputPath: this.store.getPath(`${prefix}.mp4`),
+		});
 
 		new MetricsManager().exportMarkdown("NUMBERS.md");
 		console.log(`[DONE] ${sessionId}`);
