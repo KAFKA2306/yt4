@@ -22,7 +22,6 @@ export class Orchestrator {
 			};
 			script_path: string;
 			image_path: string;
-			output_subdir: string;
 		},
 	) {}
 
@@ -102,8 +101,7 @@ export class Orchestrator {
 
 		// Final Transcript Generation
 		const assetId = this.getNextAssetId();
-		const outDir = path.resolve(this.assetDir, this.config.output_subdir);
-		if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
+		const outDir = this.assetDir;
 
 		fs.writeFileSync(
 			path.join(outDir, `${assetId}_${sessionId}.json`),
@@ -126,8 +124,7 @@ export class Orchestrator {
 	}
 
 	private getNextAssetId(): string {
-		const outDir = path.resolve(this.assetDir, this.config.output_subdir);
-		if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
+		const outDir = this.assetDir;
 		const files = fs.readdirSync(outDir);
 		const max = files
 			.map((f) => Number.parseInt(f.split("_")[0], 10))
@@ -140,13 +137,11 @@ export class Orchestrator {
 		// Handle both raw markdown and JSON scenario files
 		try {
 			const json = JSON.parse(raw);
-			if (json.phases) {
-				return json.phases.flatMap((p: any) =>
-					p.lines.map((l: any) => ({
-						text: l.text,
-						pause_after: l.pause || 5,
-					})),
-				);
+			if (Array.isArray(json)) {
+				return json.map((l: any) => ({
+					text: l.text,
+					pause_after: l.pause || 5,
+				}));
 			}
 		} catch {
 			// Fallback to markdown parser
