@@ -1,0 +1,32 @@
+[project]
+name = "yt4"
+version = "0.1.0"
+description = "Kafka Resonance - Autonomous ASMR Production Runtime"
+requires-python = ">=3.10"
+dependencies = [
+    "huggingface-hub",
+    "torch",
+    "torchaudio",
+    "transformers",
+    "pydantic",
+    "soundfile",
+    "faster-whisper",
+    "datasets",
+    "numba",
+    "peft",
+    "sentencepiece",
+    "torchcodec",
+    "dacvae @ git+https://github.com/facebookresearch/dacvae",
+]
+
+[tool.uv]
+managed = true
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cu128", marker = "sys_platform == 'linux'" }]
+torchaudio = [{ index = "pytorch-cu128", marker = "sys_platform == 'linux'" }]
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
