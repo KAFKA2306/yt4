@@ -22,12 +22,12 @@ export class Orchestrator {
 			};
 			script_path: string;
 			image_path: string;
-			runtime?: {
-				chunk_length?: number;
-				seed_base?: number;
-				pause_min?: number;
-				pause_max?: number;
-				max_retries?: number;
+			runtime: {
+				chunk_length: number;
+				seed_base: number;
+				pause_min: number;
+				pause_max: number;
+				max_retries: number;
 			};
 		},
 	) {}
@@ -68,10 +68,7 @@ export class Orchestrator {
 		const verifiedLines: ScriptLine[] = [];
 		const allSegments: any[] = [];
 		let currentOffset = 0;
-		const chunks = this.chunkLines(
-			lines,
-			this.config.runtime?.chunk_length || 750,
-		);
+		const chunks = this.chunkLines(lines, this.config.runtime.chunk_length);
 
 		for (let i = 0; i < chunks.length; i++) {
 			const progress = i / chunks.length;
@@ -80,7 +77,7 @@ export class Orchestrator {
 
 			let pth = "";
 			let segments: any[] = [];
-			const maxRetries = this.config.runtime?.max_retries || 3;
+			const maxRetries = this.config.runtime.max_retries;
 			for (let v = 1; v <= maxRetries; v++) {
 				const p = this.store.getPath(`${prefix}_p${i}_v${v}.wav`);
 				console.log(
@@ -100,7 +97,7 @@ export class Orchestrator {
 					text: cleanText,
 					caption: dynamicCaption,
 					outputPath: p,
-					seed: (this.config.runtime?.seed_base || 2306) + i + v,
+					seed: this.config.runtime.seed_base + i + v,
 				});
 
 				const report = await asr.validate(p, chunks[i]);
@@ -211,30 +208,20 @@ export class Orchestrator {
 	}
 
 	private parseScriptContent(raw: string): ScriptLine[] {
-		try {
-			const json = JSON.parse(raw);
-			if (Array.isArray(json)) {
-				return json.map((l: any) => ({
-					text: l.text,
-					pause_after: l.pause || 5,
-					emotion: l.emotion,
-				}));
-			}
-		} catch {
-			// Fallback
+		const json = JSON.parse(raw);
+		if (!Array.isArray(json)) {
+			throw new Error("Script must be a JSON array of lines.");
 		}
-
-		return raw
-			.split(/\n\n+/)
-			.filter((t) => t.trim().length > 0)
-			.map((text) => {
-				const min = this.config.runtime?.pause_min || 5;
-				const max = this.config.runtime?.pause_max || 10;
-				return {
-					text: text.trim(),
-					pause_after: min + Math.random() * (max - min),
-				};
-			});
+		return json.map((l: any) => {
+			if (typeof l.text !== "string") {
+				throw new Error(`Invalid line format: ${JSON.stringify(l)}`);
+			}
+			return {
+				text: l.text,
+				pause_after: l.pause,
+				emotion: l.emotion,
+			};
+		});
 	}
 
 	private chunkLines(ls: ScriptLine[], t: number) {
