@@ -11,7 +11,6 @@
 		"typescript": "^5"
 	},
 	"dependencies": {
-		"zod": "^4.4.3",
-		"googleapis": "latest"
+		"zod": "^4.4.3"
 	}
 }
