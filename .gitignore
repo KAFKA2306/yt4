@@ -28,5 +28,4 @@ __pycache__/
 .DS_Store
 *.tsbuildinfo
 .claude/
-.gemini/
-sandbox/
+github/
