@@ -110,12 +110,21 @@ export class Orchestrator {
 			JSON.stringify(
 				{
 					sessionId,
-					voice_identity: identity.voice_id,
-					identity,
-					lines: verifiedLines,
-					segments: allSegments,
-					total_chars: verifiedLines.reduce((s, l) => s + l.text.length, 0),
 					produced_at: new Date().toISOString(),
+					identity: {
+						id: identity.id,
+						name: identity.name,
+					},
+					stats: {
+						total_chars: verifiedLines.reduce((s, l) => s + l.text.length, 0),
+					},
+					script: verifiedLines.map((l) => ({ text: l.text, pause: l.pause_after })),
+					transcription: allSegments.map((s) => s.text.trim()).join(" "),
+					segments: allSegments.map((s) => ({
+						start: s.start,
+						end: s.end,
+						text: s.text.trim(),
+					})),
 				},
 				null,
 				2,

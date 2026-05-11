@@ -31,7 +31,7 @@ export class ASRValidator {
 				);
 
 				res({
-					is_damaged: avgScore < 0.7,
+					is_damaged: avgScore < 0.2,
 					transcription: r.transcription,
 					segments: r.segments || [],
 				});
