@@ -24,7 +24,7 @@ tasks:
   clean:
     desc: Purge all local artifacts
     cmds:
-      - rm -rf transcripts/* runs/* NUMBERS.md
+      - rm -rf transcripts/* NUMBERS.md
 
   numbers:
     desc: View management report

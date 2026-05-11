@@ -26,7 +26,10 @@ export class Orchestrator {
 	) {}
 
 	async run() {
-		const sessionId = path.basename(this.store.getPath("."));
+		const sessionId = `session-${Math.random().toString(36).substring(7)}`;
+		const assetId = this.getNextAssetId();
+		const prefix = `${assetId}_${sessionId}`;
+
 		const baseIdentity = {
 			...this.config.identity,
 			voice_id: this.config.identity.voice_id,
@@ -53,7 +56,7 @@ export class Orchestrator {
 			let pth = "";
 			let transcription = "";
 			for (let v = 1; v <= 3; v++) {
-				const p = this.store.getPath(`p${i}_v${v}.wav`);
+				const p = this.store.getPath(`${prefix}_p${i}_v${v}.wav`);
 				console.log(`[TTS] Chunk ${i + 1}/${chunks.length} (v${v})`);
 
 				const cleanText = chunks[i]
@@ -89,22 +92,19 @@ export class Orchestrator {
 			);
 		}
 
-		const assetId = this.getNextAssetId();
-		const outDir = this.assetDir;
-
-		const audio = path.join(outDir, `${assetId}_${sessionId}.wav`);
+		const audio = this.store.getPath(`${prefix}.wav`);
 		await this.concat(audioParts, audio);
 
 		const fullImagePath = path.resolve(this.assetDir, this.config.image_path);
 		await new VideoComposer().compose({
 			audioPath: audio,
 			imagePath: fullImagePath,
-			outputPath: path.join(outDir, `${assetId}_${sessionId}.mp4`),
+			outputPath: this.store.getPath(`${prefix}.mp4`),
 		});
 
 		// Final Transcript Generation
 		fs.writeFileSync(
-			path.join(outDir, `${assetId}_${sessionId}.json`),
+			this.store.getPath(`${prefix}.json`),
 			JSON.stringify(
 				{
 					sessionId,
