@@ -4,7 +4,6 @@ import * as path from "node:path";
 import { ASRValidator } from "../validation/asr";
 import { VideoComposer } from "./composer";
 import { IdentityEngine } from "./identity";
-import { MetricsManager } from "./metrics";
 import type { AssetStore } from "./storage";
 import { IrodoriTtsEngine } from "./tts";
 import type { ScriptLine } from "./types";
@@ -160,7 +159,6 @@ export class Orchestrator {
 			outputPath: this.store.getPath(`${prefix}.mp4`),
 		});
 
-		new MetricsManager().exportMarkdown("NUMBERS.md");
 		console.log(`[DONE] ${sessionId}`);
 	}
 
