@@ -89,20 +89,20 @@ export class Orchestrator {
 			);
 		}
 
-		const audio = this.store.getPath("final_mix.wav");
+		const assetId = this.getNextAssetId();
+		const outDir = this.assetDir;
+
+		const audio = path.join(outDir, `${assetId}_${sessionId}.wav`);
 		await this.concat(audioParts, audio);
 
 		const fullImagePath = path.resolve(this.assetDir, this.config.image_path);
 		await new VideoComposer().compose({
 			audioPath: audio,
 			imagePath: fullImagePath,
-			outputPath: this.store.getPath("final_video.mp4"),
+			outputPath: path.join(outDir, `${assetId}_${sessionId}.mp4`),
 		});
 
 		// Final Transcript Generation
-		const assetId = this.getNextAssetId();
-		const outDir = this.assetDir;
-
 		fs.writeFileSync(
 			path.join(outDir, `${assetId}_${sessionId}.json`),
 			JSON.stringify(
