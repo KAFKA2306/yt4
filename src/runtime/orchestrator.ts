@@ -1,143 +1,155 @@
+import { spawn } from "node:child_process";
+import * as fs from "node:fs";
 import * as path from "node:path";
-import { ContinuityEngine } from "../continuity/engine";
-import { IdentityManager } from "../identity/manager";
-import { ASMRScriptGenerator } from "../scene/generator";
 import { ASRValidator } from "../validation/asr";
-import { SemanticValidator } from "../validation/semantic";
 import { VideoComposer } from "./composer";
+import { IdentityEngine } from "./identity";
+import { MetricsManager } from "./metrics";
 import { PulseManager } from "./pulse";
 import type { AssetStore } from "./storage";
 import { IrodoriTtsEngine } from "./tts";
-import type { EmotionalState, SceneState, ScriptLine } from "./types";
+import type { ScriptLine } from "./types";
 
 export class Orchestrator {
 	constructor(
 		private store: AssetStore,
 		private identityData: any,
-		private initialEmotion: EmotionalState,
-		private initialScene: SceneState,
 	) {}
 
 	async run() {
-		console.log(`[RESONANCE] Starting Production Loop...`);
-
-		const identityManager = new IdentityManager();
-		const contract = identityManager.load(this.identityData);
-		const continuity = new ContinuityEngine(contract);
-		const generator = new ASMRScriptGenerator(contract);
+		const sessionId = path.basename(this.store.getPath("."));
+		const identity = new IdentityEngine(this.identityData).getContract();
 		const tts = new IrodoriTtsEngine();
-		const composer = new VideoComposer();
-		const semanticValidator = new SemanticValidator();
-		const asrValidator = new ASRValidator();
-		const pulseManager = new PulseManager();
+		const asr = new ASRValidator();
 
-		// 1. Daily Pulse Observation
-		const pulseState = await pulseManager.observe();
-		this.initialEmotion = { ...this.initialEmotion, ...pulseState };
-
-		// 2. Script Generation (Continuity-Aware)
-		const lines = await generator.generate(
-			"midnight rain",
-			this.initialEmotion,
+		console.log(`[RESONANCE] Loading dynamic prompt...`);
+		const promptPath = path.join(
+			process.cwd(),
+			"prompts/asmr_best_situation.json",
 		);
-		console.log(`[GEN] Script ready: ${lines.length} lines.`);
+		const prompt = JSON.parse(fs.readFileSync(promptPath, "utf-8"));
 
-		// Smooth emotional transitions and enforce invariants
-		let currentEmotion = this.initialEmotion;
-		const continuousScript: ScriptLine[] = lines.map((line, i) => {
-			const targetEmotion = line.emotion || currentEmotion;
-			const smoothed = continuity.smoothTransition(
-				currentEmotion,
-				targetEmotion,
-			);
+		const pulse = await new PulseManager().observe();
+		const lines = this.synthesizeFromPrompt(prompt, pulse);
 
-			// Enforce Invariants
-			if (
-				!identityManager.validateInvariants(
-					smoothed,
-					this.initialScene,
-					currentEmotion,
-				)
-			) {
-				throw new Error(
-					`[IDENTITY] Invariant violation at line ${i}: Emotion drift detected.`,
-				);
+		fs.writeFileSync(
+			path.join(process.cwd(), "transcripts", `${sessionId}.json`),
+			JSON.stringify(
+				{
+					sessionId,
+					identity,
+					lines,
+					total: lines.reduce((s, l) => s + l.text.length, 0),
+				},
+				null,
+				2,
+			),
+		);
+
+		const audioParts: string[] = [];
+		const chunks = this.chunkLines(lines, 750);
+
+		for (let i = 0; i < chunks.length; i++) {
+			let pth = "";
+			for (let v = 1; v <= 3; v++) {
+				const p = this.store.getPath(`p${i}_v${v}.wav`);
+				console.log(`[TTS] Chunk ${i + 1}/${chunks.length} (v${v})`);
+				await tts.synthesize({
+					text: chunks[i].map((l) => l.text).join(" "),
+					caption: identity.preferred_atmosphere,
+					outputPath: p,
+					seed: 2306 + i + v,
+				});
+				if (!(await asr.validate(p, chunks[i])).is_damaged) {
+					pth = p;
+					break;
+				}
 			}
-
-			currentEmotion = smoothed;
-			return { ...line, emotion: currentEmotion };
-		});
-
-		// 2. Semantic Validation
-		continuousScript.forEach((line, i) => {
-			const result = semanticValidator.validate(
-				line.text,
-				line.emotion!,
-				this.initialScene,
-			);
-			if (!result.is_valid) {
-				console.warn(
-					`[VALIDATION] Semantic warning at line ${i}: ${result.reason}`,
-				);
-			}
-		});
-
-		// 3. Continuous TTS & Repair Loop
-		let audioPath = "";
-		let attempts = 0;
-		const maxAttempts = 3;
-
-		while (attempts < maxAttempts) {
-			attempts++;
-			console.log(`[TTS] Attempt ${attempts}/${maxAttempts}...`);
-
-			const currentAudioPath = this.store.getPath(
-				`session_audio_v${attempts}.wav`,
-			);
-			const fullText = continuousScript.map((l) => l.text).join(" ");
-
-			await tts.synthesize({
-				text: fullText,
-				caption: contract.preferred_atmosphere,
-				outputPath: currentAudioPath,
-				seed: 2306 + attempts, // Vary the seed for each attempt
-			});
-
-			// 4. ASR Reverse Validation & Damage Detection
-			console.log(`[VALIDATION] Running ASR reverse validation...`);
-			const report = await asrValidator.validate(
-				currentAudioPath,
-				continuousScript,
-			);
-
-			if (!report.is_damaged) {
-				audioPath = currentAudioPath;
-				break;
-			}
-
-			if (attempts === maxAttempts) {
-				console.error(
-					`[CRITICAL] Max retries reached. Last damage: ${report.mismatched_lines}`,
-				);
-				throw new Error("Failed to generate clean audio after max retries");
-			}
-
-			console.warn(
-				`[REPAIR] Damage detected in lines ${report.mismatched_lines}. Retrying...`,
-			);
+			if (!pth) throw new Error(`Chunk ${i} Failure`);
+			audioParts.push(pth);
 		}
 
-		// 6. Final Render
-		const videoPath = this.store.getPath("final_video.mp4");
-		const thumbnailPath = path.join(process.cwd(), "assets/thumbnail.png");
-
-		console.log(`[VIDEO] Composing final render...`);
-		await composer.compose({
-			audioPath: audioPath,
-			imagePath: thumbnailPath,
-			outputPath: videoPath,
+		const audio = this.store.getPath("final_mix.wav");
+		await this.concat(audioParts, audio);
+		await new VideoComposer().compose({
+			audioPath: audio,
+			imagePath: "assets/thumbnail.png",
+			outputPath: this.store.getPath("final_video.mp4"),
 		});
 
-		console.log(`[SUCCESS] Production cycle complete: ${videoPath}`);
+		new MetricsManager().exportMarkdown("NUMBERS.md");
+		console.log(`[DONE] ${sessionId}`);
+	}
+
+	private synthesizeFromPrompt(prompt: any, pulse: any): ScriptLine[] {
+		const emotion = {
+			valence: 0.15,
+			arousal: 0.05,
+			softness: 0.98,
+			atmosphere: pulse.atmosphere,
+		};
+		const script: ScriptLine[] = [];
+		const targetLength = 5000;
+
+		// 1. Intro
+		prompt.phases[0].lines.forEach((l: any) => {
+			script.push({ text: l.text, emotion, pause_after: l.pause });
+		});
+
+		// 2. Body Expansion (Intimacy & Connection)
+		const bodyPhases = [prompt.phases[1], prompt.phases[2]];
+		while (script.reduce((s, l) => s + l.text.length, 0) < targetLength - 500) {
+			const phase = bodyPhases[Math.floor(Math.random() * bodyPhases.length)];
+			const line = phase.lines[Math.floor(Math.random() * phase.lines.length)];
+			script.push({
+				text: line.text,
+				emotion,
+				pause_after: line.pause + Math.random() * 5,
+			});
+		}
+
+		// 3. Ending
+		prompt.phases[3].lines.forEach((l: any) => {
+			script.push({ text: l.text, emotion, pause_after: l.pause });
+		});
+
+		return script;
+	}
+
+	private chunkLines(ls: ScriptLine[], t: number) {
+		const res: ScriptLine[][] = [];
+		let cur: ScriptLine[] = [];
+		let c = 0;
+		for (const l of ls) {
+			cur.push(l);
+			c += l.text.length;
+			if (c >= t) {
+				res.push(cur);
+				cur = [];
+				c = 0;
+			}
+		}
+		if (cur.length > 0) res.push(cur);
+		return res;
+	}
+
+	private async concat(ps: string[], out: string) {
+		const f = this.store.getPath("ps.txt");
+		fs.writeFileSync(f, ps.map((p) => `file '${path.resolve(p)}'`).join("\n"));
+		return new Promise<void>((res, rej) => {
+			const p = spawn("ffmpeg", [
+				"-y",
+				"-f",
+				"concat",
+				"-safe",
+				"0",
+				"-i",
+				f,
+				"-c",
+				"copy",
+				out,
+			]);
+			p.on("close", (c) => (c === 0 ? res() : rej(c)));
+		});
 	}
 }
