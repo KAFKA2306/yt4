@@ -18,16 +18,16 @@ Execute the autonomous emotional media production loop for yt4 while preserving 
 ## Production Loop Workflow
 1. **Daily Pulse Observation**: Fetch or observe the daily "vibe" and global pulse.
 2. **Bias-Free State Initialization**: Initialize emotional state without predefined buckets.
-3. **Script Generation**: Generate content following the "Existence Fetish" style.
-   - **Mandatory Length**: `script_master.md` MUST exceed 5000 characters.
-4. **Continuity Smoothing**: Use the ContinuityEngine to prevent abrupt shifts.
-5. **Semantic Validation**: Verify text aligns with the scene atmosphere.
-6. **Continuous TTS**: Perform single-pass audio synthesis using Irodori-TTS.
+3. **Asset-Driven Config Execution**: Load the target asset directory's `config.json` to define identity, script path, and image path.
+4. **Script Parsing**: Read `0001_situation.json` (flat Zero-Fat array `[{ "text": "...", "pause": 5 }]`) as the source of truth.
+5. **Continuity Smoothing**: Use the ContinuityEngine to prevent abrupt shifts.
+6. **Semantic Validation**: Verify text aligns with the scene atmosphere.
+7. **Continuous TTS**: Perform single-pass audio synthesis using Irodori-TTS.
    - **Stability Protocol (ADR-0020)**: Use `Irodori-TTS-500M-v2` with 10-30s reference audio.
-7. **ASR Reverse Validation**: Transcribe generated audio to detect semantic damage.
-8. **Damage Detection**: Check for critical mismatches or audio artifacts.
-9. **Repair Loop**: Re-synthesize or fix if damage exceeds thresholds.
-10. **Final Rendering**: Compose audio and visual assets into the final MP4.
+8. **ASR Reverse Validation**: Transcribe generated audio to detect semantic damage.
+9. **Damage Detection**: Check for critical mismatches or audio artifacts.
+10. **Repair Loop**: Re-synthesize or fix if damage exceeds thresholds.
+11. **Final Rendering**: Compose audio and visual assets into the final MP4 within the same asset directory (Never Nest).
 
 ## Identity Invariants
 - `max_arousal`: Maximum allowed arousal level to preserve calm atmosphere.
@@ -45,10 +45,11 @@ Execute the autonomous emotional media production loop for yt4 while preserving 
 
 ## Yawa Archive Rules
 - **Preservation**: Preserve "録音されてしまった深夜" across all production stages.
-- **Expansion**: Use `task asmr:expand` to guarantee the **5000+ character** target. Explicitly avoid vague terms like "long form."
+- **Never Nest / Simplify**: Maintain a flat structure in asset directories. Do not create subdirectories.
+- **Zero-Fat Scripts**: Use `0001_situation.json` with a flat array of lines. Eliminate unnecessary meta fields.
 - **ASR QA**: Treat ASR as a mandatory semantic integrity check, not a polish step.
 - **Atmosphere Lock**: Maintain the "深夜" (late-night) vibe as a global constant.
-- **Video Integration**: Ensure `final_video.mp4` is generated. Do not stop at `final_mix.wav`.
+- **Video Integration**: Ensure `final_video.mp4` is generated in the asset directory. Do not stop at `final_mix.wav`.
 
 ## Existence Fetish Style Guide
 - **Short Sentences**: Prioritize brevity and natural pauses.
@@ -63,13 +64,8 @@ Execute the autonomous emotional media production loop for yt4 while preserving 
 - **Local-First**: Prioritize SQLite and local files over cloud dependencies.
 - **Management by Numbers**: Record every run's metrics in NUMBERS.md.
 
-## Final Output Standards
-- **Video Mandatory**: The task is NOT complete until `final_video.mp4` exists.
-- **Resolution**: 1920x1080 (or appropriate vertical if specified).
-- **Metadata**: Tag each run with the session_id and emotional_signature.
-
 ## Terminal Commands
-- `task run`: Execute the full production pipeline.
+- `task run`: Execute the full production pipeline (e.g., `bun index.ts 009_tsundere_kafka_maid`).
 - `task validate:audio`: Perform standalone ASR validation.
 - `task lint`: Ensure zero-fat and code quality standards.
 

@@ -34,12 +34,13 @@ For each sub-task in the strategy:
    - Run relevant tests.
    - Verify zero-fat (no new comments, no dead code).
 
-## Audio Production Workflow (Yawa Archive)
-1. **Script Preparation**: Create `script_master.md`. Target: **5000+ characters**.
-2. **Expansion**: Use `task asmr:expand` if the length is insufficient.
-3. **TTS Synthesis**: Use Irodori-TTS with ADR-0020 stability protocol.
-4. **ASR QA**: Treat as a mandatory semantic integrity check.
-5. **Video Integration**: The task is NOT complete until `final_video.mp4` exists.
+## Asset Management & Audio Production
+1. **Never Nest / Simplify**: All asset files must be placed directly under the numbered asset directory (e.g., `assets/009_tsundere_kafka_maid/`). Do NOT create subdirectories (like `recordings/`).
+2. **Asset-Driven Config**: Every asset directory MUST contain a `config.json` defining `identity`, `script_path`, and `image_path`.
+3. **Zero-Fat Scripts**: Use a flat array of objects for scripts (`[{ "text": "...", "pause": 5 }]`) in `0001_situation.json`. Avoid verbose metadata or `phases`.
+4. **TTS Synthesis**: Use Irodori-TTS with ADR-0020 stability protocol.
+5. **ASR QA**: Treat as a mandatory semantic integrity check.
+6. **Video Integration**: The task is NOT complete until `final_video.mp4` exists in the same asset directory.
 
 ## Technical Standards
 - **Validation**: Use Zod (TS) or Pydantic (Python) for all data structures.
