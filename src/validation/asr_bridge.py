@@ -25,12 +25,20 @@ def main():
     # Use float32 on CPU to avoid warnings, float16/int8 on GPU
     compute_type = "float16" if device == "cuda" else "float32"
     model = WhisperModel(model_size, device=device, compute_type=compute_type)
-    segments, _ = model.transcribe(audio_path, beam_size=5)
+    segments_gen, _ = model.transcribe(audio_path, beam_size=5)
+    segments = list(segments_gen)
     
     transcribed_text = "".join([segment.text for segment in segments])
     clean_trans = clean_text(transcribed_text)
     
-    report = {"transcription": transcribed_text, "line_scores": []}
+    report = {"transcription": transcribed_text, "line_scores": [], "segments": []}
+    
+    for segment in segments:
+        report["segments"].append({
+            "start": segment.start,
+            "end": segment.end,
+            "text": segment.text
+        })
     
     for line in expected_lines:
         clean_line = clean_text(line)

@@ -50,11 +50,14 @@ export class Orchestrator {
 
 		const audioParts: string[] = [];
 		const verifiedLines: ScriptLine[] = [];
+		const allSegments: any[] = [];
+		let currentOffset = 0;
 		const chunks = this.chunkLines(lines, 750);
 
 		for (let i = 0; i < chunks.length; i++) {
 			let pth = "";
 			let transcription = "";
+			let segments: any[] = [];
 			for (let v = 1; v <= 3; v++) {
 				const p = this.store.getPath(`${prefix}_p${i}_v${v}.wav`);
 				console.log(`[TTS] Chunk ${i + 1}/${chunks.length} (v${v})`);
@@ -74,6 +77,7 @@ export class Orchestrator {
 				if (!report.is_damaged) {
 					pth = p;
 					transcription = report.transcription;
+					segments = report.segments;
 					break;
 				}
 			}
@@ -90,6 +94,20 @@ export class Orchestrator {
 					},
 				})),
 			);
+
+			// Track segments with offset
+			for (const seg of segments) {
+				allSegments.push({
+					start: seg.start + currentOffset,
+					end: seg.end + currentOffset,
+					text: seg.text,
+				});
+			}
+
+			// Update offset for next chunk (approximate using last segment end if available, or fetch real duration)
+			if (segments.length > 0) {
+				currentOffset += segments[segments.length - 1].end + 1.0; // Adding a small buffer for pause
+			}
 		}
 
 		// Final Transcript Generation
@@ -101,6 +119,7 @@ export class Orchestrator {
 					voice_identity: identity.voice_id,
 					identity,
 					lines: verifiedLines,
+					segments: allSegments,
 					total_chars: verifiedLines.reduce((s, l) => s + l.text.length, 0),
 					produced_at: new Date().toISOString(),
 				},
@@ -108,6 +127,22 @@ export class Orchestrator {
 				2,
 			),
 		);
+
+		// VTT Generation
+		const vtt = [
+			"WEBVTT",
+			"",
+			...allSegments.map((s) => {
+				const formatTime = (t: number) => {
+					const h = Math.floor(t / 3600);
+					const m = Math.floor((t % 3600) / 60);
+					const sec = (t % 60).toFixed(3);
+					return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${sec.padStart(6, "0")}`;
+				};
+				return `${formatTime(s.start)} --> ${formatTime(s.end)}\n${s.text.trim()}\n`;
+			}),
+		].join("\n");
+		fs.writeFileSync(this.store.getPath(`${prefix}.vtt`), vtt);
 
 		const audio = this.store.getPath(`${prefix}.wav`);
 		await this.concat(audioParts, audio);

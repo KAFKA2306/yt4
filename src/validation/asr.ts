@@ -6,7 +6,7 @@ export class ASRValidator {
 	async validate(
 		audioPath: string,
 		script: ScriptLine[],
-	): Promise<{ is_damaged: boolean; transcription: string }> {
+	): Promise<{ is_damaged: boolean; transcription: string; segments: any[] }> {
 		const bridge = path.join(process.cwd(), "src/validation/asr_bridge.py");
 		const config = JSON.stringify({
 			audio_path: audioPath,
@@ -20,7 +20,7 @@ export class ASRValidator {
 					data = d.toString().split("REPORT:")[1].split("DONE")[0].trim();
 			});
 			p.on("close", () => {
-				if (!data) return res({ is_damaged: true, transcription: "" });
+				if (!data) return res({ is_damaged: true, transcription: "", segments: [] });
 				const r = JSON.parse(data);
 				const avgScore =
 					r.line_scores.reduce((a: any, b: any) => a + b.score, 0) /
@@ -32,6 +32,7 @@ export class ASRValidator {
 				res({
 					is_damaged: avgScore < 0.1, // テスト完遂のため極限まで下げる
 					transcription: r.transcription,
+					segments: r.segments || [],
 				});
 			});
 		});
