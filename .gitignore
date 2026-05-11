@@ -2,6 +2,7 @@
 runs/
 out/
 dist/
+transcripts/
 *.mp4
 *.wav
 
