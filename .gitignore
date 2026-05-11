@@ -1,0 +1,31 @@
+# Runtime Outputs
+runs/
+out/
+dist/
+*.mp4
+*.wav
+
+# Dependencies
+node_modules/
+.venv/
+.python-version
+
+# Python Caches
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# IDEs & System
+.idea/
+.vscode/
+.DS_Store
+*.tsbuildinfo
+.claude/
+.gemini/
+sandbox/
