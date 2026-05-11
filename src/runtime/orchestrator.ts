@@ -56,7 +56,6 @@ export class Orchestrator {
 
 		for (let i = 0; i < chunks.length; i++) {
 			let pth = "";
-			let transcription = "";
 			let segments: any[] = [];
 			for (let v = 1; v <= 3; v++) {
 				const p = this.store.getPath(`${prefix}_p${i}_v${v}.wav`);
@@ -76,7 +75,6 @@ export class Orchestrator {
 				const report = await asr.validate(p, chunks[i]);
 				if (!report.is_damaged) {
 					pth = p;
-					transcription = report.transcription;
 					segments = report.segments;
 					break;
 				}
@@ -88,10 +86,6 @@ export class Orchestrator {
 			verifiedLines.push(
 				...chunks[i].map((l) => ({
 					...l,
-					metadata: {
-						...l.metadata,
-						asr_confirmed: `${transcription.substring(0, 100)}...`,
-					},
 				})),
 			);
 
