@@ -13,8 +13,11 @@ tasks:
 
   validate:audio:
     desc: Validate audio artifacts for semantic fidelity
+    summary: |
+      Validates a given audio file against expected text using ASR.
+      Usage: task validate:audio -- <audio_path> "<expected_text>"
     cmds:
-      - echo "Validation logic not yet implemented in yt4."
+      - bun src/validation/cli.ts {{.CLI_ARGS}}
 
   lint:
     desc: Run linters
