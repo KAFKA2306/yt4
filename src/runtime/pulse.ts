@@ -5,26 +5,25 @@ import type { EmotionalState } from "./types";
  * ECC WebSearch & Research Standards compliant.
  */
 export class PulseManager {
-	async observe(): Promise<Partial<EmotionalState>> {
-		// ここでは、事前の WebSearch で得られた 2026年 ASMR トレンドと黄金構成を
-		// コンテキストとして EmotionalState にマッピングする
+	private stages = [
+		{ name: "Intro", valence: 0.1, arousal: 0.05, softness: 0.95 },
+		{ name: "Physical Comfort", valence: 0.3, arousal: 0.1, softness: 0.98 },
+		{ name: "Deepening", valence: 0.5, arousal: 0.15, softness: 0.99 },
+		{ name: "Sleep Induction", valence: 0.2, arousal: 0.02, softness: 1.0 },
+	];
+
+	async observe(progress: number): Promise<Partial<EmotionalState>> {
+		const stageIndex = Math.min(
+			Math.floor(progress * this.stages.length),
+			this.stages.length - 1,
+		);
+		const stage = this.stages[stageIndex];
+
 		return {
-			valence: 0.15,
-			arousal: 0.05,
-			softness: 0.98,
+			valence: stage.valence,
+			arousal: stage.arousal,
+			softness: stage.softness,
 			atmosphere: "cinematic-late-night-rain",
-			// リサーチに基づく「黄金構成」コンテキスト
-			metadata: {
-				research_trends:
-					"Cinema-style cozy atmosphere, sensory-rich (hair stroking, breathing)",
-				target_length: 5000,
-				phases: [
-					"Intro: Reality Disconnection",
-					"Expansion: Physical Comfort",
-					"Deepening: Soul Connection",
-					"Ending: Sleep Induction",
-				],
-			},
-		} as any;
+		};
 	}
 }
