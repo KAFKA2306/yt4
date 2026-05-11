@@ -1,0 +1,77 @@
+import { z } from "zod";
+
+// --- Layer 1: Emotional State & Memory ---
+
+export const EmotionalStateSchema = z.object({
+  valence: z.number().min(-1).max(1),
+  arousal: z.number().min(0).max(1),
+  softness: z.number().min(0).max(1),
+  atmosphere: z.string(),
+});
+export type EmotionalState = z.infer<typeof EmotionalStateSchema>;
+
+export const EmotionalMemorySchema = z.object({
+  history: z.array(z.object({
+    timestamp: z.string(),
+    state: EmotionalStateSchema,
+    trigger: z.string().optional(),
+  })),
+  persistent_mood: EmotionalStateSchema,
+  drift_score: z.number().default(0), // Atmosphere Drift Score
+});
+export type EmotionalMemory = z.infer<typeof EmotionalMemorySchema>;
+
+// --- Layer 2: Identity Contract ---
+
+export const IdentityContractSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  voice_id: z.string(),
+  pacing_base: z.number().default(1.0),
+  hesitation_frequency: z.number().min(0).max(1).default(0.1),
+  breathing_frequency: z.number().min(0).max(1).default(0.2),
+  preferred_atmosphere: z.string().default("late-night"),
+  invariants: z.object({
+    max_arousal: z.number().default(0.4),
+    min_softness: z.number().default(0.6),
+    max_emotion_delta: z.number().default(0.1),
+    max_pressure_delta: z.number().default(0.2),
+    min_silence_density: z.number().default(0.3),
+  }),
+});
+export type IdentityContract = z.infer<typeof IdentityContractSchema>;
+
+// --- Layer 3: Scene Runtime ---
+
+export const SceneStateSchema = z.object({
+  ambience_type: z.string(), // e.g., "rain", "room-tone", "wind"
+  ambience_intensity: z.number().min(0).max(1),
+  proximity: z.enum(["intimate", "near", "medium", "far"]),
+  posture: z.string().optional(), // e.g., "sitting", "lying"
+  silence_density: z.number().min(0).max(1),
+  room_pressure: z.number().min(0).max(1),
+});
+export type SceneState = z.infer<typeof SceneStateSchema>;
+
+// --- Layer 4: Scripting & Continuity ---
+
+export const ScriptLineSchema = z.object({
+  text: z.string(),
+  emotion: EmotionalStateSchema.optional(),
+  scene: SceneStateSchema.optional(),
+  pause_after: z.number().default(0),
+  metadata: z.record(z.string(), z.any()).optional(),
+});
+export type ScriptLine = z.infer<typeof ScriptLineSchema>;
+
+// --- Layer 5: Runtime State ---
+
+export const ResonanceStateSchema = z.object({
+  session_id: z.string(),
+  identity: IdentityContractSchema,
+  current_emotion: EmotionalStateSchema,
+  current_scene: SceneStateSchema,
+  memory: EmotionalMemorySchema,
+  status: z.enum(["idle", "generating", "speaking", "repairing", "error"]).default("idle"),
+});
+export type ResonanceState = z.infer<typeof ResonanceStateSchema>;
