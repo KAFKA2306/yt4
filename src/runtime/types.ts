@@ -78,6 +78,20 @@ export const ResonanceStateSchema = z.object({
 });
 export type ResonanceState = z.infer<typeof ResonanceStateSchema>;
 
+export const LifeLogTripleSchema = z.object({
+	subject: z.string(),
+	predicate: z.string(),
+	object: z.string(),
+	_source: z.string().optional(),
+	timestamp: z.string().optional(),
+});
+export type LifeLogTriple = z.infer<typeof LifeLogTripleSchema>;
+
+export const LifeLogSchema = z.object({
+	triples: z.array(LifeLogTripleSchema),
+});
+export type LifeLog = z.infer<typeof LifeLogSchema>;
+
 export interface MetricEvent {
 	type: string;
 	status: string;
