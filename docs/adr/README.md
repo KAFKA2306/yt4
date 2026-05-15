@@ -8,3 +8,4 @@ Index of all architectural decisions for the yt4 project.
 - [ADR-0022: 完全データ駆動型エンジンへの移行とsrc/の純粋化](0022-data-driven-orchestration.md)
 - [ADR-0023: 成果物の直接出力と厳格な品質保証シーケンス](0023-direct-output-quality-gate.md)
 - [ADR-0024: 厳格な決定論とクラッシュ駆動開発の強制](0024-strict-determinism-crash-driven.md)
+- [ADR-0025: Lifestyle Triple-based Character Memory](0025-lifestyle-triple-memory.md)
