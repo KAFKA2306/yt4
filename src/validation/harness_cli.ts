@@ -1,26 +1,33 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { ASRValidator } from "./asr";
-import { SpeakerValidator } from "./speaker";
-import { ProsodyValidator } from "./prosody";
-import { QualityJudge } from "./judge";
 import { AuditLogger } from "../runtime/audit_logger";
-import { AuditTrace, ProductionConfig, ScriptLine } from "../runtime/types";
-
 import { OfflinePipeline } from "../runtime/pipeline";
+import type {
+	AuditTrace,
+	ProductionConfig,
+	ScriptLine,
+} from "../runtime/types";
+import { ASRValidator } from "./asr";
+import { QualityJudge } from "./judge";
+import { ProsodyValidator } from "./prosody";
+import { SpeakerValidator } from "./speaker";
 
 async function main() {
 	const assetDirName = process.argv[2];
 	const generateMode = process.argv.includes("--generate");
 
 	if (!assetDirName) {
-		console.error("Usage: bun src/validation/harness_cli.ts <asset_dir_name> [--generate]");
+		console.error(
+			"Usage: bun src/validation/harness_cli.ts <asset_dir_name> [--generate]",
+		);
 		process.exit(1);
 	}
 
 	const assetDir = path.resolve(process.cwd(), "assets", assetDirName);
 	const configPath = path.join(assetDir, "0000_config.json");
-	const config: ProductionConfig = JSON.parse(fs.readFileSync(configPath, "utf-8"));
+	const config: ProductionConfig = JSON.parse(
+		fs.readFileSync(configPath, "utf-8"),
+	);
 	const scriptPath = path.join(assetDir, config.script_path);
 	const script: ScriptLine[] = JSON.parse(fs.readFileSync(scriptPath, "utf-8"));
 
@@ -38,9 +45,13 @@ async function main() {
 
 	console.log(`[HARNESS] Auditing asset: ${assetDirName}`);
 
-	const files = fs.readdirSync(assetDir).filter(f => f.endsWith(".wav") && f.includes("_p"));
+	const files = fs
+		.readdirSync(assetDir)
+		.filter((f) => f.endsWith(".wav") && f.includes("_p"));
 	if (files.length === 0) {
-		console.error("No audio files found. Run with --generate to produce audio.");
+		console.error(
+			"No audio files found. Run with --generate to produce audio.",
+		);
 		process.exit(1);
 	}
 	const chunkFiles = new Map<number, string>();
@@ -54,14 +65,17 @@ async function main() {
 				chunkFiles.set(idx, f);
 			} else {
 				const existing = chunkFiles.get(idx)!;
-				const eV = existing.match(/_v(\d+)/) ? parseInt(existing.match(/_v(\d+)/)![1]) : 0;
+				const eV = existing.match(/_v(\d+)/)
+					? parseInt(existing.match(/_v(\d+)/)![1])
+					: 0;
 				if (version > eV) chunkFiles.set(idx, f);
 			}
 		}
 	}
 
 	const firstChunk = chunkFiles.get(0);
-	if (!firstChunk) throw new Error("CRITICAL: First chunk missing for reference.");
+	if (!firstChunk)
+		throw new Error("CRITICAL: First chunk missing for reference.");
 	const referenceAudio = path.join(assetDir, firstChunk);
 	let failCount = 0;
 
@@ -84,7 +98,7 @@ async function main() {
 				energy: prosodyResult.energy_mean,
 				speaker_sim: speakerResult.similarity,
 				silence_ratio: prosodyResult.silence_ratio,
-			}
+			},
 		};
 
 		const judgment = await judge.classify(rawTrace);
@@ -102,16 +116,20 @@ async function main() {
 			status: judgment.status,
 			fail_types: judgment.fail_types,
 			selected_action: judgment.repair_candidate,
-			retry_count: 0
+			retry_count: 0,
 		};
 
 		if (trace.status === "FAIL") failCount++;
 
 		audit.log(trace);
-		console.log(`  -> ${trace.status} | FAILs: ${trace.fail_types?.join(", ") || "None"} | Repair: ${trace.selected_action || "None"}`);
+		console.log(
+			`  -> ${trace.status} | FAILs: ${trace.fail_types?.join(", ") || "None"} | Repair: ${trace.selected_action || "None"}`,
+		);
 	}
 
-	console.log(`\n[RESULT] Audit Complete. FAIL: ${failCount} / ${script.length}`);
+	console.log(
+		`\n[RESULT] Audit Complete. FAIL: ${failCount} / ${script.length}`,
+	);
 	if (failCount > 0) process.exit(1);
 }
 

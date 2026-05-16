@@ -14,21 +14,20 @@ export function getNextAssetId(assetDir: string): string {
 
 export function parseScriptContent(raw: string): ScriptLine[] {
 	const json = JSON.parse(raw);
-	if (Array.isArray(json)) {
-		return json.map((l: any) => ({
-			text: l.text,
-			pause_after: l.pause ?? 5,
-			emotion: l.emotion,
-		}));
+	if (!Array.isArray(json)) {
+		throw new Error("CRITICAL: Script must be a JSON array of ScriptLine.");
 	}
 
-	return raw
-		.split(/\n\n+/)
-		.filter((t) => t.trim().length > 0)
-		.map((text) => ({
-			text: text.trim(),
-			pause_after: 5 + Math.random() * 5,
-		}));
+	return json.map((l: any) => {
+		if (l.pause === undefined) {
+			throw new Error(`CRITICAL: 'pause' field missing in line: ${l.text}`);
+		}
+		return {
+			text: l.text,
+			pause_after: l.pause,
+			emotion: l.emotion,
+		};
+	});
 }
 
 export function chunkLines(ls: ScriptLine[], t: number) {
@@ -79,10 +78,23 @@ export function generateCaption(
 	emotion: EmotionalState,
 ): string {
 	const softness =
-		emotion.softness > 0.95
-			? "囁き声、極めて繊細。"
-			: "柔らかな声、落ち着いた。";
-	const emotionDesc =
-		emotion.valence > 0.4 ? "慈愛に満ちた包容力。" : "静かな夜の情緒。";
-	return `${baseVoice} ${softness} ${emotionDesc}`;
+		emotion.softness > 0.9
+			? "極めて繊細で密着感のある囁き声。"
+			: emotion.softness > 0.7
+				? "吐息混じりの、穏やかで柔らかな囁き声。"
+				: "落ち着きのある、優しく包み込むような声。";
+	const valence =
+		emotion.valence > 0.7
+			? "深い慈愛と、どこか執着を感じさせる幸福感。"
+			: emotion.valence > 0.3
+				? "献身的で、穏やかな優しさ。"
+				: "静かな夜に溶け込むような、少し憂いを含んだ情緒。";
+	const arousal =
+		emotion.arousal > 0.4
+			? "高揚した感情、耳元で熱を帯びた吐息。"
+			: emotion.arousal > 0.2
+				? "静かに熱を帯びた、親密な距離感。"
+				: "極めて落ち着いた、沈着冷静で深淵な響き。";
+
+	return `[VoiceDesign] ${softness} ${valence} ${arousal}`;
 }

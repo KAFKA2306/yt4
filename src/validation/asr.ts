@@ -1,6 +1,6 @@
 import { spawn } from "node:child_process";
 import * as path from "node:path";
-import { ScriptLine } from "../runtime/types";
+import type { ScriptLine } from "../runtime/types";
 
 export class ASRValidator {
 	async validate(

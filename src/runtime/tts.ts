@@ -5,16 +5,22 @@ export async function synthesizeVoice(o: {
 	text: string;
 	caption: string;
 	outputPath: string;
-	seed?: number;
-	temperature?: number;
+	seed: number;
+	temperature: number;
+	num_steps: number;
+	seconds: number;
+	no_ref: boolean;
 }): Promise<string> {
 	const bridge = path.join(process.cwd(), "src/runtime/tts_bridge.py");
 	const config = JSON.stringify({
 		text: o.text,
 		caption: o.caption,
 		output_path: o.outputPath,
-		seed: o.seed ?? 2306,
-		temperature: o.temperature ?? 0.7,
+		seed: o.seed,
+		temperature: o.temperature,
+		num_steps: o.num_steps,
+		seconds: o.seconds,
+		no_ref: o.no_ref,
 	});
 	return new Promise((res, rej) => {
 		const p = spawn("uv", ["run", bridge, config]);

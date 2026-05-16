@@ -1,8 +1,8 @@
-import { AuditTrace, FailType, RepairAction } from "../runtime/types";
+import type { AuditTrace, FailType, RepairAction } from "../runtime/types";
 
 /**
  * LLM Quality Judge
- * 
+ *
  * Rules:
  * 1. NO subjective impression.
  * 2. ONLY use deterministic verifier outputs.
@@ -57,14 +57,16 @@ REPAIR_ACTIONS: regenerate_chunk, split_chunk, shorten_context, refresh_referenc
 		if ((metrics?.cer ?? 1) < 0.85) fail_types.push("LOW_INTELLIGIBILITY");
 		if ((metrics?.hallucinations ?? 0) > 0) fail_types.push("REPETITION_LOOP");
 		if ((metrics?.speaker_sim ?? 1) < 0.85) fail_types.push("SPEAKER_DRIFT");
-		if ((metrics?.silence_ratio ?? 0) > 0.12) fail_types.push("SILENCE_CORRUPTION");
+		if ((metrics?.silence_ratio ?? 0) > 0.12)
+			fail_types.push("SILENCE_CORRUPTION");
 
 		const status = fail_types.length > 0 ? "FAIL" : "PASS";
-		
+
 		let repair: RepairAction | undefined;
 		if (fail_types.includes("SPEAKER_DRIFT")) repair = "refresh_reference";
 		else if (fail_types.includes("REPETITION_LOOP")) repair = "split_chunk";
-		else if (fail_types.includes("LOW_INTELLIGIBILITY")) repair = "lower_temperature";
+		else if (fail_types.includes("LOW_INTELLIGIBILITY"))
+			repair = "lower_temperature";
 
 		return {
 			status,

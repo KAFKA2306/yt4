@@ -10,12 +10,22 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../g
 from irodori_tts.inference_runtime import InferenceRuntime, RuntimeKey, SamplingRequest, save_wav
 
 def main():
-    if len(sys.argv) < 2: return
+    if len(sys.argv) < 2:
+        print("CRITICAL: Config JSON missing.")
+        sys.exit(1)
+    
     config = json.loads(sys.argv[1])
-    text = config.get("text", "")
-    caption = config.get("caption", "静かで知的な若い女性の声。少し疲れた深夜の距離感。")
-    output_path = config.get("output_path", "output.wav")
-    seed = config.get("seed", 2306)
+    
+    # Mandatory fields - no fallbacks
+    text = config["text"]
+    caption = config["caption"]
+    output_path = config["output_path"]
+    seed = config["seed"]
+    
+    # Optional fields with strict existence check if needed, or mandatory
+    num_steps = config["num_steps"]
+    seconds = config["seconds"]
+    no_ref = config["no_ref"]
 
     ckpt = hf_hub_download(repo_id="Aratako/Irodori-TTS-500M-v2-VoiceDesign", filename="model.safetensors")
     
@@ -29,10 +39,9 @@ def main():
         text=text,
         caption=caption,
         seed=seed,
-        num_steps=32,
-        cfg_scale=config.get("temperature", 0.7),
-        no_ref=True,
-        seconds=90.0
+        num_steps=num_steps,
+        no_ref=no_ref,
+        seconds=seconds
     ))
     
     save_wav(output_path, result.audio, result.sample_rate)
