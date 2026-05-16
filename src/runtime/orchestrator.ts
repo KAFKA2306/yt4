@@ -177,7 +177,7 @@ export class Orchestrator {
 				assetId,
 				sessionId,
 				chunkIndex: chunkCounter,
-				wavHash: "", // To be filled if needed
+				wavHash: "",
 				promptHash: "",
 				seed,
 				metrics: {
@@ -188,10 +188,7 @@ export class Orchestrator {
 				reason: asrResult.score < 0.85 ? "ACOUSTIC_DAMAGE" : "WHISPER_LIMIT",
 			});
 
-			if (
-				asrResult.score < 0.85 &&
-				attempt < this.runtimeConfig.max_retries
-			) {
+			if (asrResult.score < 0.85 && attempt < this.runtimeConfig.max_retries) {
 				logger(` [RETRY] ASR Score too low: ${asrResult.score}`);
 				workQueue.unshift({ lines: chunk, attempt: attempt + 1 });
 				continue;
@@ -293,14 +290,11 @@ export class Orchestrator {
 			state = "VIDEO_RENDERED";
 		}
 
-		// Strictly separate remote reality
-		const finalState = state;
 		let remoteProof: any;
 
-		if (finalState === "VIDEO_RENDERED") {
+		if (state === "VIDEO_RENDERED") {
 			state = "REMOTE_UNVERIFIED";
 
-			// Potential Publication Gate
 			if (
 				process.env.YOUTUBE_PUBLISH_AUTO === "true" &&
 				effectiveAsrScore >= 0.85
@@ -366,25 +360,6 @@ export class Orchestrator {
 			state,
 		);
 		logger(`[DONE] ${sessionId} | Contract: ${contract.verification.status}`);
-
-		const readline = require("node:readline").createInterface({
-			input: process.stdin,
-			output: process.stdout,
-		});
-		console.log("\n[FEEDBACK] 上様、今回の成果物はいかがでしたか？");
-		const feedback = await new Promise((resolve) =>
-			readline.question("> ", resolve),
-		);
-		readline.close();
-
-		if (feedback) {
-			const feedbackPath = path.join(this.assetDir, "feedback.log");
-			fs.appendFileSync(
-				feedbackPath,
-				`\n[${new Date().toISOString()}] ${feedback}`,
-			);
-			console.log(` [SAVE] フィードバックを記録しました: ${feedbackPath}`);
-		}
 	}
 
 	private updateNumbers(
