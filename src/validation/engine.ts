@@ -17,7 +17,7 @@ export async function validateASR(
 	const config = JSON.stringify({
 		audio_path: audioPath,
 		expected_lines: script.map((l) => l.text),
-		model_size: "small", // can be upgraded to large-v3 if needed
+		model_size: "small",
 	});
 	return new Promise<any>((res) => {
 		const p = spawn("uv", ["run", bridge, config]);
@@ -46,8 +46,6 @@ export async function validateASR(
 				`[ASR] CER Score: ${score.toFixed(4)} | Hallucinations: ${hallucinations.length} | Type: ${failure_type}`,
 			);
 
-			// Logic: If it's just WHISPER_LIMIT, we might NOT want to mark it as damaged
-			// if the user prioritizes ASMR quality over ASR readability.
 			const is_damaged = failure_type !== "NONE" || score < threshold;
 
 			return res({
