@@ -5,7 +5,7 @@ import { Publisher } from "./runtime/publisher";
 async function main() {
 	const assetDir = path.resolve(process.cwd(), "assets/010_devoted_maid_lilia");
 	const uploadJsonPath = path.join(assetDir, "0017_session-kf42n_UPLOAD.json");
-	
+
 	if (!fs.existsSync(uploadJsonPath)) {
 		throw new Error(`Upload manifest not found: ${uploadJsonPath}`);
 	}
@@ -18,7 +18,8 @@ async function main() {
 
 	const publisher = new Publisher(assetDir);
 
-	const newTitle = "【ASMR/執着】献身的なメイドのリリア。雨の夜、あなたを独占する特別なケア。";
+	const newTitle =
+		"【ASMR/執着】献身的なメイドのリリア。雨の夜、あなたを独占する特別なケア。";
 	const newDescription = `「愛しています、ご主人様。私の、たった一人の……大切な……。」
 
 激しい雨の降る夜、遅くまでお仕事を頑張るご主人様。
@@ -44,8 +45,8 @@ Scenario: Resonant Archive
 			title: newTitle,
 			description: newDescription,
 			tags: ["ASMR", "メイド", "耳掃除", "囁き", "睡眠導入", "存在fetish"],
-			visibility: "public"
-		}
+			visibility: "public",
+		},
 	});
 
 	// Update local UPLOAD.json
