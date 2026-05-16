@@ -1,0 +1,17 @@
+# Global Configuration for yt4 Resonance Runtime
+runtime:
+  chunk_length: 200
+  seed_base: 2306
+  temperature: 0.7
+  num_steps: 32
+  seconds: 90.0
+  no_ref: true
+  max_retries: 3
+
+identity:
+  default_voice_id: "Aratako/Irodori-TTS-500M-v2-VoiceDesign"
+  preferred_atmosphere: "録音されてしまった深夜"
+
+validation:
+  asr_threshold: 0.95
+  speaker_threshold: 0.80

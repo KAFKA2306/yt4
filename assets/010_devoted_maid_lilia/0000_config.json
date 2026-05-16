@@ -2,17 +2,23 @@
   "identity": {
     "id": "lilia",
     "name": "Lilia",
-    "voice_id": "Irodori-TTS-500M-v3",
-    "overrides": {
-      "min_softness": 0.85,
+    "voice_id": "Aratako/Irodori-TTS-500M-v2-VoiceDesign",
+    "preferred_atmosphere": "late-night-obsessive-maid",
+    "invariants": {
+      "min_softness": 0.8,
       "max_arousal": 0.3,
-      "preferred_atmosphere": "late-night-maid-room"
+      "max_emotion_delta": 0.1
     }
   },
   "script_path": "generated_script.json",
-  "image_path": "thumbnail-v1.png",
+  "image_path": "thumbnail-v2.png",
   "runtime": {
-    "chunk_length": 150,
+    "chunk_length": 80,
+    "seed_base": 777,
+    "temperature": 0.7,
+    "num_steps": 50,
+    "seconds": 80.0,
+    "no_ref": true,
     "max_retries": 3
   }
 }

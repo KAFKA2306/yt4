@@ -1,0 +1,106 @@
+{
+  "version": "2.0.0",
+  "timestamp": "2026-05-16T07:21:45.169Z",
+  "sessionId": "session-kf42n",
+  "identity": {
+    "id": "lilia",
+    "name": "Lilia",
+    "voice_id": "Aratako/Irodori-TTS-500M-v2-VoiceDesign"
+  },
+  "inputs": {
+    "generated_script.json": "9f074f3cea933262ee85be03df0f5baad173549fdc0241af8c4a4e8b1b96102b",
+    "thumbnail-v2.png": "6f6248e3c5e8eb92ecda63010b2916a58127ce05fe71db0d644ee09e30da644b"
+  },
+  "outputs": {
+    "0017_session-kf42n.wav": "b750f8cd7ee508d3095dc13d5cf3da041df0458f3de0fdca6080bedcb65c9fb9",
+    "0017_session-kf42n.mp4": "9544dbcb7f4d82ea4c77d309023d04765e0f9703d1a31be2a82147259fb40379",
+    "0017_session-kf42n.json": "146f0974f1e18e536cdaeee9ed83a0a1d2937ca4f6c7f2f701014b15cc1186e3"
+  },
+  "verification": {
+    "asr_score": 0.6107857256740559,
+    "status": "PASS",
+    "evidence": {
+      "machine_logs": [
+        "[2026-05-16T06:36:48.532Z] [RESONANCE] Starting session session-kf42n",
+        "[2026-05-16T06:36:48.551Z] [TTS] Chunk 1 | Emotion: s=0.90 | Attempt: 0",
+        "[2026-05-16T06:38:58.823Z] [RETRY] Chunk 0 failed: ACOUSTIC_DAMAGE. Retrying...",
+        "[2026-05-16T06:38:58.828Z] [TTS] Chunk 1 | Emotion: s=0.90 | Attempt: 1",
+        "[2026-05-16T06:41:10.629Z] [WARNING] Chunk 0 ASR struggle (Whisper Limit). Identity maintained.",
+        "[2026-05-16T06:41:10.637Z] [TTS] Chunk 2 | Emotion: s=0.94 | Attempt: 1",
+        "[2026-05-16T06:43:09.478Z] [WARNING] Chunk 1 ASR struggle (Whisper Limit). Identity maintained.",
+        "[2026-05-16T06:43:09.482Z] [TTS] Chunk 3 | Emotion: s=0.94 | Attempt: 0",
+        "[2026-05-16T06:44:54.206Z] [WARNING] Chunk 2 ASR struggle (Whisper Limit). Identity maintained.",
+        "[2026-05-16T06:44:54.208Z] [TTS] Chunk 4 | Emotion: s=0.94 | Attempt: 0",
+        "[2026-05-16T06:46:41.655Z] [WARNING] Chunk 3 ASR struggle (Whisper Limit). Identity maintained.",
+        "[2026-05-16T06:46:41.656Z] [TTS] Chunk 5 | Emotion: s=0.98 | Attempt: 0",
+        "[2026-05-16T06:48:49.565Z] [RETRY] Chunk 4 failed: ACOUSTIC_DAMAGE. Retrying...",
+        "[2026-05-16T06:48:49.571Z] [TTS] Chunk 5 | Emotion: s=0.98 | Attempt: 1",
+        "[2026-05-16T06:51:06.433Z] [WARNING] Chunk 4 ASR struggle (Whisper Limit). Identity maintained.",
+        "[2026-05-16T06:51:06.438Z] [TTS] Chunk 6 | Emotion: s=0.98 | Attempt: 0",
+        "[2026-05-16T06:53:16.058Z] [WARNING] Chunk 5 ASR struggle (Whisper Limit). Identity maintained.",
+        "[2026-05-16T06:53:16.069Z] [TTS] Chunk 7 | Emotion: s=0.98 | Attempt: 0",
+        "[2026-05-16T06:55:24.753Z] [WARNING] Chunk 6 ASR struggle (Whisper Limit). Identity maintained.",
+        "[2026-05-16T06:55:24.757Z] [TTS] Chunk 8 | Emotion: s=0.98 | Attempt: 0",
+        "[2026-05-16T06:57:25.659Z] [RETRY] Chunk 7 failed: ACOUSTIC_DAMAGE. Retrying...",
+        "[2026-05-16T06:57:25.661Z] [TTS] Chunk 8 | Emotion: s=0.98 | Attempt: 1",
+        "[2026-05-16T06:59:20.424Z] [RETRY] Chunk 7 failed: ACOUSTIC_DAMAGE. Retrying...",
+        "[2026-05-16T06:59:20.427Z] [TTS] Chunk 8 | Emotion: s=0.98 | Attempt: 2",
+        "[2026-05-16T07:01:08.519Z] [WARNING] Chunk 7 ASR struggle (Whisper Limit). Identity maintained.",
+        "[2026-05-16T07:01:08.521Z] [TTS] Chunk 9 | Emotion: s=1.00 | Attempt: 0",
+        "[2026-05-16T07:02:55.730Z] [RETRY] Chunk 8 failed: ACOUSTIC_DAMAGE. Retrying...",
+        "[2026-05-16T07:02:55.732Z] [TTS] Chunk 9 | Emotion: s=1.00 | Attempt: 1",
+        "[2026-05-16T07:04:39.810Z] [WARNING] Chunk 8 ASR struggle (Whisper Limit). Identity maintained.",
+        "[2026-05-16T07:04:39.812Z] [TTS] Chunk 10 | Emotion: s=1.00 | Attempt: 0",
+        "[2026-05-16T07:06:28.013Z] [WARNING] Chunk 9 ASR struggle (Whisper Limit). Identity maintained.",
+        "[2026-05-16T07:06:28.014Z] [TTS] Chunk 11 | Emotion: s=1.00 | Attempt: 0",
+        "[2026-05-16T07:08:16.178Z] [WARNING] Chunk 10 ASR struggle (Whisper Limit). Identity maintained.",
+        "[2026-05-16T07:08:16.180Z] [TTS] Chunk 12 | Emotion: s=1.00 | Attempt: 0",
+        "[2026-05-16T07:10:09.181Z] [WARNING] Chunk 11 ASR struggle (Whisper Limit). Identity maintained.",
+        "[2026-05-16T07:10:09.182Z] [TTS] Chunk 13 | Emotion: s=1.00 | Attempt: 0",
+        "[2026-05-16T07:11:54.206Z] [WARNING] Chunk 12 ASR struggle (Whisper Limit). Identity maintained.",
+        "[2026-05-16T07:11:54.210Z] [TTS] Chunk 14 | Emotion: s=1.00 | Attempt: 0",
+        "[2026-05-16T07:13:37.654Z] [RETRY] Chunk 13 failed: ACOUSTIC_DAMAGE. Retrying...",
+        "[2026-05-16T07:13:37.657Z] [TTS] Chunk 14 | Emotion: s=1.00 | Attempt: 1",
+        "[2026-05-16T07:15:14.545Z] [RETRY] Chunk 13 failed: ACOUSTIC_DAMAGE. Retrying...",
+        "[2026-05-16T07:15:14.547Z] [TTS] Chunk 14 | Emotion: s=1.00 | Attempt: 2",
+        "[2026-05-16T07:16:50.263Z] [WARNING] Chunk 13 ASR struggle (Whisper Limit). Identity maintained.",
+        "[2026-05-16T07:16:50.265Z] [TTS] Chunk 15 | Emotion: s=1.00 | Attempt: 0",
+        "[2026-05-16T07:18:26.234Z] [WARNING] Chunk 14 ASR struggle (Whisper Limit). Identity maintained.",
+        "[2026-05-16T07:18:26.236Z] [TTS] Chunk 16 | Emotion: s=1.00 | Attempt: 0",
+        "[2026-05-16T07:20:06.033Z] [WARNING] Chunk 15 ASR struggle (Whisper Limit). Identity maintained."
+      ],
+      "runtime_traces": {
+        "emotion_avg": {
+          "valence": 0.27,
+          "arousal": 0,
+          "softness": 1,
+          "atmosphere": "late-night-obsessive-maid"
+        },
+        "chunk_count": 15,
+        "total_scores": [
+          0.7412587412587412,
+          0.5725490196078431,
+          0.5686274509803921,
+          0.5847457627118644,
+          0.6349206349206349,
+          0.6086956521739131,
+          0.5041322314049587,
+          0.46153846153846156,
+          0.7096774193548387,
+          0.618421052631579,
+          0.5955056179775281,
+          0.5053763440860215,
+          0.6882591093117408,
+          0.8444444444444444,
+          0.6132075471698113,
+          0.5212121212121212
+        ]
+      }
+    }
+  },
+  "environment": {
+    "node_version": "v24.3.0",
+    "platform": "linux",
+    "cwd": "/home/kafka/projects/yt4"
+  }
+}
