@@ -15,7 +15,6 @@ export async function verifyCoherence(): Promise<CoherenceResult> {
 	const glob = new Bun.Glob("src/**/*.ts");
 	const tryCatchPattern = /try\s*\{/g;
 
-	// Load CoDD config for DAG verification
 	const configPath = "codd.yaml";
 	let config: any = {};
 	if (fs.existsSync(configPath)) {
@@ -27,7 +26,6 @@ export async function verifyCoherence(): Promise<CoherenceResult> {
 		const content = await Bun.file(file).text();
 		const stat = fs.statSync(file);
 
-		// 1. ADR-0024: Crash-Driven
 		if (file.includes("runtime/") || file.includes("domain/")) {
 			if (tryCatchPattern.test(content)) {
 				findings.push({
@@ -40,7 +38,6 @@ export async function verifyCoherence(): Promise<CoherenceResult> {
 			}
 		}
 
-		// 2. Zero-Fat
 		if (
 			content.includes(["TO", "DO"].join("")) ||
 			content.includes(["FIX", "ME"].join(""))
@@ -53,7 +50,6 @@ export async function verifyCoherence(): Promise<CoherenceResult> {
 			});
 		}
 
-		// 3. CoDD: Elicit (Coverage Check)
 		const isLinked = config.graph?.nodes?.some(
 			(n: any) =>
 				n.path === file ||
@@ -69,14 +65,12 @@ export async function verifyCoherence(): Promise<CoherenceResult> {
 			});
 		}
 
-		// 4. CoDD: Drift (Basic Timestamp Check)
 		const linkedAdr = config.graph?.nodes?.find(
 			(n: any) => n.id === "ADR-0024",
 		)?.path;
 		if (linkedAdr && fs.existsSync(linkedAdr)) {
 			const adrStat = fs.statSync(linkedAdr);
 			if (stat.mtimeMs > adrStat.mtimeMs + 3600000) {
-				// 1h drift
 				findings.push({
 					node: "Drift",
 					file,
@@ -87,7 +81,6 @@ export async function verifyCoherence(): Promise<CoherenceResult> {
 		}
 	}
 
-	// 5. Verify ADR Existence
 	const adr24 = "docs/adr/0024-strict-determinism-crash-driven.md";
 	if (!fs.existsSync(adr24)) {
 		findings.push({
