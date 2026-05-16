@@ -23,11 +23,9 @@ export class PulseManager {
 	];
 
 	async observe(progress: number): Promise<Partial<EmotionalState>> {
-		// Daily Pulse: Grounded in LifeLog observations
 		const memories = this.lifelog.search("かふか");
 		const recentMemories = memories.slice(-5);
 
-		// Bias-Free Observation: Extracting current tension/arousal from recent activities
 		const isPokerActive = recentMemories.some((m) =>
 			m.object.includes("ポーカー"),
 		);
