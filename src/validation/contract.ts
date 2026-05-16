@@ -21,6 +21,7 @@ export interface CompletionClaim {
 		remote_proof?: {
 			platform: "youtube";
 			videoId: string;
+			visibility: string;
 			raw_response_hash: string;
 		};
 		evidence: {
@@ -52,7 +53,7 @@ export function certifyContract(params: {
 	logs: string[];
 	traces?: Record<string, any>;
 	productionState: ProductionState;
-	remoteProof?: { videoId: string; rawResponse: string };
+	remoteProof?: { videoId: string; visibility: string; rawResponse: string };
 }): CompletionClaim {
 	const inputs: Record<string, string> = {};
 	for (const p of params.inputPaths) {
@@ -77,6 +78,7 @@ export function certifyContract(params: {
 		remote_proof = {
 			platform: "youtube",
 			videoId: params.remoteProof.videoId,
+			visibility: params.remoteProof.visibility,
 			raw_response_hash: crypto
 				.createHash("sha256")
 				.update(params.remoteProof.rawResponse)
@@ -164,6 +166,13 @@ export function verifyContract(
 			return {
 				status: "UNVERIFIED",
 				reason: `Bounded Honesty Failure: Remote proof missing for state ${state}`,
+			};
+		}
+
+		if (claim.verification.remote_proof.visibility !== "public") {
+			return {
+				status: "QUALITY_FAIL",
+				reason: `Visibility Violation: Expected public but got ${claim.verification.remote_proof.visibility}`,
 			};
 		}
 	}

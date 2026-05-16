@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { google } from "googleapis";
-import type { ProductionState } from "./types";
+import type { ProductionState, YouTubeVisibility } from "./types";
 
 export interface PublishReceipt {
 	status: "uploaded";
@@ -26,7 +26,7 @@ export class Publisher {
 			description: string;
 			tags: string[];
 			category_id?: string;
-			visibility?: string;
+			visibility?: YouTubeVisibility;
 		};
 	}): Promise<PublishReceipt> {
 		const auth = this.createYouTubeClient();
@@ -45,7 +45,7 @@ export class Publisher {
 					categoryId: params.metadata.category_id || "24",
 				},
 				status: {
-					privacyStatus: params.metadata.visibility || "unlisted",
+					privacyStatus: params.metadata.visibility || "public",
 					selfDeclaredMadeForKids: false,
 				},
 			},
@@ -97,7 +97,7 @@ export class Publisher {
 			description?: string;
 			tags?: string[];
 			category_id?: string;
-			visibility?: string;
+			visibility?: YouTubeVisibility;
 		};
 	}) {
 		const auth = this.createYouTubeClient();
@@ -114,11 +114,28 @@ export class Publisher {
 					categoryId: params.metadata.category_id || "24",
 				},
 				status: {
-					privacyStatus: params.metadata.visibility || "unlisted",
+					privacyStatus: params.metadata.visibility || "public",
 				},
 			},
 		});
 		console.log(`[PUBLISH] Video updated: ${params.videoId}`);
+	}
+
+	async getVideoVisibility(videoId: string): Promise<YouTubeVisibility> {
+		const auth = this.createYouTubeClient();
+		const youtube = google.youtube({ version: "v3", auth });
+
+		const res = await youtube.videos.list({
+			part: ["status"],
+			id: [videoId],
+		});
+
+		const status = res.data.items?.[0]?.status?.privacyStatus;
+		if (!status) {
+			throw new Error(`Video not found or status missing: ${videoId}`);
+		}
+
+		return status as YouTubeVisibility;
 	}
 
 	private createYouTubeClient() {

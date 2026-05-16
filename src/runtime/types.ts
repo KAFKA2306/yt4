@@ -71,6 +71,8 @@ export type ProductionState =
 	| "PUBLIC_REACHABLE" // Watch URL verified externally
 	| "REMOTE_UNVERIFIED"; // Missing remote evidence
 
+export type YouTubeVisibility = "public" | "unlisted" | "private";
+
 export const AuditTraceSchema = z.object({
 	timestamp: z.string(),
 	assetId: z.string(),

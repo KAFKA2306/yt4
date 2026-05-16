@@ -25,7 +25,7 @@ async function main() {
 			title: upload.metadata.title,
 			description: upload.metadata.description,
 			tags: upload.metadata.tags || ["ASMR", "メイド"],
-			visibility: upload.metadata.visibility || "unlisted",
+			visibility: upload.metadata.visibility || "public",
 		}
 	});
 

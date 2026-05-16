@@ -315,11 +315,13 @@ export class Orchestrator {
 						title: `【ASMR】${identity.name} | ${currentEmotion.atmosphere}`,
 						description: `深夜の微細な空気感を、${identity.name}の声と共にお届けします。\n\n#ASMR #深夜`,
 						tags: ["ASMR", identity.name],
+						visibility: "public",
 					},
 				});
 				state = "UPLOAD_CONFIRMED";
 				remoteProof = {
 					videoId: receipt.video_id,
+					visibility: receipt.privacy_status,
 					rawResponse: receipt.raw_response,
 				};
 				logger(`[PUBLISH] Success: ${receipt.video_id}`);
