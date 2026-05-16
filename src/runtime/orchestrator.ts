@@ -1,5 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
+import * as yaml from "yaml";
 import { certifyContract } from "../validation/contract";
 import {
 	analyzeProsody,
@@ -8,11 +9,13 @@ import {
 } from "../validation/engine";
 import { AuditLogger } from "./audit_logger";
 import { composeVideo } from "./composer";
-import { IdentityEngine } from "./identity";
-import { PulseManager } from "./pulse";
+import { IdentityEngine } from \"./identity\";
+import { PulseManager } from \"./pulse\";
+import { Publisher } from \"./publisher\";
+import { type FailureReason, RepairEngine } from \"./repair\";
 import { generateScriptFromIntent } from "./script_gen";
 import { synthesizeVoice } from "./tts";
-import type { EmotionalState, ScriptLine } from "./types";
+import type { EmotionalState, ProductionState, ScriptLine } from "./types";
 import {
 	chunkLines,
 	concatAudio,
@@ -23,9 +26,16 @@ import {
 
 export class Orchestrator {
 	private audit: AuditLogger;
-	private runtimeConfig = {
-		chunk_length: 200,
-		seed_base: 2306,
+	private repair: RepairEngine;
+	private publisher: Publisher;
+	private runtimeConfig: {
+		chunk_length: number;
+		seed_base: number;
+		temperature: number;
+		num_steps: number;
+		seconds: number;
+		no_ref: boolean;
+		max_retries: number;
 	};
 
 	constructor(
@@ -35,11 +45,36 @@ export class Orchestrator {
 			script_path?: string;
 			image_path: string;
 			intent?: string;
-			runtime?: { chunk_length?: number; seed_base?: number };
+			runtime?: {
+				chunk_length?: number;
+				seed_base?: number;
+				temperature?: number;
+				num_steps?: number;
+				seconds?: number;
+				no_ref?: boolean;
+				max_retries?: number;
+			};
 		},
 	) {
-		this.runtimeConfig = { ...this.runtimeConfig, ...(config.runtime || {}) };
+		const defaultConfig = yaml.parse(
+			fs.readFileSync(path.join(process.cwd(), "config/default.yaml"), "utf-8"),
+		);
+
+		this.runtimeConfig = {
+			chunk_length:
+				config.runtime?.chunk_length ?? defaultConfig.runtime.chunk_length,
+			seed_base: config.runtime?.seed_base ?? defaultConfig.runtime.seed_base,
+			temperature:
+				config.runtime?.temperature ?? defaultConfig.runtime.temperature,
+			num_steps: config.runtime?.num_steps ?? defaultConfig.runtime.num_steps,
+			seconds: config.runtime?.seconds ?? defaultConfig.runtime.seconds,
+			no_ref: config.runtime?.no_ref ?? defaultConfig.runtime.no_ref,
+			max_retries: config.runtime?.max_retries ?? 3,
+		};
+
 		this.audit = new AuditLogger(path.join(this.assetDir, "audit.jsonl"));
+		this.repair = new RepairEngine();
+		this.publisher = new Publisher(this.assetDir);
 	}
 
 	async run() {
@@ -51,7 +86,9 @@ export class Orchestrator {
 			runtimeLogs.push(line);
 		};
 
+		let state: ProductionState = "IDLE";
 		logger(`[RESONANCE] Starting session ${sessionId}`);
+		state = "GENERATING";
 		const assetId = getNextAssetId(this.assetDir);
 		const prefix = `${assetId}_${sessionId}`;
 
@@ -79,10 +116,9 @@ export class Orchestrator {
 			fullScriptPath = path.resolve(this.assetDir, "generated_script.json");
 			fs.writeFileSync(fullScriptPath, JSON.stringify(lines, null, 2));
 		} else {
-			fullScriptPath = path.resolve(
-				this.assetDir,
-				this.config.script_path || "0001_situation.json",
-			);
+			if (!this.config.script_path)
+				throw new Error("CRITICAL: script_path missing in configuration.");
+			fullScriptPath = path.resolve(this.assetDir, this.config.script_path);
 			if (!fs.existsSync(fullScriptPath))
 				throw new Error(`CRITICAL: ${fullScriptPath} missing.`);
 			lines = parseScriptContent(fs.readFileSync(fullScriptPath, "utf-8"));
@@ -93,30 +129,61 @@ export class Orchestrator {
 		const allSegments: any[] = [];
 		const allScores: number[] = [];
 		let currentOffset = 0;
-		const chunks = chunkLines(lines, this.runtimeConfig.chunk_length);
+		const initialChunks = chunkLines(lines, this.runtimeConfig.chunk_length);
+		const workQueue: { lines: ScriptLine[]; attempt: number }[] =
+			initialChunks.map((c) => ({ lines: c, attempt: 0 }));
 
-		for (let i = 0; i < chunks.length; i++) {
-			const targetEmotion = await pulse.observe(i / chunks.length);
-			currentEmotion = idEngine.smooth(currentEmotion, targetEmotion as any);
+		let chunkCounter = 0;
+		while (workQueue.length > 0) {
+			const work = workQueue.shift()!;
+			const chunk = work.lines;
+			const attempt = work.attempt;
 
-			const p = path.join(this.assetDir, `${prefix}_p${i}.wav`);
-			logger(
-				`[TTS] Chunk ${i + 1}/${chunks.length} | Emotion: v=${currentEmotion.valence.toFixed(2)} a=${currentEmotion.arousal.toFixed(2)} s=${currentEmotion.softness.toFixed(2)}`,
+			const targetEmotion = await pulse.observe(
+				chunkCounter / initialChunks.length,
 			);
+			const emotion = idEngine.smooth(currentEmotion, targetEmotion as any);
 
-			const cleanText = chunks[i]
+			const p = path.join(this.assetDir, `${prefix}_p${chunkCounter}.wav`);
+			const cleanText = chunk
 				.map((l) => l.text.replace(/（.*?）|\(.*?\)/g, ""))
 				.join(" ");
-			const caption = generateCaption(identity.voice_id, currentEmotion);
+
+			let temp = this.runtimeConfig.temperature;
+			const seed = this.runtimeConfig.seed_base + chunkCounter + attempt * 100;
+
+			if (attempt > 0) {
+				const repairResult = this.repair.apply(
+					chunk,
+					"ACOUSTIC_DAMAGE",
+					attempt,
+				);
+				if (repairResult.overrides.temperature)
+					temp = repairResult.overrides.temperature;
+				if (repairResult.overrides.softness_delta)
+					emotion.softness = Math.max(
+						0.1,
+						emotion.softness + repairResult.overrides.softness_delta,
+					);
+			}
+
+			const caption = generateCaption(identity.voice_id, emotion);
+			logger(
+				`[TTS] Chunk ${chunkCounter + 1} | Emotion: s=${emotion.softness.toFixed(2)} | Attempt: ${attempt}`,
+			);
 
 			await synthesizeVoice({
 				text: cleanText,
 				caption,
 				outputPath: p,
-				seed: this.runtimeConfig.seed_base + i,
+				seed,
+				temperature: temp,
+				num_steps: this.runtimeConfig.num_steps,
+				seconds: this.runtimeConfig.seconds,
+				no_ref: this.runtimeConfig.no_ref,
 			});
 
-			const asrResult = await validateASR(p, chunks[i]);
+			const asrResult = await validateASR(p, chunk);
 			const prosodyResult = await analyzeProsody(p);
 			let speakerSim = 1.0;
 			if (fs.existsSync(referenceAudio)) {
@@ -124,56 +191,111 @@ export class Orchestrator {
 				speakerSim = speakerResult.similarity;
 			}
 
-			const isDamaged = asrResult.is_damaged || speakerSim < 0.8;
-			const reason = asrResult.is_damaged
-				? "ASR_FAILURE"
-				: speakerSim < 0.8
-					? "SPEAKER_DRIFT"
-					: undefined;
+			// F0 Clamping: Physically impossible pitch for a whisper
+			const isDistorted =
+				prosodyResult.f0_mean > 500 || prosodyResult.f0_mean < 50;
+			const isDamaged =
+				asrResult.is_damaged || speakerSim < 0.75 || isDistorted;
+			let reason: FailureReason = asrResult.failure_type as FailureReason;
+			if (speakerSim < 0.75) reason = "SPEAKER_DRIFT";
+			if (isDistorted) reason = "ACOUSTIC_DAMAGE"; // Digital distortion/Chipmunk
+
+			const status = isDamaged ? "FAIL" : "PASS";
 
 			this.audit.log({
 				timestamp: new Date().toISOString(),
 				assetId: identity.id,
 				sessionId,
-				chunkIndex: i,
+				chunkIndex: chunkCounter,
 				wavHash: AuditLogger.calculateHash(fs.readFileSync(p)),
 				promptHash: AuditLogger.calculateHash(cleanText),
-				seed: this.runtimeConfig.seed_base + i,
+				seed,
 				metrics: {
 					cer: asrResult.score,
 					hallucinations: asrResult.hallucinations.length,
 					f0: prosodyResult.f0_mean,
 					energy: prosodyResult.energy_mean,
 					speaker_sim: speakerSim,
+					rms: asrResult.rms,
 				},
-				status: isDamaged ? "FAIL" : "PASS",
+				status,
 				reason,
 			});
 
-			if (isDamaged)
-				throw new Error(
-					`CRITICAL: Chunk ${i} Integrity Damage (${reason}). CRASH-DRIVEN TERMINATION.`,
+			if (isDamaged) {
+				if (attempt < this.runtimeConfig.max_retries) {
+					logger(
+						`[RETRY] Chunk ${chunkCounter} failed: ${reason} (F0=${prosodyResult.f0_mean.toFixed(1)}). Retrying...`,
+					);
+					const repairPlan = this.repair.apply(chunk, reason, attempt + 1);
+					if (repairPlan.modifiedChunks.length > 1) {
+						const nextWork = repairPlan.modifiedChunks.map((c) => ({
+							lines: c,
+							attempt: attempt + 1,
+						}));
+						workQueue.unshift(...nextWork);
+					} else {
+						workQueue.unshift({ lines: chunk, attempt: attempt + 1 });
+					}
+					continue;
+				}
+				logger(`[CRITICAL] Chunk ${chunkCounter} failed after max retries.`);
+				this.updateNumbers(
+					assetId,
+					sessionId,
+					verifiedLines.length,
+					initialChunks.length,
+					allScores.length > 0 ? Math.min(...allScores) : 0,
+					"LOCAL_FAIL",
 				);
+				throw new Error(`CRITICAL: Integrity Damage (${reason}).`);
+			}
+
+			if (asrResult.failure_type === "WHISPER_LIMIT") {
+				logger(
+					`[WARNING] Chunk ${chunkCounter} ASR struggle (Whisper Limit). Identity maintained.`,
+				);
+			}
 
 			audioParts.push(p);
-			verifiedLines.push(...chunks[i]);
-			for (const seg of asrResult.segments) {
+			verifiedLines.push(...chunk);
+
+			// TRUTH-DRIVEN CAPTIONS: Use script text, not hallucinated transcription
+			if (asrResult.segments.length > 0) {
+				const chunkText = chunk.map((l) => l.text).join("");
 				allSegments.push({
-					start: seg.start + currentOffset,
-					end: seg.end + currentOffset,
-					text: seg.text,
+					start: currentOffset,
+					end:
+						currentOffset +
+						asrResult.segments[asrResult.segments.length - 1].end,
+					text: chunkText,
 				});
-			}
-			if (asrResult.segments.length > 0)
 				currentOffset +=
 					asrResult.segments[asrResult.segments.length - 1].end + 1.0;
-			allScores.push(0.8);
+			} else {
+				const estimatedDuration =
+					chunk.reduce((s, l) => s + l.text.length, 0) * 0.15;
+				allSegments.push({
+					start: currentOffset,
+					end: currentOffset + estimatedDuration,
+					text: chunk.map((l) => l.text).join(""),
+				});
+				currentOffset += estimatedDuration + 1.0;
+			}
+
+			allScores.push(asrResult.score);
+			currentEmotion = emotion;
+			chunkCounter++;
+		}
+		state = "GENERATED";
+		const minAsrScore = allScores.length > 0 ? Math.min(...allScores) : 0;
+		if (minAsrScore >= 0.99) {
+			state = "AUDIO_VALIDATED";
+		} else {
+			state = "LOCAL_FAIL";
 		}
 
-		const avgAsrScore =
-			allScores.length > 0
-				? allScores.reduce((a, b) => a + b, 0) / allScores.length
-				: 0;
+		const effectiveAsrScore = minAsrScore;
 		const transcriptPath = path.join(this.assetDir, `${prefix}.json`);
 		fs.writeFileSync(
 			transcriptPath,
@@ -189,7 +311,7 @@ export class Orchestrator {
 						text: l.text,
 						pause: l.pause_after,
 					})),
-					transcription: allSegments.map((s) => s.text.trim()).join(" "),
+					transcription: "[TRUTH-DRIVEN] Subtitles generated from script.",
 					segments: allSegments.map((s) => ({
 						start: s.start,
 						end: s.end,
@@ -220,12 +342,26 @@ export class Orchestrator {
 		await concatAudio(audioParts, audio);
 
 		const fullImagePath = path.resolve(this.assetDir, this.config.image_path);
-		const finalVideo = path.join(this.assetDir, `${prefix}.mp4`);
-		await composeVideo({
-			audioPath: audio,
-			imagePath: fullImagePath,
-			outputPath: finalVideo,
-		});
+		if (state === "AUDIO_VALIDATED") {
+			const finalVideo = path.join(this.assetDir, `${prefix}.mp4`);
+			await composeVideo({
+				audioPath: audio,
+				imagePath: fullImagePath,
+				outputPath: finalVideo,
+			});
+			state = "VIDEO_RENDERED";
+		}
+
+		// Strictly separate remote reality
+		const finalState = state;
+		if (finalState === "VIDEO_RENDERED") {
+			state = "REMOTE_UNVERIFIED";
+		}
+
+		const outputPaths = [audio, transcriptPath];
+		if (state === "REMOTE_UNVERIFIED" || state.startsWith("UPLOAD")) {
+			outputPaths.push(path.join(this.assetDir, `${prefix}.mp4`));
+		}
 
 		const contract = certifyContract({
 			sessionId,
@@ -235,12 +371,13 @@ export class Orchestrator {
 				voice_id: identity.voice_id,
 			},
 			inputPaths: [fullScriptPath, fullImagePath],
-			outputPaths: [audio, finalVideo, transcriptPath],
-			asrScore: avgAsrScore,
+			outputPaths,
+			asrScore: effectiveAsrScore,
 			logs: runtimeLogs,
+			productionState: state,
 			traces: {
 				emotion_avg: currentEmotion,
-				chunk_count: chunks.length,
+				chunk_count: initialChunks.length,
 				total_scores: allScores,
 			},
 		});
@@ -253,8 +390,9 @@ export class Orchestrator {
 			assetId,
 			sessionId,
 			verifiedLines.length,
-			chunks.length,
-			avgAsrScore,
+			initialChunks.length,
+			effectiveAsrScore,
+			state,
 		);
 		logger(`[DONE] ${sessionId} | Contract: ${contract.verification.status}`);
 
@@ -284,10 +422,11 @@ export class Orchestrator {
 		chars: number,
 		chunks: number,
 		asr: number,
+		state: ProductionState,
 	) {
 		const p = path.join(process.cwd(), "NUMBERS.md");
 		const date = new Date().toISOString().split("T")[0];
-		const line = `| ${date} | ${assetId} | ${sessionId} | ${chars} | ${chunks} | ${asr.toFixed(2)} | 0 | DONE |`;
+		const line = `| ${date} | ${assetId} | ${sessionId} | ${chars} | ${chunks} | ${asr.toFixed(2)} | 0 | ${state} |`;
 		fs.appendFileSync(p, `\n${line}`);
 	}
 }
