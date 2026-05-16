@@ -4,7 +4,8 @@ runtime:
   seed_base: 2306
   temperature: 0.7
   num_steps: 32
-  seconds: 90.0
+  seconds: null
+  duration_scale: 1.0
   no_ref: true
   max_retries: 3
 

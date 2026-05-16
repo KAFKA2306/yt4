@@ -77,24 +77,9 @@ export function generateCaption(
 	baseVoice: string,
 	emotion: EmotionalState,
 ): string {
-	const softness =
-		emotion.softness > 0.9
-			? "極めて繊細で密着感のある囁き声。"
-			: emotion.softness > 0.7
-				? "吐息混じりの、穏やかで柔らかな囁き声。"
-				: "落ち着きのある、優しく包み込むような声。";
-	const valence =
-		emotion.valence > 0.7
-			? "深い慈愛と、どこか執着を感じさせる幸福感。"
-			: emotion.valence > 0.3
-				? "献身的で、穏やかな優しさ。"
-				: "静かな夜に溶け込むような、少し憂いを含んだ情緒。";
-	const arousal =
-		emotion.arousal > 0.4
-			? "高揚した感情、耳元で熱を帯びた吐息。"
-			: emotion.arousal > 0.2
-				? "静かに熱を帯びた、親密な距離感。"
-				: "極めて落ち着いた、沈着冷静で深淵な響き。";
+	const softness = emotion.softness > 0.8 ? "囁き声" : "穏やかな声";
+	const valence = emotion.valence > 0.5 ? "優しい" : "落ち着いた";
+	const arousal = emotion.arousal > 0.3 ? "親密な" : "静かな";
 
-	return `[VoiceDesign] ${softness} ${valence} ${arousal}`;
+	return `[VoiceDesign:${baseVoice}] ${softness}、${valence}、${arousal}。`;
 }

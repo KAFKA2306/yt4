@@ -61,14 +61,22 @@ export class Publisher {
 		console.log(`[PUBLISH] Video uploaded: ${videoId}`);
 
 		if (params.imagePath && fs.existsSync(params.imagePath)) {
-			await youtube.thumbnails.set({
-				videoId: videoId,
-				media: {
-					mimeType: "image/png",
-					body: fs.createReadStream(params.imagePath),
-				},
-			});
-			console.log("[PUBLISH] Thumbnail set.");
+			await youtube
+				.thumbnails.set({
+					videoId: videoId,
+					media: {
+						mimeType: "image/png",
+						body: fs.createReadStream(params.imagePath),
+					},
+				})
+				.then(() => {
+					console.log("[PUBLISH] Thumbnail set.");
+				})
+				.catch((error: unknown) => {
+					console.warn(
+						`[PUBLISH] Thumbnail upload skipped: ${(error as Error).message}`,
+					);
+				});
 		}
 
 		return {

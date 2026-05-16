@@ -11,3 +11,4 @@ Index of all architectural decisions for the yt4 project.
 - [ADR-0025: Lifestyle Triple-based Character Memory](0025-lifestyle-triple-memory.md)
 - [ADR-0026: Nuanced Quality Gates and Failure Taxonomy](0026-nuanced-quality-gates-taxonomy.md)
 - [ADR-0027: Zero-Trust Integrity and Remote Proof Binding](0027-zero-trust-remote-proof.md)
+- [ADR-0028: Irodori-TTS v3 Integration and Duration Predictor Enforcement](0028-irodori-v3-integration.md)

@@ -12,3 +12,6 @@
 - **019**: Sexy patter (ear teasing). Required threshold adjustment (0.25) and multiple retries due to breathy whisper nature.
 
 | 2026-05-16 | 0017 | session-kf42n | 2682 | 15 | 0.61 | 5 | DONE |
+
+| 2026-05-16 | 020 | session-3p2p0e | 57 | 12 | 0.85 | 0 | REMOTE_UNVERIFIED |
+| 2026-05-16 | 020 | session-wi31 | 57 | 12 | 0.85 | 0 | REMOTE_UNVERIFIED |

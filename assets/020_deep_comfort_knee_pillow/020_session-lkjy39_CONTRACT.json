@@ -1,0 +1,82 @@
+{
+  "version": "2.0.0",
+  "timestamp": "2026-05-16T12:34:50.331Z",
+  "sessionId": "session-lkjy39",
+  "identity": {
+    "id": "oneesan-01",
+    "name": "お姉さん",
+    "voice_id": "包容力のある、落ち着いた大人の女性の声。密着感のある囁きと、優しく語りかけるトーン。母性と親密さが同居する響き。"
+  },
+  "inputs": {
+    "0001_situation.json": "fb401b20d99d8ec068f8724cf1e568cc418212fa4a746d71debfc69aa124dfbf",
+    "0001_thumbnail.png": "27f948e15588ca96a23a3ffdfe3d7736a3989b968b9a36e0b3d98a5383913b56"
+  },
+  "outputs": {
+    "020_session-lkjy39.wav": "f716350abaf7bfe21108f0f430f75bf265f4f6e2cbc4edaa586dacbcbc99a409",
+    "020_session-lkjy39.json": "25060418b31ae3a16b358639e05f60271916e90fad9a79ec6bcebe527b7b595a"
+  },
+  "verification": {
+    "asr_score": 0.859504132231405,
+    "status": "QUALITY_FAIL",
+    "production_state": "LOCAL_FAIL",
+    "evidence": {
+      "machine_logs": [
+        "[2026-05-16T12:01:57.987Z] [RESONANCE] Starting session session-lkjy39",
+        "[2026-05-16T12:01:57.997Z] [TTS] Chunk 0 | Attempt 0",
+        "[2026-05-16T12:04:38.339Z] [TTS] Chunk 1 | Attempt 0",
+        "[2026-05-16T12:06:55.872Z] [TTS] Chunk 2 | Attempt 0",
+        "[2026-05-16T12:09:43.775Z] [TTS] Chunk 3 | Attempt 0",
+        "[2026-05-16T12:11:55.660Z] [TTS] Chunk 4 | Attempt 0",
+        "[2026-05-16T12:13:26.055Z] [TTS] Chunk 5 | Attempt 0",
+        "[2026-05-16T12:15:20.319Z] [TTS] Chunk 6 | Attempt 0",
+        "[2026-05-16T12:16:59.362Z]  [RETRY] ASR Score too low: 0.7121212121212122",
+        "[2026-05-16T12:16:59.365Z] [TTS] Chunk 6 | Attempt 1",
+        "[2026-05-16T12:18:45.433Z] [TTS] Chunk 7 | Attempt 0",
+        "[2026-05-16T12:20:46.399Z]  [RETRY] ASR Score too low: 0.810126582278481",
+        "[2026-05-16T12:20:46.402Z] [TTS] Chunk 7 | Attempt 1",
+        "[2026-05-16T12:22:20.996Z] [TTS] Chunk 8 | Attempt 0",
+        "[2026-05-16T12:24:22.630Z] [TTS] Chunk 9 | Attempt 0",
+        "[2026-05-16T12:26:14.832Z] [TTS] Chunk 10 | Attempt 0",
+        "[2026-05-16T12:27:56.740Z]  [RETRY] ASR Score too low: 0.6296296296296297",
+        "[2026-05-16T12:27:56.742Z] [TTS] Chunk 10 | Attempt 1",
+        "[2026-05-16T12:29:45.193Z]  [RETRY] ASR Score too low: 0.6271186440677966",
+        "[2026-05-16T12:29:45.195Z] [TTS] Chunk 10 | Attempt 2",
+        "[2026-05-16T12:31:17.339Z]  [RETRY] ASR Score too low: 0.660377358490566",
+        "[2026-05-16T12:31:17.341Z] [TTS] Chunk 10 | Attempt 3",
+        "[2026-05-16T12:32:23.505Z]  [RETRY] ASR Score too low: 0.7522935779816514",
+        "[2026-05-16T12:32:23.510Z] [TTS] Chunk 10 | Attempt 4",
+        "[2026-05-16T12:33:15.555Z]  [RETRY] ASR Score too low: 0.7241379310344828",
+        "[2026-05-16T12:33:15.557Z] [TTS] Chunk 10 | Attempt 5",
+        "[2026-05-16T12:34:02.207Z] [TTS] Chunk 11 | Attempt 0"
+      ],
+      "runtime_traces": {
+        "emotion_avg": {
+          "valence": 0.27,
+          "arousal": 0,
+          "softness": 1,
+          "atmosphere": "録音されてしまった深夜"
+        },
+        "chunk_count": 12,
+        "total_scores": [
+          0.859504132231405,
+          0.8920863309352518,
+          0.96,
+          0.9183673469387755,
+          0.8823529411764706,
+          0.9411764705882353,
+          0.927536231884058,
+          0.8609271523178808,
+          0.9784172661870504,
+          0.976,
+          0.9421487603305785,
+          0.9090909090909091
+        ]
+      }
+    }
+  },
+  "environment": {
+    "node_version": "v24.3.0",
+    "platform": "linux",
+    "cwd": "/home/kafka/projects/yt4"
+  }
+}

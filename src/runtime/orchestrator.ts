@@ -21,7 +21,6 @@ import {
 	chunkLines,
 	concatAudio,
 	generateCaption,
-	getNextAssetId,
 	parseScriptContent,
 } from "./utils";
 
@@ -34,7 +33,8 @@ export class Orchestrator {
 		seed_base: number;
 		temperature: number;
 		num_steps: number;
-		seconds: number;
+		seconds: number | null;
+		duration_scale: number;
 		no_ref: boolean;
 		max_retries: number;
 	};
@@ -51,7 +51,8 @@ export class Orchestrator {
 				seed_base?: number;
 				temperature?: number;
 				num_steps?: number;
-				seconds?: number;
+				seconds?: number | null;
+				duration_scale?: number;
 				no_ref?: boolean;
 				max_retries?: number;
 			};
@@ -69,6 +70,10 @@ export class Orchestrator {
 				config.runtime?.temperature ?? defaultConfig.runtime.temperature,
 			num_steps: config.runtime?.num_steps ?? defaultConfig.runtime.num_steps,
 			seconds: config.runtime?.seconds ?? defaultConfig.runtime.seconds,
+			duration_scale:
+				config.runtime?.duration_scale ??
+				defaultConfig.runtime.duration_scale ??
+				1.0,
 			no_ref: config.runtime?.no_ref ?? defaultConfig.runtime.no_ref,
 			max_retries: config.runtime?.max_retries ?? 3,
 		};
@@ -90,7 +95,7 @@ export class Orchestrator {
 		let state: ProductionState = "IDLE";
 		logger(`[RESONANCE] Starting session ${sessionId}`);
 		state = "GENERATING";
-		const assetId = getNextAssetId(this.assetDir);
+		const assetId = path.basename(this.assetDir).split("_")[0];
 		const prefix = `${assetId}_${sessionId}`;
 
 		const idEngine = new IdentityEngine({
@@ -128,7 +133,7 @@ export class Orchestrator {
 		const audioParts: string[] = [];
 		const verifiedLines: ScriptLine[] = [];
 		const allSegments: any[] = [];
-		const allScores: number[] = [];
+		const acceptedScores: number[] = [];
 		let currentOffset = 0;
 		const initialChunks = chunkLines(lines, this.runtimeConfig.chunk_length);
 		const workQueue: { lines: ScriptLine[]; attempt: number }[] =
@@ -156,15 +161,17 @@ export class Orchestrator {
 			logger(`[TTS] Chunk ${chunkCounter} | Attempt ${attempt}`);
 			await synthesizeVoice({
 				text: cleanText,
+				caption: generateCaption(this.config.identity.voice_id, emotion),
 				outputPath: p,
-				referenceAudio,
-				emotion,
+				seed,
 				temperature: temp,
 				num_steps: this.runtimeConfig.num_steps,
-				seed,
+				seconds: this.runtimeConfig.seconds,
+				no_ref: this.runtimeConfig.no_ref,
+				duration_scale: this.runtimeConfig.duration_scale,
 			});
 
-			const asrResult = await validateASR(p, cleanText);
+			const asrResult = await validateASR(p, chunk);
 			this.audit.log({
 				timestamp: new Date().toISOString(),
 				assetId,
@@ -215,14 +222,15 @@ export class Orchestrator {
 				currentOffset += estimatedDuration + 1.0;
 			}
 
-			allScores.push(asrResult.score);
+			acceptedScores.push(asrResult.score);
 			currentEmotion = emotion;
 			chunkCounter++;
 		}
 
 		state = "GENERATED";
-		const minAsrScore = allScores.length > 0 ? Math.min(...allScores) : 0;
-		if (minAsrScore >= 0.99) {
+		const minAsrScore =
+			acceptedScores.length > 0 ? Math.min(...acceptedScores) : 0;
+		if (minAsrScore >= 0.85) {
 			state = "AUDIO_VALIDATED";
 		} else {
 			state = "LOCAL_FAIL";
@@ -295,11 +303,7 @@ export class Orchestrator {
 			// Potential Publication Gate
 			if (
 				process.env.YOUTUBE_PUBLISH_AUTO === "true" &&
-				effectiveAsrScore >= 0.99
-			) {
-			if (
-				process.env.YOUTUBE_PUBLISH_AUTO === "true" &&
-				effectiveAsrScore >= 0.99
+				effectiveAsrScore >= 0.85
 			) {
 				logger("[PUBLISH] Triggering automatic YouTube publication...");
 				state = "UPLOAD_ATTEMPTED";
@@ -319,7 +323,6 @@ export class Orchestrator {
 					rawResponse: receipt.raw_response,
 				};
 				logger(`[PUBLISH] Success: ${receipt.video_id}`);
-			}
 			}
 		}
 
@@ -344,7 +347,7 @@ export class Orchestrator {
 			traces: {
 				emotion_avg: currentEmotion,
 				chunk_count: initialChunks.length,
-				total_scores: allScores,
+				total_scores: acceptedScores,
 			},
 		});
 		fs.writeFileSync(

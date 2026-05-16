@@ -16,18 +16,25 @@ def main():
     
     config = json.loads(sys.argv[1])
     
-    # Mandatory fields - no fallbacks
     text = config["text"]
     caption = config["caption"]
     output_path = config["output_path"]
     seed = config["seed"]
-    
-    # Optional fields with strict existence check if needed, or mandatory
     num_steps = config["num_steps"]
-    seconds = config["seconds"]
+    seconds = config.get("seconds") # Can be None
     no_ref = config["no_ref"]
+    duration_scale = config.get("duration_scale", 1.0)
+    ref_wav = config.get("ref_wav")
 
-    ckpt = hf_hub_download(repo_id="Aratako/Irodori-TTS-500M-v2-VoiceDesign", filename="model.safetensors")
+    # Use v3 by default, or v2-VoiceDesign if caption is provided and no ref
+    repo_id = config.get("repo_id")
+    if not repo_id:
+        if caption and no_ref:
+            repo_id = "Aratako/Irodori-TTS-500M-v2-VoiceDesign"
+        else:
+            repo_id = "Aratako/Irodori-TTS-500M-v3"
+
+    ckpt = hf_hub_download(repo_id=repo_id, filename="model.safetensors")
     
     runtime = InferenceRuntime.from_key(RuntimeKey(
         checkpoint=ckpt,
@@ -38,10 +45,12 @@ def main():
     result = runtime.synthesize(SamplingRequest(
         text=text,
         caption=caption,
+        ref_wav=ref_wav,
         seed=seed,
         num_steps=num_steps,
         no_ref=no_ref,
-        seconds=seconds
+        seconds=seconds,
+        duration_scale=duration_scale
     ))
     
     save_wav(output_path, result.audio, result.sample_rate)
