@@ -26,7 +26,6 @@ export class RepairEngine {
 
 		switch (reason) {
 			case "ACOUSTIC_DAMAGE":
-				// Model collapse: lower temp and split
 				overrides.temperature = Math.max(0.1, 0.5 - attempt * 0.1);
 				return {
 					modifiedChunks: chunk.length > 1 ? this.split(chunk) : [chunk],
@@ -34,12 +33,10 @@ export class RepairEngine {
 				};
 
 			case "SILENCE_OR_TOO_SOFT":
-				// Too quiet: lower softness
 				overrides.softness_delta = -0.2 * attempt;
 				return { modifiedChunks: [chunk], overrides };
 
 			case "SPEAKER_DRIFT":
-				// Voice lost: just new seed for now
 				return { modifiedChunks: [chunk], overrides };
 
 			default:
