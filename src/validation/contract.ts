@@ -12,8 +12,8 @@ export interface CompletionClaim {
 		name: string;
 		voice_id: string;
 	};
-	inputs: Record<string, string>; // path -> hash
-	outputs: Record<string, string>; // path -> hash
+	inputs: Record<string, string>;
+	outputs: Record<string, string>;
 	verification: {
 		asr_score: number;
 		status: AuditStatus;
@@ -66,7 +66,6 @@ export function certifyContract(params: {
 	}
 
 	let status: AuditStatus = "UNVERIFIED";
-	// Align contract quality with the runtime acceptance floor.
 	if (params.asrScore < 0.85) {
 		status = "QUALITY_FAIL";
 	} else {
@@ -154,7 +153,6 @@ export function verifyContract(
 		};
 	}
 
-	// Remote Proof Enforcement
 	const state = claim.verification.production_state;
 	if (
 		state === "UPLOAD_CONFIRMED" ||
