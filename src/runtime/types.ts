@@ -12,25 +12,19 @@ export const IdentityContractSchema = z.object({
 	id: z.string(),
 	name: z.string(),
 	voice_id: z.string(),
-	preferred_atmosphere: z.string().default("late-night"),
-	invariants: z
-		.object({
-			max_arousal: z.number().default(0.4),
-			min_softness: z.number().default(0.6),
-			max_emotion_delta: z.number().default(0.1),
-		})
-		.default({
-			max_arousal: 0.4,
-			min_softness: 0.6,
-			max_emotion_delta: 0.1,
-		}),
+	preferred_atmosphere: z.string(),
+	invariants: z.object({
+		max_arousal: z.number(),
+		min_softness: z.number(),
+		max_emotion_delta: z.number(),
+	}),
 });
 export type IdentityContract = z.infer<typeof IdentityContractSchema>;
 
 export const ScriptLineSchema = z.object({
 	text: z.string(),
 	emotion: EmotionalStateSchema.optional(),
-	pause_after: z.number().default(5),
+	pause_after: z.number(),
 });
 export type ScriptLine = z.infer<typeof ScriptLineSchema>;
 
@@ -52,6 +46,31 @@ export type RepairAction =
 	| "lower_temperature"
 	| "rerun_alignment";
 
+export type AuditStatus =
+	| "PASS"
+	| "QUALITY_FAIL"
+	| "INFRA_FAIL"
+	| "UNVERIFIED"
+	| "NOT_APPLICABLE";
+
+/**
+ * ProductionState: Decomposed state machine to prevent state collapse.
+ * Strictly separates local artifacts from remote reality.
+ */
+export type ProductionState =
+	| "IDLE"
+	| "GENERATING"
+	| "GENERATED" // Local assets exist
+	| "AUDIO_VALIDATED" // Passed ASR/Prosody/Speaker audit
+	| "VIDEO_RENDERED" // MP4 rendered from validated audio
+	| "LOCAL_FAIL" // Failed at any local step
+	| "UPLOAD_ATTEMPTED" // API call initiated
+	| "UPLOAD_CONFIRMED" // API response received with videoId
+	| "YOUTUBE_FETCH_CONFIRMED" // Metadata re-fetched from YouTube
+	| "STUDIO_VISIBLE" // Confirmed visible in Studio
+	| "PUBLIC_REACHABLE" // Watch URL verified externally
+	| "REMOTE_UNVERIFIED"; // Missing remote evidence
+
 export const AuditTraceSchema = z.object({
 	timestamp: z.string(),
 	assetId: z.string(),
@@ -67,9 +86,11 @@ export const AuditTraceSchema = z.object({
 		energy: z.number().optional(),
 		speaker_sim: z.number().optional(),
 		silence_ratio: z.number().optional(),
+		rms: z.number().optional(),
 	}),
 	transcription: z.string().optional(),
 	status: z.enum(["PASS", "FAIL"]),
+	reason: z.string().optional(),
 	fail_types: z.array(z.string()).optional(),
 	selected_action: z.string().optional(),
 	retry_count: z.number().optional(),
@@ -88,6 +109,10 @@ export interface ProductionConfig {
 	runtime: {
 		chunk_length: number;
 		seed_base: number;
+		temperature: number;
+		num_steps: number;
+		seconds: number;
+		no_ref: boolean;
 		max_retries: number;
 	};
 }
@@ -104,4 +129,5 @@ export const LifeLogTripleSchema = z.object({
 	predicate: z.string(),
 	object: z.string(),
 	timestamp: z.string(),
+	_source: z.string().optional(),
 });
