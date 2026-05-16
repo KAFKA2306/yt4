@@ -1,8 +1,7 @@
 import * as crypto from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
-
-export type AuditStatus = "PASS" | "FAIL" | "UNVERIFIED" | "NOT_APPLICABLE";
+import type { AuditStatus, ProductionState } from "../runtime/types";
 
 export interface CompletionClaim {
 	version: string;
@@ -18,6 +17,12 @@ export interface CompletionClaim {
 	verification: {
 		asr_score: number;
 		status: AuditStatus;
+		production_state: ProductionState;
+		remote_proof?: {
+			platform: "youtube";
+			videoId: string;
+			raw_response_hash: string;
+		};
 		evidence: {
 			machine_logs: string[];
 			runtime_traces: Record<string, any>;
@@ -46,6 +51,8 @@ export function certifyContract(params: {
 	asrScore: number;
 	logs: string[];
 	traces?: Record<string, any>;
+	productionState: ProductionState;
+	remoteProof?: { videoId: string; rawResponse: string };
 }): CompletionClaim {
 	const inputs: Record<string, string> = {};
 	for (const p of params.inputPaths) {
@@ -58,10 +65,23 @@ export function certifyContract(params: {
 	}
 
 	let status: AuditStatus = "UNVERIFIED";
-	if (params.asrScore < 0.15) {
-		status = "FAIL";
-	} else if (params.asrScore >= 0.2) {
+	// WHISPER_LIMIT is abolished. Strict check only.
+	if (params.asrScore < 0.95) {
+		status = "QUALITY_FAIL";
+	} else if (params.asrScore >= 0.99) {
 		status = "PASS";
+	}
+
+	let remote_proof: any;
+	if (params.remoteProof) {
+		remote_proof = {
+			platform: "youtube",
+			videoId: params.remoteProof.videoId,
+			raw_response_hash: crypto
+				.createHash("sha256")
+				.update(params.remoteProof.rawResponse)
+				.digest("hex"),
+		};
 	}
 
 	return {
@@ -74,6 +94,8 @@ export function certifyContract(params: {
 		verification: {
 			asr_score: params.asrScore,
 			status,
+			production_state: params.productionState,
+			remote_proof,
 			evidence: {
 				machine_logs: params.logs,
 				runtime_traces: params.traces || {},
@@ -95,10 +117,10 @@ export function verifyContract(
 		const p = path.join(baseDir, name);
 		const actualHash = hashFile(p);
 		if (actualHash === "MISSING")
-			return { status: "FAIL", reason: `Artifact Missing: ${name}` };
+			return { status: "QUALITY_FAIL", reason: `Artifact Missing: ${name}` };
 		if (actualHash !== expectedHash)
 			return {
-				status: "FAIL",
+				status: "QUALITY_FAIL",
 				reason: `Integrity Breach: ${name} (Hash Mismatch)`,
 			};
 	}
@@ -109,7 +131,7 @@ export function verifyContract(
 		const claimTime = new Date(claim.timestamp).getTime();
 		if (stat.mtimeMs < claimTime - 10000) {
 			return {
-				status: "FAIL",
+				status: "QUALITY_FAIL",
 				reason: `Artifact Replay Detected: ${name} is older than contract`,
 			};
 		}
@@ -125,9 +147,25 @@ export function verifyContract(
 	const logText = claim.verification.evidence.machine_logs.join("\n");
 	if (!logText.includes(claim.sessionId)) {
 		return {
-			status: "FAIL",
+			status: "QUALITY_FAIL",
 			reason: `Identity Breach: SessionID ${claim.sessionId} not found in logs`,
 		};
+	}
+
+	// Remote Proof Enforcement
+	const state = claim.verification.production_state;
+	if (
+		state === "UPLOAD_CONFIRMED" ||
+		state === "YOUTUBE_FETCH_CONFIRMED" ||
+		state === "STUDIO_VISIBLE" ||
+		state === "PUBLIC_REACHABLE"
+	) {
+		if (!claim.verification.remote_proof) {
+			return {
+				status: "UNVERIFIED",
+				reason: `Bounded Honesty Failure: Remote proof missing for state ${state}`,
+			};
+		}
 	}
 
 	return { status: claim.verification.status };
