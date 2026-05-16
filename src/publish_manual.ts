@@ -5,7 +5,7 @@ import { Publisher } from "./runtime/publisher";
 async function main() {
 	const assetDir = path.resolve(process.cwd(), "assets/010_devoted_maid_lilia");
 	const uploadJsonPath = path.join(assetDir, "0017_session-kf42n_UPLOAD.json");
-	
+
 	if (!fs.existsSync(uploadJsonPath)) {
 		throw new Error(`Upload manifest not found: ${uploadJsonPath}`);
 	}
@@ -26,11 +26,11 @@ async function main() {
 			description: upload.metadata.description,
 			tags: upload.metadata.tags || ["ASMR", "メイド"],
 			visibility: upload.metadata.visibility || "public",
-		}
+		},
 	});
 
 	console.log(`[SUCCESS] Video ID: ${receipt.video_id}`);
-	
+
 	// Update UPLOAD.json with video_id
 	upload.status = "PUBLISHED";
 	upload.video_id = receipt.video_id;
