@@ -1,11 +1,10 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { Publisher } from "../runtime/publisher";
 import { verifyCoherence } from "./coherence";
 import { verifyContract } from "./contract";
-import { Publisher } from "../runtime/publisher";
 
 async function main() {
-	// 1. Coherence Audit (CoDD)
 	console.log("[AUDIT] Starting Coherence Verification (CoDD)...");
 	const coherence = await verifyCoherence();
 	if (coherence.findings.length > 0) {
@@ -22,7 +21,10 @@ async function main() {
 		process.exit(0);
 	}
 
-	const dir = process.argv[2] && !process.argv[2].startsWith("--") ? process.argv[2] : "transcripts";
+	const dir =
+		process.argv[2] && !process.argv[2].startsWith("--")
+			? process.argv[2]
+			: "transcripts";
 	const isLive = process.argv.includes("--live");
 	const publisher = isLive ? new Publisher(dir) : null;
 
