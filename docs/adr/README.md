@@ -9,3 +9,5 @@ Index of all architectural decisions for the yt4 project.
 - [ADR-0023: 成果物の直接出力と厳格な品質保証シーケンス](0023-direct-output-quality-gate.md)
 - [ADR-0024: 厳格な決定論とクラッシュ駆動開発の強制](0024-strict-determinism-crash-driven.md)
 - [ADR-0025: Lifestyle Triple-based Character Memory](0025-lifestyle-triple-memory.md)
+- [ADR-0026: Nuanced Quality Gates and Failure Taxonomy](0026-nuanced-quality-gates-taxonomy.md)
+- [ADR-0027: Zero-Trust Integrity and Remote Proof Binding](0027-zero-trust-remote-proof.md)

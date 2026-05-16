@@ -12,6 +12,7 @@ This project treats the agent as a professional, deterministic engine. Context i
 - **Workflow Isolation**: Maintain strict separation between Research, Strategy, and Execution.
 - **Harness Engineering (CoDD)**: Maintain a mechanically verifiable DAG in `codd.yaml`. 
 - **Pre-commit Hook**: A mandatory coherence audit runs before every commit. Failures block the commit.
+- **Zero-Trust Integrity (ADR-0027)**: Mandatory binding of local artifacts to `remote_proof` (YouTube URL).
 - **Superpowers Protocol**: No code implementation until a `design.md` is approved by the user. Ask clarifying questions one at a time.
 
 ## Phase 1: Research
@@ -44,6 +45,7 @@ For each sub-task in the strategy:
 4. **TTS Synthesis**: Use Irodori-TTS with ADR-0020 stability protocol.
 5. **ASR QA**: Treat as a mandatory semantic integrity check.
 6. **Video Integration**: The task is NOT complete until `final_video.mp4` exists in the same asset directory.
+7. **Remote Binding**: Use account-specific `.env` files for `task publish` and record `remote_proof`.
 
 ## Technical Standards
 - **Validation**: Use Zod (TS) or Pydantic (Python) for all data structures.

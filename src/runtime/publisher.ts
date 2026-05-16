@@ -55,7 +55,8 @@ export class Publisher {
 		});
 
 		const videoId = res.data.id;
-		if (!videoId) throw new Error("YouTube upload failed: No VideoID returned.");
+		if (!videoId)
+			throw new Error("YouTube upload failed: No VideoID returned.");
 
 		console.log(`[PUBLISH] Video uploaded: ${videoId}`);
 
@@ -81,12 +82,44 @@ export class Publisher {
 		};
 	}
 
+	async updateVideo(params: {
+		videoId: string;
+		metadata: {
+			title?: string;
+			description?: string;
+			tags?: string[];
+			category_id?: string;
+			visibility?: string;
+		};
+	}) {
+		const auth = this.createYouTubeClient();
+		const youtube = google.youtube({ version: "v3", auth });
+
+		await youtube.videos.update({
+			part: ["snippet", "status"],
+			requestBody: {
+				id: params.videoId,
+				snippet: {
+					title: params.metadata.title,
+					description: params.metadata.description,
+					tags: params.metadata.tags,
+					categoryId: params.metadata.category_id || "24",
+				},
+				status: {
+					privacyStatus: params.metadata.visibility || "unlisted",
+				},
+			},
+		});
+		console.log(`[PUBLISH] Video updated: ${params.videoId}`);
+	}
+
 	private createYouTubeClient() {
 		const clientId = process.env.YOUTUBE_CLIENT_ID;
 		const clientSecret = process.env.YOUTUBE_CLIENT_SECRET;
 		const refreshToken = process.env.YOUTUBE_REFRESH_TOKEN;
 		const redirectUri =
-			process.env.YOUTUBE_REDIRECT_URI || "http://localhost:3000/oauth2callback";
+			process.env.YOUTUBE_REDIRECT_URI ||
+			"http://localhost:3000/oauth2callback";
 
 		if (!clientId || !clientSecret || !refreshToken) {
 			throw new Error("YouTube API credentials missing in environment.");
@@ -107,7 +140,8 @@ export class Publisher {
 		});
 
 		const channel = res.data.items?.[0];
-		if (!channel) throw new Error("YouTube preflight failed: No channel found.");
+		if (!channel)
+			throw new Error("YouTube preflight failed: No channel found.");
 
 		const actualTitle = channel.snippet?.title;
 		const actualId = channel.id;

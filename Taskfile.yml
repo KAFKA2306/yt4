@@ -50,6 +50,13 @@ tasks:
           git commit -m "refactor: update $file"
         done
 
+  publish:yawa:
+    desc: \"Publish a completed session to Yawa Archive ASMR\"
+    cmds:
+      - bun --env-file=config/.env.yawa index.ts {{.CLI_ARGS}}
+    env:
+      YOUTUBE_PUBLISH_AUTO: \"true\"
+
   asmr:expand:
     desc: Expand script_master.md to 5000+ characters using Existence Fetish style
     cmds:

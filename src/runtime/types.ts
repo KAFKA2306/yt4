@@ -121,13 +121,13 @@ export interface LifeLogTriple {
 	subject: string;
 	predicate: string;
 	object: string;
-	timestamp: string;
+	timestamp?: string;
 }
 
 export const LifeLogTripleSchema = z.object({
 	subject: z.string(),
 	predicate: z.string(),
 	object: z.string(),
-	timestamp: z.string(),
+	timestamp: z.string().optional(),
 	_source: z.string().optional(),
 });

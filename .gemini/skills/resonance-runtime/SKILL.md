@@ -21,13 +21,15 @@ The production loop MUST follow this exact order:
 1. **JSON**: Load and parse `generated_script.json` or `0001_situation.json`.
 2. **WAV**: Synthesize audio chunks via TTS.
 3. **Whisper**: Perform ASR transcription and segment analysis.
-4. **TTS (Repair)**: Re-synthesize if ASR detects reading mistakes (threshold < 0.85).
+4. **TTS (Repair)**: Re-synthesize if `ACOUSTIC_DAMAGE` detected (ADR-0026).
 5. **Transcript**: Write final metadata to `[prefix].json`.
 6. **VTT**: Write WebVTT subtitles with precise Whisper timestamps.
-7. **[Gate] Accuracy Verification**: Ensure **Zero Reading Mistakes** (100% semantic fidelity).
+7. **[Gate] Accuracy Verification**: Apply **ADR-0026 Taxonomy** (Whisper Limit vs Acoustic Damage).
 8. **Feedback (Feature 2)**: Collect CLI feedback from the user at the end of the run for batch identity refactoring.
 9. **WAV (Mix)**: Concatenate verified chunks into the final masterpiece `.wav`.
 10. **MP4**: Compose final video into `.mp4`.
+11. **UPLOAD**: Publish to YouTube via account-specific credentials (ADR-0027).
+12. **PROOF**: Bind `remote_proof` to `UPLOAD.json` and `CONTRACT.json`.
 
 ## Production Loop Workflow
 1. **Daily Pulse Observation**: Fetch or observe the daily "vibe" and global pulse.
@@ -36,12 +38,12 @@ The production loop MUST follow this exact order:
 4. **Script Parsing (JSON)**: Read `0001_situation.json`.
 5. **Continuous TTS (WAV)**: Perform audio synthesis using Irodori-TTS.
 6. **ASR Reverse Validation (Whisper)**: Transcribe generated audio to detect semantic damage.
-7. **Damage Detection & Repair (TTS)**: Re-synthesize if score < 0.85 (Mandatory for "Be Best" quality).
+7. **Damage Detection & Repair (TTS)**: Re-synthesize if `ACOUSTIC_DAMAGE` detected. Permissive pass for `WHISPER_LIMIT` (ADR-0026).
 8. **Transcript Generation**: Write final metadata to `[prefix].json`.
 9. **VTT Subtitle Generation**: Write subtitles to `[prefix].vtt`.
 10. **Accuracy Final Gate**: Confirm zero reading mistakes before final mix.
-11. **Final WAV Mixing**: Concatenate all verified audio parts into `[prefix].wav`.
-12. **Final Rendering (MP4)**: Compose final video into `[prefix].mp4`.
+11. **Final Rendering (MP4)**: Compose final video into `[prefix].mp4`.
+12. **Remote Binding**: Execute `task publish` and record `remote_proof` (ADR-0027).
 
 ## Identity Invariants
 - `max_arousal`: Maximum allowed arousal level to preserve calm atmosphere.

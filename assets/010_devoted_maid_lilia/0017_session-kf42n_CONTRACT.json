@@ -18,8 +18,9 @@
   },
   "verification": {
     "asr_score": 0.6107857256740559,
-    "status": "PASS",
+    "status": "UPLOAD_CONFIRMED",
     "evidence": {
+      "remote_proof": "https://www.youtube.com/watch?v=qgOgnmejnfo",
       "machine_logs": [
         "[2026-05-16T06:36:48.532Z] [RESONANCE] Starting session session-kf42n",
         "[2026-05-16T06:36:48.551Z] [TTS] Chunk 1 | Emotion: s=0.90 | Attempt: 0",

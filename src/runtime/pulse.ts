@@ -16,9 +16,9 @@ export class PulseManager {
 	}
 
 	private stages = [
-		{ name: "Intro", valence: 0.1, arousal: 0.05, softness: 0.95 },
-		{ name: "Physical Comfort", valence: 0.3, arousal: 0.1, softness: 0.98 },
-		{ name: "Deepening", valence: 0.5, arousal: 0.15, softness: 0.99 },
+		{ name: "Intro", valence: 0.1, arousal: 0.05, softness: 0.9 },
+		{ name: "Physical Comfort", valence: 0.3, arousal: 0.1, softness: 0.95 },
+		{ name: "Deepening", valence: 0.5, arousal: 0.15, softness: 0.98 },
 		{ name: "Sleep Induction", valence: 0.2, arousal: 0.02, softness: 1.0 },
 	];
 
@@ -51,7 +51,6 @@ export class PulseManager {
 				1.0,
 				stage.softness + globalPulse.recharge_desire * 0.05,
 			),
-			atmosphere: "cinematic-late-night-rain",
 		};
 	}
 }

@@ -846,3 +846,8 @@
 {"subject": "かふか", "predicate": "認識した心理機能", "object": "Fi（内向的感情）により深い満足感を得た", "_source": "20260515_summary.txt"}
 {"subject": "スターライトオアシス", "predicate": "は", "object": "薄暗く、柔らかな青色の光と心落ち着く音楽が流れる空間", "_source": "20260515_summary.txt"}
 {"subject": "スターライトオアシス", "predicate": "の特徴は", "object": "SF映画のような洗練された空間デザイン", "_source": "20260515_summary.txt"}
+{"subject": "夜話アーカイブ ASMR", "predicate": "の視聴回数 (過去28日間)", "object": "46", "timestamp": "2026-05-14", "_source": "youtube_studio_20260516"}
+{"subject": "夜話アーカイブ ASMR", "predicate": "のインプレッション数 (過去28日間)", "object": "980", "timestamp": "2026-05-14", "_source": "youtube_studio_20260516"}
+{"subject": "夜話アーカイブ ASMR", "predicate": "のインプレッションクリック率 (過去28日間)", "object": "2.4%", "timestamp": "2026-05-14", "_source": "youtube_studio_20260516"}
+{"subject": "夜話アーカイブ ASMR", "predicate": "の平均視聴時間 (過去28日間)", "object": "0:35", "timestamp": "2026-05-14", "_source": "youtube_studio_20260516"}
+{"subject": "夜話アーカイブ ASMR", "predicate": "の主要流入源", "object": "YouTube 検索 (45.7%)", "timestamp": "2026-05-14", "_source": "youtube_studio_20260516"}
