@@ -61,8 +61,8 @@ export class Publisher {
 		console.log(`[PUBLISH] Video uploaded: ${videoId}`);
 
 		if (params.imagePath && fs.existsSync(params.imagePath)) {
-			await youtube
-				.thumbnails.set({
+			await youtube.thumbnails
+				.set({
 					videoId: videoId,
 					media: {
 						mimeType: "image/png",
