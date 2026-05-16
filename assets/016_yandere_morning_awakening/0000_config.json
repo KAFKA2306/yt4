@@ -1,0 +1,14 @@
+{
+  "identity": {
+    "id": "kafka-01",
+    "name": "Kafka",
+    "voice_id": "落ち着いた知的な女性の声。しかし、どこか熱を帯びた、独占欲の滲む囁き。逃がさないという意思を感じさせる、少し強めのトーン。",
+    "overrides": {
+      "pacing_base": 0.95,
+      "hesitation_frequency": 0.4,
+      "breathing_frequency": 0.6
+    }
+  },
+  "script_path": "0001_situation.json",
+  "image_path": "../001amaamaoneesan/0001_thumbnail.png"
+}

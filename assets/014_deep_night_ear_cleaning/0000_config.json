@@ -1,0 +1,14 @@
+{
+  "identity": {
+    "id": "kafka-01",
+    "name": "Kafka",
+    "voice_id": "落ち着いた知的な女性の声。耳元での非常に低く、深みのある囁き。耳かきの音に重なるような、心地よい吐息混じりのトーン。",
+    "overrides": {
+      "pacing_base": 0.7,
+      "hesitation_frequency": 0.3,
+      "breathing_frequency": 0.5
+    }
+  },
+  "script_path": "0001_situation.json",
+  "image_path": "../001amaamaoneesan/0001_thumbnail.png"
+}

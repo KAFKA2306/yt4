@@ -1,6 +1,6 @@
-import type { EmotionalState } from "./types";
-import { LifeLogManager } from "../domain/lifelog";
 import { join } from "node:path";
+import { LifeLogManager } from "../domain/lifelog";
+import type { EmotionalState } from "./types";
 
 /**
  * Research-Driven Pulse Management
@@ -26,11 +26,13 @@ export class PulseManager {
 		// Daily Pulse: Grounded in LifeLog observations
 		const memories = this.lifelog.search("かふか");
 		const recentMemories = memories.slice(-5);
-		
+
 		// Bias-Free Observation: Extracting current tension/arousal from recent activities
-		const isPokerActive = recentMemories.some(m => m.object.includes("ポーカー"));
-		const isVrcActive = recentMemories.some(m => m.object.includes("VRChat"));
-		
+		const isPokerActive = recentMemories.some((m) =>
+			m.object.includes("ポーカー"),
+		);
+		const isVrcActive = recentMemories.some((m) => m.object.includes("VRChat"));
+
 		const globalPulse = {
 			tension: isPokerActive ? 0.8 : 0.6,
 			recharge_desire: isVrcActive ? 0.9 : 0.7,

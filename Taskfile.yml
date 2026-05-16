@@ -15,6 +15,16 @@ tasks:
     cmds:
       - bun src/validation/cli.ts
 
+  audit:
+    desc: Verify Zero-Trust contract and CoDD coherence across all artifacts
+    cmds:
+      - bun src/validation/audit_cli.ts
+
+  codd:verify:
+    desc: Mechanically verify architectural coherence (Requirements ↔ Implementation)
+    cmds:
+      - bun src/validation/audit_cli.ts --coherence-only
+
   lint:
     desc: Ensure zero-fat and code quality standards
     cmds:

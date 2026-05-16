@@ -1,5 +1,5 @@
 import * as path from "node:path";
-import { ASRValidator } from "./asr";
+import { validateASR } from "./engine";
 
 async function main() {
 	const [audio, text] = process.argv.slice(2);
@@ -8,7 +8,7 @@ async function main() {
 		process.exit(1);
 	}
 
-	const report = await new ASRValidator().validate(
+	const report = await validateASR(
 		path.resolve(audio),
 		[{ text, pause_after: 0 }],
 		0.85,

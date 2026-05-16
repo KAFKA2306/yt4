@@ -1,6 +1,6 @@
-import { readFileSync, writeFileSync, appendFileSync, existsSync, mkdirSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { LifeLogTripleSchema, type LifeLogTriple } from "../runtime/types";
+import { appendFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
+import { dirname } from "node:path";
+import { type LifeLogTriple, LifeLogTripleSchema } from "../runtime/types";
 
 export class LifeLogManager {
 	private filePath: string;
@@ -15,7 +15,7 @@ export class LifeLogManager {
 
 	append(triple: LifeLogTriple): void {
 		const validated = LifeLogTripleSchema.parse(triple);
-		appendFileSync(this.filePath, JSON.stringify(validated) + "\n");
+		appendFileSync(this.filePath, `${JSON.stringify(validated)}\n`);
 	}
 
 	getAll(): LifeLogTriple[] {

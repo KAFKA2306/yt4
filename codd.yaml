@@ -1,0 +1,75 @@
+# yt4 Coherence-Driven Development (CoDD) Configuration
+version: "0.1.0"
+
+project:
+  name: "yt4-resonance"
+  language: "typescript"
+  frameworks: ["bun", "irodori-tts"]
+
+# Coherence DAG Definition
+graph:
+  nodes:
+    - id: "ADR-0024"
+      path: "docs/adr/0024-strict-determinism-crash-driven.md"
+      kind: "requirement"
+      enforces: ["no-try-catch", "no-fallback"]
+    
+    - id: "ADR-0022"
+      path: "docs/adr/0022-data-driven-orchestration.md"
+      kind: "design"
+      enforces: ["pure-src", "external-config"]
+
+    - id: "resonance-runtime"
+      path: ".gemini/skills/resonance-runtime/SKILL.md"
+      kind: "skill"
+      references: ["ADR-0020", "ADR-0024"]
+
+    - id: "orchestrator"
+      path: "src/runtime/orchestrator.ts"
+      kind: "implementation"
+      implements: ["ADR-0024", "ADR-0022"]
+      depends_on: ["script-generator"]
+
+    - id: "script-generator"
+      path: "src/runtime/script_gen.ts"
+      kind: "implementation"
+      implements: ["ADR-0024"]
+
+    - id: "pulse-manager"
+      path: "src/runtime/pulse.ts"
+      kind: "implementation"
+      implements: ["ADR-0022"]
+
+    - id: "contract-auditor"
+      path: "src/validation/contract.ts"
+      kind: "verification"
+      verifies: ["orchestrator"]
+
+    - id: "asr-validator"
+      path: "src/validation/asr.ts"
+      kind: "verification"
+      verifies: ["orchestrator"]
+
+    - id: "coherence-auditor"
+      path: "src/validation/coherence.ts"
+      kind: "verification"
+      verifies: ["graph"]
+
+# Verification Policies
+policies:
+  crash_driven:
+    pattern: "try\\s*\\{"
+    forbidden: true
+    severity: "CRITICAL"
+    targets: ["src/runtime/**/*.ts", "src/domain/**/*.ts"]
+
+  zero_fat:
+    pattern: "// TODO|// FIXME|console\\.log" # console.log is allowed in orchestrator logger but we should be careful
+    forbidden: false # Just a warning for now
+    severity: "LOW"
+
+  identity_invariants:
+    thresholds:
+      asr_score: 0.85
+      max_arousal: 0.7
+      min_softness: 0.6

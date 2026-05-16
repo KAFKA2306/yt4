@@ -1,0 +1,15 @@
+{
+  "identity": {
+    "id": "kafka-01-sexy",
+    "name": "Kafka (Sexy)",
+    "voice_id": "吐息の多い、色っぽく艶やかな女性の声。耳元での囁きが脳を溶かすような、深度のあるセンシュアルなトーン。",
+    "overrides": {
+      "pacing_base": 0.8,
+      "hesitation_frequency": 0.25,
+      "breathing_frequency": 0.45,
+      "softness": 0.95
+    }
+  },
+  "script_path": "0001_situation.json",
+  "image_path": "../001amaamaoneesan/0001_thumbnail.png"
+}

@@ -8,93 +8,100 @@ export const EmotionalStateSchema = z.object({
 });
 export type EmotionalState = z.infer<typeof EmotionalStateSchema>;
 
-export const EmotionalMemorySchema = z.object({
-	history: z.array(
-		z.object({
-			timestamp: z.string(),
-			state: EmotionalStateSchema,
-			trigger: z.string().optional(),
-		}),
-	),
-	persistent_mood: EmotionalStateSchema,
-	drift_score: z.number().default(0),
-});
-export type EmotionalMemory = z.infer<typeof EmotionalMemorySchema>;
-
 export const IdentityContractSchema = z.object({
 	id: z.string(),
 	name: z.string(),
 	voice_id: z.string(),
-	pacing_base: z.number().default(1.0),
-	hesitation_frequency: z.number().min(0).max(1).default(0.1),
-	breathing_frequency: z.number().min(0).max(1).default(0.2),
 	preferred_atmosphere: z.string().default("late-night"),
 	invariants: z
 		.object({
 			max_arousal: z.number().default(0.4),
 			min_softness: z.number().default(0.6),
 			max_emotion_delta: z.number().default(0.1),
-			max_pressure_delta: z.number().default(0.2),
-			min_silence_density: z.number().default(0.3),
 		})
 		.default({
 			max_arousal: 0.4,
 			min_softness: 0.6,
 			max_emotion_delta: 0.1,
-			max_pressure_delta: 0.2,
-			min_silence_density: 0.3,
 		}),
 });
 export type IdentityContract = z.infer<typeof IdentityContractSchema>;
 
-export const SceneStateSchema = z.object({
-	ambience_type: z.string(),
-	ambience_intensity: z.number().min(0).max(1),
-	proximity: z.enum(["intimate", "near", "medium", "far"]),
-	posture: z.string().optional(),
-	silence_density: z.number().min(0).max(1),
-	room_pressure: z.number().min(0).max(1),
-});
-export type SceneState = z.infer<typeof SceneStateSchema>;
-
 export const ScriptLineSchema = z.object({
 	text: z.string(),
 	emotion: EmotionalStateSchema.optional(),
-	scene: SceneStateSchema.optional(),
-	pause_after: z.number().default(0),
-	metadata: z.record(z.string(), z.any()).optional(),
+	pause_after: z.number().default(5),
 });
 export type ScriptLine = z.infer<typeof ScriptLineSchema>;
 
-export const ResonanceStateSchema = z.object({
-	session_id: z.string(),
-	identity: IdentityContractSchema,
-	current_emotion: EmotionalStateSchema,
-	current_scene: SceneStateSchema,
-	memory: EmotionalMemorySchema,
-	status: z
-		.enum(["idle", "generating", "speaking", "repairing", "error"])
-		.default("idle"),
+export type FailType =
+	| "SPEAKER_DRIFT"
+	| "LANGUAGE_COLLAPSE"
+	| "LOW_INTELLIGIBILITY"
+	| "PROSODY_FLAT"
+	| "EMOTION_MISMATCH"
+	| "REPETITION_LOOP"
+	| "NOISE_CORRUPTION"
+	| "SILENCE_CORRUPTION";
+
+export type RepairAction =
+	| "regenerate_chunk"
+	| "split_chunk"
+	| "shorten_context"
+	| "refresh_reference"
+	| "lower_temperature"
+	| "rerun_alignment";
+
+export const AuditTraceSchema = z.object({
+	timestamp: z.string(),
+	assetId: z.string(),
+	sessionId: z.string(),
+	chunkIndex: z.number(),
+	wavHash: z.string(),
+	promptHash: z.string(),
+	seed: z.number(),
+	metrics: z.object({
+		cer: z.number(),
+		hallucinations: z.number(),
+		f0: z.number().optional(),
+		energy: z.number().optional(),
+		speaker_sim: z.number().optional(),
+		silence_ratio: z.number().optional(),
+	}),
+	transcription: z.string().optional(),
+	status: z.enum(["PASS", "FAIL"]),
+	fail_types: z.array(z.string()).optional(),
+	selected_action: z.string().optional(),
+	retry_count: z.number().optional(),
 });
-export type ResonanceState = z.infer<typeof ResonanceStateSchema>;
+export type AuditTrace = z.infer<typeof AuditTraceSchema>;
+
+export interface ProductionConfig {
+	identity: {
+		id: string;
+		name: string;
+		voice_id: string;
+		overrides?: any;
+	};
+	script_path: string;
+	image_path: string;
+	runtime: {
+		chunk_length: number;
+		seed_base: number;
+		max_retries: number;
+	};
+}
+
+export interface LifeLogTriple {
+	subject: string;
+	predicate: string;
+	object: string;
+	timestamp: string;
+}
 
 export const LifeLogTripleSchema = z.object({
 	subject: z.string(),
 	predicate: z.string(),
 	object: z.string(),
-	_source: z.string().optional(),
-	timestamp: z.string().optional(),
+	timestamp: z.string(),
 });
-export type LifeLogTriple = z.infer<typeof LifeLogTripleSchema>;
-
-export const LifeLogSchema = z.object({
-	triples: z.array(LifeLogTripleSchema),
-});
-export type LifeLog = z.infer<typeof LifeLogSchema>;
-
-export interface MetricEvent {
-	type: string;
-	status: string;
-	message?: string;
-	timestamp: number;
-}

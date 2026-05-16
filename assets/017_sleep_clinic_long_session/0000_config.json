@@ -1,0 +1,18 @@
+{
+  "identity": {
+    "id": "kafka-01",
+    "name": "Kafka",
+    "voice_id": "落ち着いた知的な女性の声。医療的な清潔感と、包み込むような優しさが共存するトーン。プロフェッショナルかつ親密な距離感。",
+    "overrides": {
+      "pacing_base": 0.8,
+      "hesitation_frequency": 0.1,
+      "breathing_frequency": 0.3
+    }
+  },
+  "script_path": "0001_situation.json",
+  "image_path": "../001amaamaoneesan/0001_thumbnail.png",
+  "runtime": {
+    "chunk_length": 300,
+    "max_retries": 5
+  }
+}

@@ -17,15 +17,17 @@ Execute the autonomous emotional media production loop for yt4 while preserving 
 
 ## Mandatory Production Sequence
 The production loop MUST follow this exact order:
-1. **JSON**: Load and parse `0001_situation.json`.
+0. **Intent (Autonomous Phase)**: If `intent` is specified, trigger Multi-Agent Scripting to generate `generated_script.json`.
+1. **JSON**: Load and parse `generated_script.json` or `0001_situation.json`.
 2. **WAV**: Synthesize audio chunks via TTS.
 3. **Whisper**: Perform ASR transcription and segment analysis.
 4. **TTS (Repair)**: Re-synthesize if ASR detects reading mistakes (threshold < 0.85).
 5. **Transcript**: Write final metadata to `[prefix].json`.
 6. **VTT**: Write WebVTT subtitles with precise Whisper timestamps.
 7. **[Gate] Accuracy Verification**: Ensure **Zero Reading Mistakes** (100% semantic fidelity).
-8. **WAV (Mix)**: Concatenate verified chunks into the final masterpiece `.wav`.
-9. **MP4**: Compose final video into `.mp4`.
+8. **Feedback (Feature 2)**: Collect CLI feedback from the user at the end of the run for batch identity refactoring.
+9. **WAV (Mix)**: Concatenate verified chunks into the final masterpiece `.wav`.
+10. **MP4**: Compose final video into `.mp4`.
 
 ## Production Loop Workflow
 1. **Daily Pulse Observation**: Fetch or observe the daily "vibe" and global pulse.
@@ -49,10 +51,10 @@ The production loop MUST follow this exact order:
 - `min_silence_density`: Minimum required silence for atmosphere preservation.
 
 ## Irodori-TTS Stability Protocol (ADR-0020)
-- **Preferred Model**: Use `Irodori-TTS-500M-v2` (Base) with high-quality reference audio (10-30s).
-- **Reference Parameters**: Set `--max-ref-seconds 30.0`, `--ref-normalize-db -16.0`, and enable `--ref-ensure-max`.
-- **VoiceDesign**: Use `Irodori-TTS-500M-v2-VoiceDesign` only for one-off characters or specific aesthetic tuning.
-- **Persistent Characters**: Prioritize LoRA fine-tuning for recurring personas (e.g., Kafka).
+- **Preferred Model**: Use `Irodori-TTS-500M-v3` (Base) with automatic duration prediction.
+- **Reference Parameters**: Set `--ref-normalize-db -16.0` and enable `--ref-ensure-max`.
+- **VoiceDesign**: Use `Irodori-TTS-500M-v2-VoiceDesign` with `--caption` for stylistic control (whisper, soft, etc.).
+- **Automatic Duration**: v3 models do not require `--seconds`. Use `--duration-scale` for minor adjustments.
 - **Stability Control**: Use a fixed `seed` across reruns to ensure deterministic output.
 
 ## Yawa Archive Rules

@@ -10,6 +10,9 @@ This project treats the agent as a professional, deterministic engine. Context i
 - **Zero-Fat**: Ruthlessly eliminate unused code, comments, and boilerplate.
 - **Crash-Driven**: No `try-catch` in business logic. Fail fast to identify root causes.
 - **Workflow Isolation**: Maintain strict separation between Research, Strategy, and Execution.
+- **Harness Engineering (CoDD)**: Maintain a mechanically verifiable DAG in `codd.yaml`. 
+- **Pre-commit Hook**: A mandatory coherence audit runs before every commit. Failures block the commit.
+- **Superpowers Protocol**: No code implementation until a `design.md` is approved by the user. Ask clarifying questions one at a time.
 
 ## Phase 1: Research
 Systematically map the codebase and validate assumptions.

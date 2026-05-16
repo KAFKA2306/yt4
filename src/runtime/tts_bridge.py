@@ -29,9 +29,10 @@ def main():
         text=text,
         caption=caption,
         seed=seed,
-        num_steps=24, # Quality improvement
+        num_steps=32,
+        cfg_scale=config.get("temperature", 0.7),
         no_ref=True,
-        seconds=45.0 # Support longer chunks
+        seconds=90.0
     ))
     
     save_wav(output_path, result.audio, result.sample_rate)

@@ -3,7 +3,6 @@ import {
 	EmotionalStateSchema,
 	type IdentityContract,
 	IdentityContractSchema,
-	type SceneState,
 } from "./types";
 
 export class IdentityEngine {
@@ -35,28 +34,5 @@ export class IdentityEngine {
 			atmosphere: target.atmosphere,
 		};
 		return EmotionalStateSchema.parse(next);
-	}
-
-	validate(
-		emotion: EmotionalState,
-		scene: SceneState,
-		prev?: EmotionalState,
-	): boolean {
-		const { invariants: inv } = this.contract;
-		if (
-			emotion.arousal > inv.max_arousal ||
-			emotion.softness < inv.min_softness
-		)
-			return false;
-		if (scene.silence_density < inv.min_silence_density) return false;
-		if (
-			prev &&
-			Math.abs(emotion.arousal - prev.arousal) +
-				Math.abs(emotion.softness - prev.softness) +
-				Math.abs(emotion.valence - prev.valence) >
-				inv.max_emotion_delta
-		)
-			return false;
-		return true;
 	}
 }

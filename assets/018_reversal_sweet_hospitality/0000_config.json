@@ -1,0 +1,18 @@
+{
+  "identity": {
+    "id": "kafka-01",
+    "name": "Kafka",
+    "voice_id": "落ち着いた知的な女性の声。普段は厳格でプロフェッショナルな印象だが、二人きりの時だけ見せる、熱っぽく甘いトーン。ギャップを強調した表現。",
+    "overrides": {
+      "pacing_base": 0.85,
+      "hesitation_frequency": 0.3,
+      "breathing_frequency": 0.45
+    }
+  },
+  "script_path": "0001_situation.json",
+  "image_path": "../001amaamaoneesan/0001_thumbnail.png",
+  "runtime": {
+    "chunk_length": 600,
+    "max_retries": 4
+  }
+}
