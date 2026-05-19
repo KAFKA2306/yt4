@@ -1,0 +1,25 @@
+{
+  "identity": {
+    "id": "yuna-01",
+    "name": "柚奈",
+    "voice_id": "ツンツンとぶっきらぼうでありながら、聞き手の体調を心底心配しているのが伝わる愛らしい女性の声。少し早口から始まり、徐々に優しくトーンダウンしていくささやき混じりの少し高めの可愛いトーン。",
+    "preferred_atmosphere": "熱を出してしんどいベッドサイド、不機嫌そうな顔をしながらも極めて甲斐甲斐しくお世話をしてくれるツンデレ隣人の温もり",
+    "invariants": {
+      "max_arousal": 0.5,
+      "min_softness": 0.7,
+      "max_emotion_delta": 0.15
+    },
+    "overrides": {
+      "pacing_base": 0.8,
+      "hesitation_frequency": 0.3,
+      "breathing_frequency": 0.3
+    }
+  },
+  "image_path": "thumbnail.png",
+  "script_path": "0001_situation.json",
+  "runtime": {
+    "chunk_length": 120,
+    "temperature": 0.45,
+    "max_retries": 5
+  }
+}

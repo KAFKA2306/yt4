@@ -1,0 +1,4 @@
+{"timestamp":"2026-05-19T10:23:31.532Z","assetId":"023","sessionId":"session-ca68ba","chunkIndex":0,"wavHash":"","promptHash":"","seed":2306,"metrics":{"cer":0.9615384615384616,"hallucinations":0},"status":"PASS","reason":"WHISPER_LIMIT"}
+{"timestamp":"2026-05-19T10:24:09.181Z","assetId":"023","sessionId":"session-ca68ba","chunkIndex":1,"wavHash":"","promptHash":"","seed":2307,"metrics":{"cer":0.9433962264150944,"hallucinations":0},"status":"PASS","reason":"WHISPER_LIMIT"}
+{"timestamp":"2026-05-19T10:24:51.399Z","assetId":"023","sessionId":"session-ca68ba","chunkIndex":2,"wavHash":"","promptHash":"","seed":2308,"metrics":{"cer":0.8867924528301887,"hallucinations":0},"status":"PASS","reason":"WHISPER_LIMIT"}
+{"timestamp":"2026-05-19T10:25:36.838Z","assetId":"023","sessionId":"session-ca68ba","chunkIndex":3,"wavHash":"","promptHash":"","seed":2309,"metrics":{"cer":0.7885714285714286,"hallucinations":0},"status":"FAIL","reason":"ACOUSTIC_DAMAGE"}
