@@ -1,0 +1,25 @@
+{
+  "identity": {
+    "id": "miko-01",
+    "name": "おっちょこちょい巫女ちゃん",
+    "voice_id": "元気で活発な若い女性の声。少しおっちょこちょいで表情豊か。ハキハキとした口調と、イタズラに照れる可愛らしいニュアンス。",
+    "preferred_atmosphere": "イタズラなピンクの精霊が舞う深夜の神社",
+    "invariants": {
+      "max_arousal": 0.8,
+      "min_softness": 0.5,
+      "max_emotion_delta": 0.2
+    },
+    "overrides": {
+      "pacing_base": 0.9,
+      "hesitation_frequency": 0.15,
+      "breathing_frequency": 0.2
+    }
+  },
+  "image_path": "thumbnail.png",
+  "script_path": "0001_situation.json",
+  "runtime": {
+    "chunk_length": 80,
+    "temperature": 0.5,
+    "max_retries": 5
+  }
+}

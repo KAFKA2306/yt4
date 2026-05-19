@@ -1,0 +1,57 @@
+{
+  "version": "2.0.0",
+  "timestamp": "2026-05-18T01:04:13.780Z",
+  "sessionId": "session-zw5wie",
+  "identity": {
+    "id": "miko-01",
+    "name": "おっちょこちょい巫女ちゃん",
+    "voice_id": "元気で活発な若い女性の声。少しおっちょこちょいで表情豊か。ハキハキとした口調と、イタズラに照れる可愛らしいニュアンス。"
+  },
+  "inputs": {
+    "0001_situation.json": "b273c12d8c2718d7b32e20633268c268392b00745beefa17807061e088179fb2",
+    "thumbnail.png": "ec20a22f03b7048baa5a5451836bd15a9bd192683d7c63805f041fd6420184b3"
+  },
+  "outputs": {
+    "021_session-zw5wie.wav": "755d5eaa1a270c48e21349c06a5081fd7196bc3e30ddca54b0e21950955fedf8",
+    "021_session-zw5wie.json": "b93a3ee4d93b2d702b24cb70265d9267cfee833f63a6d3790815b243e6ba278b",
+    "021_session-zw5wie.mp4": "dfcd14c561b86dfc57c17d20b9ba7e843601beabc6c2b6f8dcb3af817294b346"
+  },
+  "verification": {
+    "asr_score": 0.8527131782945736,
+    "status": "PASS",
+    "production_state": "REMOTE_UNVERIFIED",
+    "evidence": {
+      "machine_logs": [
+        "[2026-05-18T01:00:59.688Z] [RESONANCE] Starting session session-zw5wie",
+        "[2026-05-18T01:00:59.696Z] [TTS] Chunk 0 | Attempt 0",
+        "[2026-05-18T01:01:26.015Z] [TTS] Chunk 1 | Attempt 0",
+        "[2026-05-18T01:01:51.761Z] [TTS] Chunk 2 | Attempt 0",
+        "[2026-05-18T01:02:17.940Z] [TTS] Chunk 3 | Attempt 0",
+        "[2026-05-18T01:02:43.875Z] [TTS] Chunk 4 | Attempt 0",
+        "[2026-05-18T01:03:10.547Z] [TTS] Chunk 5 | Attempt 0"
+      ],
+      "runtime_traces": {
+        "emotion_avg": {
+          "valence": 0.36999999999999994,
+          "arousal": 0,
+          "softness": 1,
+          "atmosphere": "イタズラなピンクの精霊が舞う深夜の神社"
+        },
+        "chunk_count": 6,
+        "total_scores": [
+          0.9746835443037974,
+          0.9624060150375939,
+          0.9206349206349206,
+          0.8527131782945736,
+          0.9550561797752809,
+          0.975609756097561
+        ]
+      }
+    }
+  },
+  "environment": {
+    "node_version": "v24.3.0",
+    "platform": "linux",
+    "cwd": "/home/kafka/projects/yt4"
+  }
+}

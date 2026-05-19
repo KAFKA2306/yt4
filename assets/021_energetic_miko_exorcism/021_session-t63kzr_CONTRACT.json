@@ -1,0 +1,65 @@
+{
+  "version": "2.0.0",
+  "timestamp": "2026-05-18T09:28:43.048Z",
+  "sessionId": "session-t63kzr",
+  "identity": {
+    "id": "miko-01",
+    "name": "おっちょこちょい巫女ちゃん",
+    "voice_id": "元気で活発な若い女性の声。少しおっちょこちょいで表情豊か。ハキハキとした口調と、イタズラに照れる可愛らしいニュアンス。"
+  },
+  "inputs": {
+    "0001_situation.json": "b273c12d8c2718d7b32e20633268c268392b00745beefa17807061e088179fb2",
+    "thumbnail.png": "ec20a22f03b7048baa5a5451836bd15a9bd192683d7c63805f041fd6420184b3"
+  },
+  "outputs": {
+    "021_session-t63kzr.wav": "755d5eaa1a270c48e21349c06a5081fd7196bc3e30ddca54b0e21950955fedf8",
+    "021_session-t63kzr.json": "b27dc3915d5a968d632e07fcf61454b88f5367ccaf768544fa665d0e5eebecad",
+    "021_session-t63kzr.mp4": "dfcd14c561b86dfc57c17d20b9ba7e843601beabc6c2b6f8dcb3af817294b346"
+  },
+  "verification": {
+    "asr_score": 0.8527131782945736,
+    "status": "PASS",
+    "production_state": "UPLOAD_CONFIRMED",
+    "remote_proof": {
+      "platform": "youtube",
+      "videoId": "VNY1aKrKlH4",
+      "visibility": "public",
+      "raw_response_hash": "327726c14c84907db0375a756ceda8ba26b04986cca85d2192bf8a0a4e64d3ba"
+    },
+    "evidence": {
+      "machine_logs": [
+        "[2026-05-18T09:25:20.478Z] [RESONANCE] Starting session session-t63kzr",
+        "[2026-05-18T09:25:20.484Z] [TTS] Chunk 0 | Attempt 0",
+        "[2026-05-18T09:25:47.262Z] [TTS] Chunk 1 | Attempt 0",
+        "[2026-05-18T09:26:13.172Z] [TTS] Chunk 2 | Attempt 0",
+        "[2026-05-18T09:26:41.376Z] [TTS] Chunk 3 | Attempt 0",
+        "[2026-05-18T09:27:08.299Z] [TTS] Chunk 4 | Attempt 0",
+        "[2026-05-18T09:27:35.880Z] [TTS] Chunk 5 | Attempt 0",
+        "[2026-05-18T09:28:39.324Z] [PUBLISH] Triggering automatic YouTube publication...",
+        "[2026-05-18T09:28:43.022Z] [PUBLISH] Success: VNY1aKrKlH4"
+      ],
+      "runtime_traces": {
+        "emotion_avg": {
+          "valence": 0.36999999999999994,
+          "arousal": 0,
+          "softness": 1,
+          "atmosphere": "イタズラなピンクの精霊が舞う深夜の神社"
+        },
+        "chunk_count": 6,
+        "total_scores": [
+          0.9746835443037974,
+          0.9624060150375939,
+          0.9206349206349206,
+          0.8527131782945736,
+          0.9550561797752809,
+          0.975609756097561
+        ]
+      }
+    }
+  },
+  "environment": {
+    "node_version": "v24.3.0",
+    "platform": "linux",
+    "cwd": "/home/kafka/projects/yt4"
+  }
+}
