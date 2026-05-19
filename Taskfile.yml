@@ -8,7 +8,7 @@ tasks:
   run:
     desc: Execute the autonomous resonance production loop
     cmds:
-      - bun index.ts
+      - bun index.ts {{.CLI_ARGS}}
 
   validate:audio:
     desc: Perform standalone ASR validation
@@ -51,11 +51,11 @@ tasks:
         done
 
   publish:yawa:
-    desc: \"Publish a completed session to Yawa Archive ASMR\"
+    desc: "Publish a completed session to Yawa Archive ASMR"
     cmds:
       - bun --env-file=config/.env.yawa index.ts {{.CLI_ARGS}}
     env:
-      YOUTUBE_PUBLISH_AUTO: \"true\"
+      YOUTUBE_PUBLISH_AUTO: "true"
 
   asmr:expand:
     desc: Expand script_master.md to 5000+ characters using Existence Fetish style

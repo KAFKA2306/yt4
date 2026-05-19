@@ -15,3 +15,6 @@
 
 | 2026-05-16 | 020 | session-3p2p0e | 57 | 12 | 0.85 | 0 | REMOTE_UNVERIFIED |
 | 2026-05-16 | 020 | session-wi31 | 57 | 12 | 0.85 | 0 | REMOTE_UNVERIFIED |
+| 2026-05-18 | 021 | session-zw5wie | 19 | 6 | 0.85 | 0 | REMOTE_UNVERIFIED |
+| 2026-05-18 | 021 | session-ucj2un | 19 | 6 | 0.85 | 0 | REMOTE_UNVERIFIED |
+| 2026-05-18 | 021 | session-t63kzr | 19 | 6 | 0.85 | 0 | UPLOAD_CONFIRMED |
