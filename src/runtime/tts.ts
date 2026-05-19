@@ -11,6 +11,7 @@ export async function synthesizeVoice(o: {
 	seconds?: number | null;
 	no_ref: boolean;
 	duration_scale?: number;
+	refWav?: string;
 }): Promise<string> {
 	const bridge = path.join(process.cwd(), "src/runtime/tts_bridge.py");
 	const config = JSON.stringify({
@@ -23,6 +24,7 @@ export async function synthesizeVoice(o: {
 		seconds: o.seconds,
 		no_ref: o.no_ref,
 		duration_scale: o.duration_scale ?? 1.0,
+		ref_wav: o.refWav,
 	});
 	return new Promise((res, rej) => {
 		const p = spawn("uv", ["run", bridge, config]);

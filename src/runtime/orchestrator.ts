@@ -134,6 +134,7 @@ export class Orchestrator {
 		const verifiedLines: ScriptLine[] = [];
 		const allSegments: any[] = [];
 		const acceptedScores: number[] = [];
+		const speakerScores: number[] = [];
 		let currentOffset = 0;
 		const initialChunks = chunkLines(lines, this.runtimeConfig.chunk_length);
 		const workQueue: { lines: ScriptLine[]; attempt: number }[] =
@@ -157,6 +158,7 @@ export class Orchestrator {
 
 			const temp = this.runtimeConfig.temperature;
 			const seed = this.runtimeConfig.seed_base + chunkCounter + attempt * 100;
+			const hasRef = fs.existsSync(referenceAudio);
 
 			logger(`[TTS] Chunk ${chunkCounter} | Attempt ${attempt}`);
 			await synthesizeVoice({
@@ -167,11 +169,29 @@ export class Orchestrator {
 				temperature: temp,
 				num_steps: this.runtimeConfig.num_steps,
 				seconds: this.runtimeConfig.seconds,
-				no_ref: this.runtimeConfig.no_ref,
+				no_ref: hasRef ? false : this.runtimeConfig.no_ref,
 				duration_scale: this.runtimeConfig.duration_scale,
+				refWav: hasRef ? referenceAudio : undefined,
 			});
 
 			const asrResult = await validateASR(p, chunk);
+			let speakerSim = 1.0;
+			let speakerPass = true;
+			if (hasRef) {
+				const speakerResult = await verifySpeaker(referenceAudio, p);
+				speakerSim = speakerResult.similarity;
+				speakerPass = speakerResult.is_consistent;
+				speakerScores.push(speakerSim);
+			}
+
+			const status = asrResult.score >= 0.85 && speakerPass ? "PASS" : "FAIL";
+			let reason = "NONE";
+			if (asrResult.score < 0.85) {
+				reason = "ACOUSTIC_DAMAGE";
+			} else if (!speakerPass) {
+				reason = "SPEAKER_DRIFT";
+			}
+
 			this.audit.log({
 				timestamp: new Date().toISOString(),
 				assetId,
@@ -183,13 +203,23 @@ export class Orchestrator {
 				metrics: {
 					cer: asrResult.score,
 					hallucinations: 0,
+					speaker_sim: speakerSim,
 				},
-				status: asrResult.score >= 0.85 ? "PASS" : "FAIL",
-				reason: asrResult.score < 0.85 ? "ACOUSTIC_DAMAGE" : "WHISPER_LIMIT",
+				status,
+				reason,
 			});
 
-			if (asrResult.score < 0.85 && attempt < this.runtimeConfig.max_retries) {
-				logger(` [RETRY] ASR Score too low: ${asrResult.score}`);
+			if (
+				(asrResult.score < 0.85 || !speakerPass) &&
+				attempt < this.runtimeConfig.max_retries
+			) {
+				if (asrResult.score < 0.85) {
+					logger(` [RETRY] ASR Score too low: ${asrResult.score}`);
+				} else {
+					logger(
+						` [RETRY] Speaker similarity too low: ${speakerSim.toFixed(4)}`,
+					);
+				}
 				workQueue.unshift({ lines: chunk, attempt: attempt + 1 });
 				continue;
 			}
@@ -337,6 +367,8 @@ export class Orchestrator {
 			inputPaths: [fullScriptPath, fullImagePath],
 			outputPaths,
 			asrScore: effectiveAsrScore,
+			speakerScore:
+				speakerScores.length > 0 ? Math.min(...speakerScores) : undefined,
 			logs: runtimeLogs,
 			productionState: state,
 			remoteProof,
@@ -344,6 +376,7 @@ export class Orchestrator {
 				emotion_avg: currentEmotion,
 				chunk_count: initialChunks.length,
 				total_scores: acceptedScores,
+				speaker_scores: speakerScores,
 			},
 		});
 		fs.writeFileSync(

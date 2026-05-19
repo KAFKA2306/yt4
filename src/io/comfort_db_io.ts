@@ -6,8 +6,11 @@ import type {
 	DialogueFeature,
 	SafetyAudit,
 	MarketMetric,
-	RawScript
+	RawScript,
+	InteractionPrimitive,
+	SleepRiskAudit
 } from "../domain/comfort_db";
+
 
 export class ComfortDatabase {
 	private db: Database;
@@ -112,7 +115,31 @@ export class ComfortDatabase {
 				FOREIGN KEY(script_id) REFERENCES scripts_core(id)
 			);
 		`);
+
+		this.db.run(`
+			CREATE TABLE IF NOT EXISTS interaction_primitives (
+				id INTEGER PRIMARY KEY AUTOINCREMENT,
+				script_id TEXT NOT NULL,
+				sequence_index INTEGER NOT NULL,
+				archetype TEXT NOT NULL,
+				raw_text TEXT NOT NULL,
+				silence_duration REAL NOT NULL,
+				FOREIGN KEY(script_id) REFERENCES scripts_core(id)
+			);
+		`);
+
+		this.db.run(`
+			CREATE TABLE IF NOT EXISTS sleep_risk_audits (
+				script_id TEXT PRIMARY KEY,
+				sleep_interruption_risk REAL NOT NULL,
+				auditory_overstimulation REAL NOT NULL,
+				emotional_dependency_risk REAL NOT NULL,
+				repeat_listening_tolerance REAL NOT NULL,
+				FOREIGN KEY(script_id) REFERENCES scripts_core(id)
+			);
+		`);
 	}
+
 
 	public saveScript(audit: ASMRScriptAudit): void {
 		const tx = this.db.transaction(() => {
@@ -122,9 +149,16 @@ export class ComfortDatabase {
 			this.saveSafety(audit.safety);
 			this.saveMarket(audit.market);
 			this.saveRaw(audit.raw);
+			if (audit.primitives) {
+				this.savePrimitives(audit.core.id, audit.primitives);
+			}
+			if (audit.sleep_risk) {
+				this.saveSleepRisk(audit.sleep_risk);
+			}
 		});
 		tx();
 	}
+
 
 	private saveCore(core: ScriptCore): void {
 		this.db.run(
@@ -271,6 +305,45 @@ export class ComfortDatabase {
 		);
 	}
 
+	private savePrimitives(scriptId: string, primitives: InteractionPrimitive[]): void {
+		this.db.run("DELETE FROM interaction_primitives WHERE script_id = ?", [scriptId]);
+		for (const p of primitives) {
+			this.db.run(
+				`
+				INSERT INTO interaction_primitives (
+					script_id, sequence_index, archetype, raw_text, silence_duration
+				) VALUES (?, ?, ?, ?, ?)
+				`,
+				[
+					scriptId,
+					p.sequence_index,
+					p.archetype,
+					p.raw_text,
+					p.silence_duration
+				]
+			);
+		}
+	}
+
+	private saveSleepRisk(risk: SleepRiskAudit): void {
+		this.db.run(
+			`
+			INSERT OR REPLACE INTO sleep_risk_audits (
+				script_id, sleep_interruption_risk, auditory_overstimulation,
+				emotional_dependency_risk, repeat_listening_tolerance
+			) VALUES (?, ?, ?, ?, ?)
+			`,
+			[
+				risk.script_id,
+				risk.sleep_interruption_risk,
+				risk.auditory_overstimulation,
+				risk.emotional_dependency_risk,
+				risk.repeat_listening_tolerance
+			]
+		);
+	}
+
+
 	public getScript(id: string): ASMRScriptAudit | null {
 		const coreRow = this.db.query("SELECT * FROM scripts_core WHERE id = ?").get(id) as any;
 		if (!coreRow) return null;
@@ -280,6 +353,25 @@ export class ComfortDatabase {
 		const safetyRow = this.db.query("SELECT * FROM safety_audits WHERE script_id = ?").get(id) as any;
 		const marketRow = this.db.query("SELECT * FROM market_metrics WHERE script_id = ?").get(id) as any;
 		const rawRow = this.db.query("SELECT * FROM raw_scripts WHERE script_id = ?").get(id) as any;
+
+		const primitiveRows = this.db.query("SELECT * FROM interaction_primitives WHERE script_id = ? ORDER BY sequence_index ASC").all(id) as any[];
+		const primitives: InteractionPrimitive[] = primitiveRows.map(r => ({
+			id: r.id.toString(),
+			script_id: r.script_id,
+			sequence_index: r.sequence_index,
+			archetype: r.archetype as any,
+			raw_text: r.raw_text,
+			silence_duration: r.silence_duration
+		}));
+
+		const sleepRiskRow = this.db.query("SELECT * FROM sleep_risk_audits WHERE script_id = ?").get(id) as any;
+		const sleepRisk: SleepRiskAudit | undefined = sleepRiskRow ? {
+			script_id: sleepRiskRow.script_id,
+			sleep_interruption_risk: sleepRiskRow.sleep_interruption_risk,
+			auditory_overstimulation: sleepRiskRow.auditory_overstimulation,
+			emotional_dependency_risk: sleepRiskRow.emotional_dependency_risk,
+			repeat_listening_tolerance: sleepRiskRow.repeat_listening_tolerance
+		} : undefined;
 
 		return {
 			core: {
@@ -355,8 +447,11 @@ export class ComfortDatabase {
 				temporal_structure_embedding: rawRow.temporal_structure_embedding
 					? JSON.parse(rawRow.temporal_structure_embedding)
 					: undefined
-			}
+			},
+			primitives: primitives.length > 0 ? primitives : undefined,
+			sleep_risk: sleepRisk
 		};
+
 	}
 
 	public close(): void {

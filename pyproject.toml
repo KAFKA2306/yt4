@@ -17,6 +17,7 @@ dependencies = [
     "sentencepiece",
     "torchcodec",
     "dacvae @ git+https://github.com/facebookresearch/dacvae",
+    "speechbrain>=1.1.0",
 ]
 
 [tool.uv]

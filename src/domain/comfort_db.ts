@@ -78,13 +78,32 @@ export const RawScriptSchema = z.object({
 	temporal_structure_embedding: z.array(z.number()).optional()
 });
 
+export const InteractionPrimitiveSchema = z.object({
+	id: z.string().optional(),
+	script_id: z.string(),
+	sequence_index: z.number().int().nonnegative(),
+	archetype: z.enum(["listener_status_check", "proximity_shift", "tactile_reassurance", "silence_architecture"]),
+	raw_text: z.string(),
+	silence_duration: z.number().nonnegative()
+});
+
+export const SleepRiskAuditSchema = z.object({
+	script_id: z.string(),
+	sleep_interruption_risk: z.number().min(0).max(1),
+	auditory_overstimulation: z.number().min(0).max(1),
+	emotional_dependency_risk: z.number().min(0).max(1),
+	repeat_listening_tolerance: z.number().min(0).max(1)
+});
+
 export const ASMRScriptAuditSchema = z.object({
 	core: ScriptCoreSchema,
 	acoustic: AcousticFeatureSchema,
 	dialogue: DialogueFeatureSchema,
 	safety: SafetyAuditSchema,
 	market: MarketMetricSchema,
-	raw: RawScriptSchema
+	raw: RawScriptSchema,
+	primitives: z.array(InteractionPrimitiveSchema).optional(),
+	sleep_risk: SleepRiskAuditSchema.optional()
 });
 
 export type ScriptCore = z.infer<typeof ScriptCoreSchema>;
@@ -93,4 +112,7 @@ export type DialogueFeature = z.infer<typeof DialogueFeatureSchema>;
 export type SafetyAudit = z.infer<typeof SafetyAuditSchema>;
 export type MarketMetric = z.infer<typeof MarketMetricSchema>;
 export type RawScript = z.infer<typeof RawScriptSchema>;
+export type InteractionPrimitive = z.infer<typeof InteractionPrimitiveSchema>;
+export type SleepRiskAudit = z.infer<typeof SleepRiskAuditSchema>;
 export type ASMRScriptAudit = z.infer<typeof ASMRScriptAuditSchema>;
+

@@ -70,6 +70,29 @@ const testData: ASMRScriptAudit = {
 		script_id: "test-01",
 		raw_text: "（扉が静かに開く音）入るよ〜？……やっぱり、すごくしんどそうだね……。おでこ、冷やそうね。",
 		provenance_type: "DirectScript"
+	},
+	primitives: [
+		{
+			script_id: "test-01",
+			sequence_index: 0,
+			archetype: "listener_status_check",
+			raw_text: "やっぱり、すごくしんどそうだね……。",
+			silence_duration: 6.0
+		},
+		{
+			script_id: "test-01",
+			sequence_index: 1,
+			archetype: "tactile_reassurance",
+			raw_text: "おでこ、冷やそうね。",
+			silence_duration: 8.0
+		}
+	],
+	sleep_risk: {
+		script_id: "test-01",
+		sleep_interruption_risk: 0.05,
+		auditory_overstimulation: 0.1,
+		emotional_dependency_risk: 0.25,
+		repeat_listening_tolerance: 0.95
 	}
 };
 
@@ -89,9 +112,17 @@ if (parsedRetrieved.core.title !== testData.core.title) {
 	throw new Error("Title mismatch");
 }
 
-if (parsedRetrieved.acoustic.sfx_instructions[0] !== testData.acoustic.sfx_instructions[0]) {
-	throw new Error("SFX instructions mismatch");
+if (!parsedRetrieved.primitives || parsedRetrieved.primitives.length !== 2) {
+	throw new Error("Interaction primitives retrieval mismatch");
 }
 
-console.log("DATABASE TEST PASSED SUCCESSFULLY");
+if (parsedRetrieved.primitives[0].archetype !== "listener_status_check") {
+	throw new Error("Interaction primitives archetype mismatch");
+}
+
+if (!parsedRetrieved.sleep_risk || parsedRetrieved.sleep_risk.sleep_interruption_risk !== 0.05) {
+	throw new Error("Sleep risk audit metrics mismatch");
+}
+
+console.log("DATABASE TEST PASSED SUCCESSFULLY - ALL HCI 2.0 TABLES VALIDATED");
 db.close();

@@ -58,6 +58,7 @@ The production loop MUST follow this exact order:
 - **VoiceDesign**: Use `Irodori-TTS-500M-v2-VoiceDesign` with `--caption` for stylistic control (whisper, soft, etc.).
 - **Automatic Duration**: v3 models do not require `--seconds`. Use `--duration-scale` for minor adjustments.
 - **Stability Control**: Use a fixed `seed` across reruns to ensure deterministic output.
+- **Speaker Consistency Protocol**: If `reference.wav` exists in the asset directory, automatically toggle `no_ref: false` and pass `refWav: reference.wav` to synthesize voice. Use ECAPA-TDNN speaker similarity validation to ensure similarity is >= 0.80. Automatically retry the chunk synthesis with a new seed offset if speaker drift is detected.
 
 ## Yawa Archive Rules
 - **Preservation**: Preserve "録音されてしまった深夜" across all production stages.

@@ -50,6 +50,11 @@ graph:
       kind: "verification"
       verifies: ["orchestrator"]
 
+    - id: "speaker-validator"
+      path: "src/validation/speaker_bridge.py"
+      kind: "verification"
+      verifies: ["orchestrator"]
+
     - id: "coherence-auditor"
       path: "src/validation/coherence.ts"
       kind: "verification"
@@ -71,5 +76,6 @@ policies:
   identity_invariants:
     thresholds:
       asr_score: 0.85
+      speaker_threshold: 0.80
       max_arousal: 0.7
       min_softness: 0.6

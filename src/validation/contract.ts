@@ -50,6 +50,7 @@ export function certifyContract(params: {
 	inputPaths: string[];
 	outputPaths: string[];
 	asrScore: number;
+	speakerScore?: number;
 	logs: string[];
 	traces?: Record<string, any>;
 	productionState: ProductionState;
@@ -66,7 +67,10 @@ export function certifyContract(params: {
 	}
 
 	let status: AuditStatus = "UNVERIFIED";
-	if (params.asrScore < 0.85) {
+	if (
+		params.asrScore < 0.85 ||
+		(params.speakerScore !== undefined && params.speakerScore < 0.8)
+	) {
 		status = "QUALITY_FAIL";
 	} else {
 		status = "PASS";
