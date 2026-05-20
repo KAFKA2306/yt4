@@ -1,0 +1,91 @@
+{
+  "version": "2.0.0",
+  "timestamp": "2026-05-19T23:14:36.862Z",
+  "sessionId": "session-qxngoj",
+  "identity": {
+    "id": "chihiro-01",
+    "name": "千尋",
+    "voice_id": "おっとりと優しく包容力がありながら、聞き手を自分だけのものにしたいという微かな独占欲を帯びた女性の声。耳元でとろけるような甘く非常に柔らかいウィスパーボイス。"
+  },
+  "inputs": {
+    "0001_situation.json": "9376b2d954dd095a95675105d716dd22d617f7ba2bd413d6fe833c0978b31d66",
+    "thumbnail.png": "02aaa065e156d9c1f732674073116e5b441bb975cf1abe4d812dac534cb8dc72"
+  },
+  "outputs": {
+    "025_session-qxngoj.wav": "52a4bafbc8cddb5271d0887d3609fb9852208c289a815ab1a2ffe497c6903b5e",
+    "025_session-qxngoj.json": "9c4511b71b7df7a3dbc494ec384fd45b5f5564054d5c907fc9ec73a62bfe740c"
+  },
+  "verification": {
+    "asr_score": 0.803030303030303,
+    "status": "QUALITY_FAIL",
+    "production_state": "LOCAL_FAIL",
+    "evidence": {
+      "machine_logs": [
+        "[2026-05-19T22:58:53.640Z] [RESONANCE] Starting session session-qxngoj",
+        "[2026-05-19T22:58:53.652Z] [TTS] Chunk 0 | Attempt 0",
+        "[2026-05-19T22:59:55.051Z] [TTS] Chunk 1 | Attempt 0",
+        "[2026-05-19T23:00:55.912Z] [TTS] Chunk 2 | Attempt 0",
+        "[2026-05-19T23:01:59.841Z] [TTS] Chunk 3 | Attempt 0",
+        "[2026-05-19T23:03:03.520Z]  [RETRY] Speaker similarity too low: 0.7868",
+        "[2026-05-19T23:03:03.527Z] [TTS] Chunk 3 | Attempt 1",
+        "[2026-05-19T23:04:09.314Z]  [RETRY] Speaker similarity too low: 0.7743",
+        "[2026-05-19T23:04:09.322Z] [TTS] Chunk 3 | Attempt 2",
+        "[2026-05-19T23:05:22.318Z]  [RETRY] Speaker similarity too low: 0.7472",
+        "[2026-05-19T23:05:22.325Z] [TTS] Chunk 3 | Attempt 3",
+        "[2026-05-19T23:06:32.227Z]  [RETRY] ASR Score too low: 0.7910447761194029",
+        "[2026-05-19T23:06:32.254Z] [TTS] Chunk 3 | Attempt 4",
+        "[2026-05-19T23:07:45.168Z]  [RETRY] ASR Score too low: 0.8333333333333334",
+        "[2026-05-19T23:07:45.179Z] [TTS] Chunk 3 | Attempt 5",
+        "[2026-05-19T23:09:01.443Z] [TTS] Chunk 4 | Attempt 0",
+        "[2026-05-19T23:09:57.759Z]  [RETRY] Speaker similarity too low: 0.7603",
+        "[2026-05-19T23:09:57.765Z] [TTS] Chunk 4 | Attempt 1",
+        "[2026-05-19T23:10:50.969Z]  [RETRY] Speaker similarity too low: 0.7424",
+        "[2026-05-19T23:10:50.974Z] [TTS] Chunk 4 | Attempt 2",
+        "[2026-05-19T23:11:49.717Z]  [RETRY] Speaker similarity too low: 0.7786",
+        "[2026-05-19T23:11:49.720Z] [TTS] Chunk 4 | Attempt 3",
+        "[2026-05-19T23:12:40.367Z]  [RETRY] Speaker similarity too low: 0.7440",
+        "[2026-05-19T23:12:40.373Z] [TTS] Chunk 4 | Attempt 4",
+        "[2026-05-19T23:13:35.425Z]  [RETRY] Speaker similarity too low: 0.7848",
+        "[2026-05-19T23:13:35.431Z] [TTS] Chunk 4 | Attempt 5"
+      ],
+      "runtime_traces": {
+        "emotion_avg": {
+          "valence": 0.27,
+          "arousal": 0.039999999999999994,
+          "softness": 1,
+          "atmosphere": "静かな寝室、キミには私しかいないよねと優しく語りかけられ、絶対的な安心感と優しい独占欲に包まれる甘い時間"
+        },
+        "chunk_count": 5,
+        "total_scores": [
+          0.96,
+          0.9282296650717703,
+          0.9444444444444444,
+          0.803030303030303,
+          0.8823529411764706
+        ],
+        "speaker_scores": [
+          0.9055843353271484,
+          0.9220017194747925,
+          0.9447203874588013,
+          0.7868384122848511,
+          0.7742933630943298,
+          0.7472205758094788,
+          0.7470618486404419,
+          0.784305214881897,
+          0.8480513095855713,
+          0.760288417339325,
+          0.7424395084381104,
+          0.7786080837249756,
+          0.744027316570282,
+          0.7847548723220825,
+          0.7781441807746887
+        ]
+      }
+    }
+  },
+  "environment": {
+    "node_version": "v24.3.0",
+    "platform": "linux",
+    "cwd": "/home/kafka/projects/yt4"
+  }
+}

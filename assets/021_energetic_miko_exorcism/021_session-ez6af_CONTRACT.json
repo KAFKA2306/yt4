@@ -1,0 +1,113 @@
+{
+  "version": "2.0.0",
+  "timestamp": "2026-05-19T23:57:44.049Z",
+  "sessionId": "session-ez6af",
+  "identity": {
+    "id": "miko-01",
+    "name": "おっちょこちょい巫女ちゃん",
+    "voice_id": "元気で活発な若い女性の声。少しおっちょこちょいで表情豊か。ハキハキとした口調と、イタズラに照れる可愛らしいニュアンス。"
+  },
+  "inputs": {
+    "0001_situation.json": "b273c12d8c2718d7b32e20633268c268392b00745beefa17807061e088179fb2",
+    "thumbnail.png": "18b9a1a78d549b92bb93c30afef925f5b9aba37327ce4db47f60a38dc1df8391"
+  },
+  "outputs": {
+    "021_session-ez6af.wav": "0d882b9c991ee008f3299967785b38fa89bc397267793faa3a4972cb21ceba6f",
+    "021_session-ez6af.json": "0c489e65b7978134089b74ba0aa3222ca906cf3add56847dfdb08e3ec5e235b9",
+    "021_session-ez6af.mp4": "643dc64f4e89c0f166dbb0b233c08ab032715f47bcbb1c3afa402ffb40ab0f81"
+  },
+  "verification": {
+    "asr_score": 0.859375,
+    "status": "QUALITY_FAIL",
+    "production_state": "REMOTE_UNVERIFIED",
+    "evidence": {
+      "machine_logs": [
+        "[2026-05-19T23:34:50.920Z] [RESONANCE] Starting session session-ez6af",
+        "[2026-05-19T23:34:50.932Z] [TTS] Chunk 0 | Attempt 0",
+        "[2026-05-19T23:35:58.100Z]  [RETRY] Speaker similarity too low: 0.7910",
+        "[2026-05-19T23:35:58.102Z] [TTS] Chunk 0 | Attempt 1",
+        "[2026-05-19T23:36:44.359Z] [TTS] Chunk 1 | Attempt 0",
+        "[2026-05-19T23:37:31.639Z]  [RETRY] Speaker similarity too low: 0.6662",
+        "[2026-05-19T23:37:31.640Z] [TTS] Chunk 1 | Attempt 1",
+        "[2026-05-19T23:38:37.081Z]  [RETRY] ASR Score too low: 0.8091603053435115",
+        "[2026-05-19T23:38:37.084Z] [TTS] Chunk 1 | Attempt 2",
+        "[2026-05-19T23:39:39.236Z]  [RETRY] Speaker similarity too low: 0.6869",
+        "[2026-05-19T23:39:39.248Z] [TTS] Chunk 1 | Attempt 3",
+        "[2026-05-19T23:40:44.028Z]  [RETRY] Speaker similarity too low: 0.5987",
+        "[2026-05-19T23:40:44.052Z] [TTS] Chunk 1 | Attempt 4",
+        "[2026-05-19T23:43:15.959Z]  [RETRY] Speaker similarity too low: 0.6302",
+        "[2026-05-19T23:43:15.963Z] [TTS] Chunk 1 | Attempt 5",
+        "[2026-05-19T23:44:20.695Z] [TTS] Chunk 2 | Attempt 0",
+        "[2026-05-19T23:45:15.505Z]  [RETRY] Speaker similarity too low: 0.7047",
+        "[2026-05-19T23:45:15.510Z] [TTS] Chunk 2 | Attempt 1",
+        "[2026-05-19T23:46:25.755Z]  [RETRY] Speaker similarity too low: 0.6717",
+        "[2026-05-19T23:46:25.760Z] [TTS] Chunk 2 | Attempt 2",
+        "[2026-05-19T23:47:40.827Z]  [RETRY] Speaker similarity too low: 0.7053",
+        "[2026-05-19T23:47:40.829Z] [TTS] Chunk 2 | Attempt 3",
+        "[2026-05-19T23:48:24.238Z]  [RETRY] Speaker similarity too low: 0.6370",
+        "[2026-05-19T23:48:24.241Z] [TTS] Chunk 2 | Attempt 4",
+        "[2026-05-19T23:49:07.587Z]  [RETRY] Speaker similarity too low: 0.7108",
+        "[2026-05-19T23:49:07.595Z] [TTS] Chunk 2 | Attempt 5",
+        "[2026-05-19T23:50:13.350Z] [TTS] Chunk 3 | Attempt 0",
+        "[2026-05-19T23:51:03.698Z]  [RETRY] Speaker similarity too low: 0.7420",
+        "[2026-05-19T23:51:03.708Z] [TTS] Chunk 3 | Attempt 1",
+        "[2026-05-19T23:51:58.246Z]  [RETRY] Speaker similarity too low: 0.7591",
+        "[2026-05-19T23:51:58.251Z] [TTS] Chunk 3 | Attempt 2",
+        "[2026-05-19T23:52:50.803Z]  [RETRY] Speaker similarity too low: 0.7592",
+        "[2026-05-19T23:52:50.813Z] [TTS] Chunk 3 | Attempt 3",
+        "[2026-05-19T23:53:53.441Z]  [RETRY] Speaker similarity too low: 0.7277",
+        "[2026-05-19T23:53:53.446Z] [TTS] Chunk 3 | Attempt 4",
+        "[2026-05-19T23:54:58.142Z]  [RETRY] Speaker similarity too low: 0.7600",
+        "[2026-05-19T23:54:58.146Z] [TTS] Chunk 3 | Attempt 5",
+        "[2026-05-19T23:55:57.729Z] [TTS] Chunk 4 | Attempt 0",
+        "[2026-05-19T23:56:43.562Z] [TTS] Chunk 5 | Attempt 0"
+      ],
+      "runtime_traces": {
+        "emotion_avg": {
+          "valence": 0.36999999999999994,
+          "arousal": 0,
+          "softness": 1,
+          "atmosphere": "イタズラなピンクの精霊が舞う深夜の神社"
+        },
+        "chunk_count": 6,
+        "total_scores": [
+          0.9,
+          0.8970588235294118,
+          0.9105691056910569,
+          0.859375,
+          0.9550561797752809,
+          0.9620253164556962
+        ],
+        "speaker_scores": [
+          0.7910470962524414,
+          0.8001788258552551,
+          0.6662482023239136,
+          0.5399850606918335,
+          0.6869125366210938,
+          0.5987375378608704,
+          0.6302340626716614,
+          0.6339151263237,
+          0.7046545743942261,
+          0.6716975569725037,
+          0.705303966999054,
+          0.6370347738265991,
+          0.710848331451416,
+          0.659795880317688,
+          0.7420116066932678,
+          0.7590732574462891,
+          0.7592459917068481,
+          0.7277261018753052,
+          0.7600250840187073,
+          0.7238333821296692,
+          0.9171872735023499,
+          0.8142154216766357
+        ]
+      }
+    }
+  },
+  "environment": {
+    "node_version": "v24.3.0",
+    "platform": "linux",
+    "cwd": "/home/kafka/projects/yt4"
+  }
+}

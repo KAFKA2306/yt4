@@ -1,0 +1,82 @@
+{
+  "version": "2.0.0",
+  "timestamp": "2026-05-19T23:28:33.970Z",
+  "sessionId": "session-x4m0lt",
+  "identity": {
+    "id": "rika-01",
+    "name": "凛夏",
+    "voice_id": "凛としたクールで不愛想な響きでありながら、熱を出した聞き手をとことん甘やかそうとする愛情に満ちた女性の声。雨の音に溶け込むような、低周波で非常に優しく心地よい極上のウィスパーボイス。"
+  },
+  "inputs": {
+    "0001_situation.json": "dbc129d2e2125dc0530ea10173f3223cca8757846367a28221a38ed5f7a8a738",
+    "thumbnail.png": "b473507438d84c4e9eb04506fc62a9cdfa2fd3bbb48b7e03ead6c962341156d0"
+  },
+  "outputs": {
+    "024_session-x4m0lt.wav": "7fa1d99b7688b9b92a3439f1da2624ac10d5f7363842ee65edbcb4169d1d590c",
+    "024_session-x4m0lt.json": "2912ace8258c5041a60fe0dffcfa8210853b087abd24c6254ef1d2ab288340e0"
+  },
+  "verification": {
+    "asr_score": 0.7894736842105263,
+    "status": "QUALITY_FAIL",
+    "production_state": "LOCAL_FAIL",
+    "evidence": {
+      "machine_logs": [
+        "[2026-05-19T23:14:42.613Z] [RESONANCE] Starting session session-x4m0lt",
+        "[2026-05-19T23:14:42.627Z] [TTS] Chunk 0 | Attempt 0",
+        "[2026-05-19T23:15:49.462Z]  [RETRY] ASR Score too low: 0.8211920529801324",
+        "[2026-05-19T23:15:49.472Z] [TTS] Chunk 0 | Attempt 1",
+        "[2026-05-19T23:17:06.797Z]  [RETRY] ASR Score too low: 0.847682119205298",
+        "[2026-05-19T23:17:06.801Z] [TTS] Chunk 0 | Attempt 2",
+        "[2026-05-19T23:18:53.457Z]  [RETRY] ASR Score too low: 0.8157894736842105",
+        "[2026-05-19T23:18:53.463Z] [TTS] Chunk 0 | Attempt 3",
+        "[2026-05-19T23:19:45.019Z]  [RETRY] ASR Score too low: 0.8104575163398693",
+        "[2026-05-19T23:19:45.022Z] [TTS] Chunk 0 | Attempt 4",
+        "[2026-05-19T23:20:52.363Z]  [RETRY] ASR Score too low: 0.8211920529801324",
+        "[2026-05-19T23:20:52.366Z] [TTS] Chunk 0 | Attempt 5",
+        "[2026-05-19T23:21:50.588Z] [TTS] Chunk 1 | Attempt 0",
+        "[2026-05-19T23:23:03.114Z]  [RETRY] ASR Score too low: 0.8426395939086294",
+        "[2026-05-19T23:23:03.134Z] [TTS] Chunk 1 | Attempt 1",
+        "[2026-05-19T23:24:43.661Z] [TTS] Chunk 2 | Attempt 0",
+        "[2026-05-19T23:25:48.714Z]  [RETRY] ASR Score too low: 0.7891156462585034",
+        "[2026-05-19T23:25:48.721Z] [TTS] Chunk 2 | Attempt 1",
+        "[2026-05-19T23:26:40.627Z] [TTS] Chunk 3 | Attempt 0",
+        "[2026-05-19T23:27:34.187Z] [TTS] Chunk 4 | Attempt 0"
+      ],
+      "runtime_traces": {
+        "emotion_avg": {
+          "valence": 0.27,
+          "arousal": 0.01999999999999999,
+          "softness": 1,
+          "atmosphere": "雨の流れる窓際、冷えた体を温める毛布の擦れる音と、ぶっきらぼうな幼馴染の吐息が交錯する薄暗い部屋の静寂"
+        },
+        "chunk_count": 5,
+        "total_scores": [
+          0.7894736842105263,
+          0.8762886597938144,
+          0.8613138686131386,
+          0.9090909090909091,
+          0.8611111111111112
+        ],
+        "speaker_scores": [
+          0.8956627249717712,
+          0.9148104190826416,
+          0.915016770362854,
+          0.8965736031532288,
+          0.9039310216903687,
+          0.9052684307098389,
+          0.9208385348320007,
+          0.9246238470077515,
+          0.9448301196098328,
+          0.9270839095115662,
+          0.9001341462135315,
+          0.9029977321624756
+        ]
+      }
+    }
+  },
+  "environment": {
+    "node_version": "v24.3.0",
+    "platform": "linux",
+    "cwd": "/home/kafka/projects/yt4"
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "version": "2.0.0",
+  "timestamp": "2026-05-19T23:34:49.327Z",
+  "sessionId": "session-d0d0tp",
+  "identity": {
+    "id": "yuna-01",
+    "name": "柚奈",
+    "voice_id": "ツンツンとぶっきらぼうでありながら、聞き手の体調を心底心配しているのが伝わる愛らしい女性の声。少し早口から始まり、徐々に優しくトーンダウンしていくささやき混じりの少し高めの可愛いトーン。"
+  },
+  "inputs": {
+    "0001_situation.json": "7e4d2c7c53f1f0104641e8eebddfe9327cd0815e86ad5534e3e0582faf016a13",
+    "thumbnail.png": "ca56bfb48b94429916daad2f541567a60345f867ded4578c9f851da31f5d5012"
+  },
+  "outputs": {
+    "023_session-d0d0tp.wav": "b25ace200f244615bbc7c6c105faaed2d5baf7448feb0d8b56ce262bb070dc6c",
+    "023_session-d0d0tp.json": "dbb4aff8d0f5c9136306c642f97fdd083351d7b88df67d025ed70fd24c72db1a",
+    "023_session-d0d0tp.mp4": "bad2125834c63484a778a0d659bc61d1706af243df8f387d1939b3b8dd0f7f18"
+  },
+  "verification": {
+    "asr_score": 0.850828729281768,
+    "status": "PASS",
+    "production_state": "REMOTE_UNVERIFIED",
+    "evidence": {
+      "machine_logs": [
+        "[2026-05-19T23:28:36.121Z] [RESONANCE] Starting session session-d0d0tp",
+        "[2026-05-19T23:28:36.132Z] [TTS] Chunk 0 | Attempt 0",
+        "[2026-05-19T23:29:44.028Z] [TTS] Chunk 1 | Attempt 0",
+        "[2026-05-19T23:31:49.322Z] [TTS] Chunk 2 | Attempt 0",
+        "[2026-05-19T23:32:46.384Z] [TTS] Chunk 3 | Attempt 0",
+        "[2026-05-19T23:33:36.850Z] [TTS] Chunk 4 | Attempt 0"
+      ],
+      "runtime_traces": {
+        "emotion_avg": {
+          "valence": 0.31999999999999995,
+          "arousal": 0,
+          "softness": 1,
+          "atmosphere": "熱を出してしんどいベッドサイド、不機嫌そうな顔をしながらも極めて甲斐甲斐しくお世話をしてくれるツンデレ隣人の温もり"
+        },
+        "chunk_count": 5,
+        "total_scores": [
+          0.9375,
+          0.9395348837209302,
+          0.8959276018099548,
+          0.850828729281768,
+          0.9320388349514563
+        ],
+        "speaker_scores": [
+          0.8829743266105652,
+          0.8719602227210999,
+          0.940303385257721,
+          0.8515744805335999,
+          0.892967700958252
+        ]
+      }
+    }
+  },
+  "environment": {
+    "node_version": "v24.3.0",
+    "platform": "linux",
+    "cwd": "/home/kafka/projects/yt4"
+  }
+}
