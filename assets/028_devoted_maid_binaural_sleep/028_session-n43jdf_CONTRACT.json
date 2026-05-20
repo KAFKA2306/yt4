@@ -1,0 +1,65 @@
+{
+  "version": "2.0.0",
+  "timestamp": "2026-05-19T22:34:56.380Z",
+  "sessionId": "session-n43jdf",
+  "identity": {
+    "id": "lilia-02",
+    "name": "リリア",
+    "voice_id": "丁寧で落ち着いた敬語でありながら、深い安心感と慈愛に満ちた、柔らかく澄んだ女性の声。低周波の響きを含み、バイノーラルの耳元ささやきにおいて極上の睡眠導入効果をもたらすトーン。"
+  },
+  "inputs": {
+    "0001_situation.json": "9649e889ff0157df6373aa54401e1f67997eae544579afb781db868e09baa2db",
+    "thumbnail.png": "8031d285456d82becdad2fc1e98a00f68518b3588f937f4d6be89b7a215582d4"
+  },
+  "outputs": {
+    "028_session-n43jdf.wav": "d9f4a4b91a57b1451c5f3b3e45f381d12bd2ed104701acb8205a4c5515fcf49d",
+    "028_session-n43jdf.json": "bd85481f7e5de5a1f40f8c009ad3cfc80089779d47d48822a6a17d672bc60949",
+    "028_session-n43jdf.mp4": "85330aaad9ffb344c940b2ccea3955b77cfe2b7ecc9b1889d410b564d2e784fa"
+  },
+  "verification": {
+    "asr_score": 0.8669950738916257,
+    "status": "PASS",
+    "production_state": "UPLOAD_CONFIRMED",
+    "remote_proof": {
+      "platform": "youtube",
+      "videoId": "3h71GOZk8eI",
+      "visibility": "public",
+      "raw_response_hash": "b93d38237600831e98e9ef323e539793a86db1f80e013af77a26e5ff2464616b"
+    },
+    "evidence": {
+      "machine_logs": [
+        "[2026-05-19T22:28:06.377Z] [RESONANCE] Starting session session-n43jdf",
+        "[2026-05-19T22:28:06.390Z] [TTS] Chunk 0 | Attempt 0",
+        "[2026-05-19T22:29:08.600Z] [TTS] Chunk 1 | Attempt 0",
+        "[2026-05-19T22:30:03.489Z]  [RETRY] ASR Score too low: 0.7980769230769231",
+        "[2026-05-19T22:30:03.499Z] [TTS] Chunk 1 | Attempt 1",
+        "[2026-05-19T22:31:25.081Z] [TTS] Chunk 2 | Attempt 0",
+        "[2026-05-19T22:32:18.406Z]  [RETRY] ASR Score too low: 0.7529411764705882",
+        "[2026-05-19T22:32:18.422Z] [TTS] Chunk 2 | Attempt 1",
+        "[2026-05-19T22:33:11.398Z] [TTS] Chunk 3 | Attempt 0",
+        "[2026-05-19T22:34:51.817Z] [PUBLISH] Triggering automatic YouTube publication...",
+        "[2026-05-19T22:34:56.333Z] [PUBLISH] Success: 3h71GOZk8eI"
+      ],
+      "runtime_traces": {
+        "emotion_avg": {
+          "valence": 0.27,
+          "arousal": 0.01999999999999999,
+          "softness": 1,
+          "atmosphere": "深夜の静かなお屋敷の主人用ベッドルーム、ランプの薄明かりの中、献身的な専属メイドが主人を深い眠りに誘うため、耳元で優しく髪をなでながら囁きかける極上の帰属性空間"
+        },
+        "chunk_count": 4,
+        "total_scores": [
+          0.9487179487179487,
+          0.9074074074074074,
+          0.946236559139785,
+          0.8669950738916257
+        ]
+      }
+    }
+  },
+  "environment": {
+    "node_version": "v24.3.0",
+    "platform": "linux",
+    "cwd": "/home/kafka/projects/yt4"
+  }
+}

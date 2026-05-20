@@ -1,0 +1,59 @@
+{
+  "version": "2.0.0",
+  "timestamp": "2026-05-19T22:48:11.030Z",
+  "sessionId": "session-sgz7p",
+  "identity": {
+    "id": "lilia-02",
+    "name": "リリア",
+    "voice_id": "丁寧で落ち着いた敬語でありながら、深い安心感と慈愛に満ちた、柔らかく澄んだ女性の声。低周波の響きを含み、バイノーラルの耳元ささやきにおいて極上の睡眠導入効果をもたらすトーン。"
+  },
+  "inputs": {
+    "0001_situation.json": "9649e889ff0157df6373aa54401e1f67997eae544579afb781db868e09baa2db",
+    "thumbnail.png": "8031d285456d82becdad2fc1e98a00f68518b3588f937f4d6be89b7a215582d4"
+  },
+  "outputs": {
+    "028_session-sgz7p.wav": "56b73cbf2880c304109626ab51cf44e7d90a4fdeb26ed654de8fb1da8eeca8f8",
+    "028_session-sgz7p.json": "121d75779c20e9e2aa80b53aa10ce86c3117170643a48d4550a384901ac61102",
+    "028_session-sgz7p.mp4": "a022d47989fd6772b3761020201cd4da0a1a1ab15998cfece6c5cd888cee1807"
+  },
+  "verification": {
+    "asr_score": 0.9180327868852459,
+    "status": "PASS",
+    "production_state": "REMOTE_UNVERIFIED",
+    "evidence": {
+      "machine_logs": [
+        "[2026-05-19T22:43:40.511Z] [RESONANCE] Starting session session-sgz7p",
+        "[2026-05-19T22:43:40.530Z] [TTS] Chunk 0 | Attempt 0",
+        "[2026-05-19T22:44:35.060Z] [TTS] Chunk 1 | Attempt 0",
+        "[2026-05-19T22:45:32.895Z] [TTS] Chunk 2 | Attempt 0",
+        "[2026-05-19T22:46:21.928Z] [TTS] Chunk 3 | Attempt 0"
+      ],
+      "runtime_traces": {
+        "emotion_avg": {
+          "valence": 0.27,
+          "arousal": 0.01999999999999999,
+          "softness": 1,
+          "atmosphere": "深夜の静かなお屋敷の主人用ベッドルーム、ランプの薄明かりの中、献身的な専属メイドが主人を深い眠りに誘うため、耳元で優しく髪をなでながら囁きかける極上の帰属性空間"
+        },
+        "chunk_count": 4,
+        "total_scores": [
+          0.967741935483871,
+          0.9619047619047619,
+          0.9180327868852459,
+          0.9818181818181818
+        ],
+        "speaker_scores": [
+          0.9443212747573853,
+          0.936349630355835,
+          0.934013843536377,
+          0.9490131139755249
+        ]
+      }
+    }
+  },
+  "environment": {
+    "node_version": "v24.3.0",
+    "platform": "linux",
+    "cwd": "/home/kafka/projects/yt4"
+  }
+}

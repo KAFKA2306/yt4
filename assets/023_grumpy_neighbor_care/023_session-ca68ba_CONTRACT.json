@@ -1,0 +1,64 @@
+{
+  "version": "2.0.0",
+  "timestamp": "2026-05-19T10:29:58.468Z",
+  "sessionId": "session-ca68ba",
+  "identity": {
+    "id": "yuna-01",
+    "name": "柚奈",
+    "voice_id": "ツンツンとぶっきらぼうでありながら、聞き手の体調を心底心配しているのが伝わる愛らしい女性の声。少し早口から始まり、徐々に優しくトーンダウンしていくささやき混じりの少し高めの可愛いトーン。"
+  },
+  "inputs": {
+    "0001_situation.json": "7e4d2c7c53f1f0104641e8eebddfe9327cd0815e86ad5534e3e0582faf016a13",
+    "thumbnail.png": "fb73a7aebcd47f5642409a977c85772cdf26dc4b474cd21e5a62f080c8cd98a4"
+  },
+  "outputs": {
+    "023_session-ca68ba.wav": "2b0824aa2b4836a8efedafadaf6dc99ec2574fe083fd3cfb8e5d406ef1cc873b",
+    "023_session-ca68ba.json": "6330e89666a9d79bb3765d8d1ddac7ab500d1c0f086bc12199f9fc3b49349ce4"
+  },
+  "verification": {
+    "asr_score": 0.7752808988764045,
+    "status": "QUALITY_FAIL",
+    "production_state": "LOCAL_FAIL",
+    "evidence": {
+      "machine_logs": [
+        "[2026-05-19T10:22:41.137Z] [RESONANCE] Starting session session-ca68ba",
+        "[2026-05-19T10:22:41.150Z] [TTS] Chunk 0 | Attempt 0",
+        "[2026-05-19T10:23:31.535Z] [TTS] Chunk 1 | Attempt 0",
+        "[2026-05-19T10:24:09.184Z] [TTS] Chunk 2 | Attempt 0",
+        "[2026-05-19T10:24:51.404Z] [TTS] Chunk 3 | Attempt 0",
+        "[2026-05-19T10:25:36.838Z]  [RETRY] ASR Score too low: 0.7885714285714286",
+        "[2026-05-19T10:25:36.841Z] [TTS] Chunk 3 | Attempt 1",
+        "[2026-05-19T10:26:22.170Z]  [RETRY] ASR Score too low: 0.7657142857142857",
+        "[2026-05-19T10:26:22.174Z] [TTS] Chunk 3 | Attempt 2",
+        "[2026-05-19T10:27:08.480Z]  [RETRY] ASR Score too low: 0.7865168539325843",
+        "[2026-05-19T10:27:08.482Z] [TTS] Chunk 3 | Attempt 3",
+        "[2026-05-19T10:27:46.865Z]  [RETRY] ASR Score too low: 0.7657142857142857",
+        "[2026-05-19T10:27:46.870Z] [TTS] Chunk 3 | Attempt 4",
+        "[2026-05-19T10:28:29.230Z]  [RETRY] ASR Score too low: 0.7558139534883721",
+        "[2026-05-19T10:28:29.235Z] [TTS] Chunk 3 | Attempt 5",
+        "[2026-05-19T10:29:13.530Z] [TTS] Chunk 4 | Attempt 0"
+      ],
+      "runtime_traces": {
+        "emotion_avg": {
+          "valence": 0.31999999999999995,
+          "arousal": 0,
+          "softness": 1,
+          "atmosphere": "熱を出してしんどいベッドサイド、不機嫌そうな顔をしながらも極めて甲斐甲斐しくお世話をしてくれるツンデレ隣人の温もり"
+        },
+        "chunk_count": 5,
+        "total_scores": [
+          0.9615384615384616,
+          0.9433962264150944,
+          0.8867924528301887,
+          0.7752808988764045,
+          0.9263157894736842
+        ]
+      }
+    }
+  },
+  "environment": {
+    "node_version": "v24.3.0",
+    "platform": "linux",
+    "cwd": "/home/kafka/projects/yt4"
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "version": "2.0.0",
+  "timestamp": "2026-05-19T10:35:34.268Z",
+  "sessionId": "session-klpegc",
+  "identity": {
+    "id": "yuna-01",
+    "name": "柚奈",
+    "voice_id": "ツンツンとぶっきらぼうでありながら、聞き手の体調を心底心配しているのが伝わる愛らしい女性の声。少し早口から始まり、徐々に優しくトーンダウンしていくささやき混じりの少し高めの可愛いトーン。"
+  },
+  "inputs": {
+    "0001_situation.json": "7e4d2c7c53f1f0104641e8eebddfe9327cd0815e86ad5534e3e0582faf016a13",
+    "thumbnail.png": "fb73a7aebcd47f5642409a977c85772cdf26dc4b474cd21e5a62f080c8cd98a4"
+  },
+  "outputs": {
+    "023_session-klpegc.wav": "b8e27d7d0a92be21789a540f8b157bc106c05cbed04267a6bb025c926c9a67c7",
+    "023_session-klpegc.json": "58e49ea8fc537b666df119bffd5b089bf59827362563490343281262f9253e3c",
+    "023_session-klpegc.mp4": "ec2bd5bd0d40d339f200b7008150070d491f7d7c2c1c1e49b7e1cd71093c637c"
+  },
+  "verification": {
+    "asr_score": 0.8586956521739131,
+    "status": "PASS",
+    "production_state": "UPLOAD_CONFIRMED",
+    "remote_proof": {
+      "platform": "youtube",
+      "videoId": "5bGMj9nBlTk",
+      "visibility": "public",
+      "raw_response_hash": "456a6ae793fb8fa1a0f1e6f7745ac7877cbebbe35892faec65583c7c5ccdfa25"
+    },
+    "evidence": {
+      "machine_logs": [
+        "[2026-05-19T10:30:07.826Z] [RESONANCE] Starting session session-klpegc",
+        "[2026-05-19T10:30:07.848Z] [TTS] Chunk 0 | Attempt 0",
+        "[2026-05-19T10:30:50.289Z] [TTS] Chunk 1 | Attempt 0",
+        "[2026-05-19T10:31:36.643Z] [TTS] Chunk 2 | Attempt 0",
+        "[2026-05-19T10:32:20.362Z] [TTS] Chunk 3 | Attempt 0",
+        "[2026-05-19T10:33:02.358Z]  [RETRY] ASR Score too low: 0.8494623655913979",
+        "[2026-05-19T10:33:02.361Z] [TTS] Chunk 3 | Attempt 1",
+        "[2026-05-19T10:33:49.474Z] [TTS] Chunk 4 | Attempt 0",
+        "[2026-05-19T10:35:29.979Z] [PUBLISH] Triggering automatic YouTube publication...",
+        "[2026-05-19T10:35:34.236Z] [PUBLISH] Success: 5bGMj9nBlTk"
+      ],
+      "runtime_traces": {
+        "emotion_avg": {
+          "valence": 0.31999999999999995,
+          "arousal": 0,
+          "softness": 1,
+          "atmosphere": "熱を出してしんどいベッドサイド、不機嫌そうな顔をしながらも極めて甲斐甲斐しくお世話をしてくれるツンデレ隣人の温もり"
+        },
+        "chunk_count": 5,
+        "total_scores": [
+          0.9192546583850931,
+          0.9439252336448598,
+          0.926605504587156,
+          0.8586956521739131,
+          0.90625
+        ]
+      }
+    }
+  },
+  "environment": {
+    "node_version": "v24.3.0",
+    "platform": "linux",
+    "cwd": "/home/kafka/projects/yt4"
+  }
+}

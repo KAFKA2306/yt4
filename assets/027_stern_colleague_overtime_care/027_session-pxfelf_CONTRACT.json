@@ -1,0 +1,61 @@
+{
+  "version": "2.0.0",
+  "timestamp": "2026-05-19T22:27:59.916Z",
+  "sessionId": "session-pxfelf",
+  "identity": {
+    "id": "saori-01",
+    "name": "沙織",
+    "voice_id": "少しツンとしたクールな響きでありながら、内側に抑えきれない優しさと恥ずかしさが滲む、少し低めの澄んだ女性の声。耳元に近づくにつれて、急激にささやき声になり、照れを含んだ甘いトーンへとグラデーションしていくトーン。"
+  },
+  "inputs": {
+    "0001_situation.json": "9dc0d57bf3100781d2d276311e5213e86cd7ad8a0ffc377a90437faa6b1dbcdf",
+    "thumbnail.png": "98620a4abf2a827c6fdd0231421a498506d05c132ba4a1f92a37af4ab3ba0614"
+  },
+  "outputs": {
+    "027_session-pxfelf.wav": "51a6be3b272582fbc01268b5318b7fd096fb25fe2202df7d38afad4de768ee2e",
+    "027_session-pxfelf.json": "9454c0bb98881926f78466b2951e017c7849155622f6f7aff194ff8ce84d36af",
+    "027_session-pxfelf.mp4": "942d9ded7e9833c4d005e6a9a5b7160653cbd10ae8fab1fdffd37ddc7732c391"
+  },
+  "verification": {
+    "asr_score": 0.8953488372093024,
+    "status": "PASS",
+    "production_state": "UPLOAD_CONFIRMED",
+    "remote_proof": {
+      "platform": "youtube",
+      "videoId": "3Jv7xPax-Dw",
+      "visibility": "public",
+      "raw_response_hash": "1d96f29fc2762325529928f32c76b1cb21568c11f3d6f814697e06c75a5260f6"
+    },
+    "evidence": {
+      "machine_logs": [
+        "[2026-05-19T22:24:48.490Z] [RESONANCE] Starting session session-pxfelf",
+        "[2026-05-19T22:24:48.497Z] [TTS] Chunk 0 | Attempt 0",
+        "[2026-05-19T22:25:28.626Z] [TTS] Chunk 1 | Attempt 0",
+        "[2026-05-19T22:26:03.483Z] [TTS] Chunk 2 | Attempt 0",
+        "[2026-05-19T22:26:40.435Z] [TTS] Chunk 3 | Attempt 0",
+        "[2026-05-19T22:27:56.171Z] [PUBLISH] Triggering automatic YouTube publication...",
+        "[2026-05-19T22:27:59.893Z] [PUBLISH] Success: 3Jv7xPax-Dw"
+      ],
+      "runtime_traces": {
+        "emotion_avg": {
+          "valence": 0.29999999999999993,
+          "arousal": 0,
+          "softness": 1,
+          "atmosphere": "深夜の静まり返ったオフィス、残業中に机に突っ伏して眠ってしまったキミに、温かいコーヒーを淹れてくれて、照れながらも優しく寄り添って看病してくれる不器用な同僚の温もり"
+        },
+        "chunk_count": 4,
+        "total_scores": [
+          0.9518072289156626,
+          0.8953488372093024,
+          0.9166666666666666,
+          0.9405405405405406
+        ]
+      }
+    }
+  },
+  "environment": {
+    "node_version": "v24.3.0",
+    "platform": "linux",
+    "cwd": "/home/kafka/projects/yt4"
+  }
+}

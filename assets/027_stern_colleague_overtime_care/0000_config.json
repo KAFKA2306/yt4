@@ -1,0 +1,25 @@
+{
+  "identity": {
+    "id": "saori-01",
+    "name": "沙織",
+    "voice_id": "少しツンとしたクールな響きでありながら、内側に抑えきれない優しさと恥ずかしさが滲む、少し低めの澄んだ女性の声。耳元に近づくにつれて、急激にささやき声になり、照れを含んだ甘いトーンへとグラデーションしていくトーン。",
+    "preferred_atmosphere": "深夜の静まり返ったオフィス、残業中に机に突っ伏して眠ってしまったキミに、温かいコーヒーを淹れてくれて、照れながらも優しく寄り添って看病してくれる不器用な同僚の温もり",
+    "invariants": {
+      "max_arousal": 0.5,
+      "min_softness": 0.7,
+      "max_emotion_delta": 0.15
+    },
+    "overrides": {
+      "pacing_base": 0.8,
+      "hesitation_frequency": 0.3,
+      "breathing_frequency": 0.3
+    }
+  },
+  "image_path": "thumbnail.png",
+  "script_path": "0001_situation.json",
+  "runtime": {
+    "chunk_length": 120,
+    "temperature": 0.45,
+    "max_retries": 5
+  }
+}

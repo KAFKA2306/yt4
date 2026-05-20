@@ -1,0 +1,61 @@
+{
+  "version": "2.0.0",
+  "timestamp": "2026-05-19T22:24:40.704Z",
+  "sessionId": "session-xmkbn",
+  "identity": {
+    "id": "misaki-01",
+    "name": "美咲",
+    "voice_id": "包容力と母性を感じさせる、優しく穏やかで落ち着いた女性の声。耳元で囁くささやき声が非常に美しく、吐息の量が多く、聞いているだけで自律神経が安らぐトーン。"
+  },
+  "inputs": {
+    "0001_situation.json": "37708a063233fead0957b82142dec6bd93502b107c8cb56d02cb407443451de7",
+    "thumbnail.png": "2e7e26b353e4ebebc667d116a39604f2db9a1b12646e1af99d4c71eb9f4f2774"
+  },
+  "outputs": {
+    "026_session-xmkbn.wav": "bd4b37dc590a832210d3d69b146e5ff9cc044eb4c86f8da90dd2fda0776ffd21",
+    "026_session-xmkbn.json": "9cd172f00ab64179bd55468ddc70009ded5dcd47066876214bb4c83b6ad9a1c0",
+    "026_session-xmkbn.mp4": "7c13e7f34da408606d3051a73d38ae9a2a148f71c9859bf1de9e82677bf25ebe"
+  },
+  "verification": {
+    "asr_score": 0.8888888888888888,
+    "status": "PASS",
+    "production_state": "UPLOAD_CONFIRMED",
+    "remote_proof": {
+      "platform": "youtube",
+      "videoId": "vcQoDw2rDAo",
+      "visibility": "public",
+      "raw_response_hash": "8bcd96e562122b471df7cbaee0ffaf9c4ff2e54b5858393133f619efb1128fdd"
+    },
+    "evidence": {
+      "machine_logs": [
+        "[2026-05-19T22:21:18.297Z] [RESONANCE] Starting session session-xmkbn",
+        "[2026-05-19T22:21:18.310Z] [TTS] Chunk 0 | Attempt 0",
+        "[2026-05-19T22:22:03.446Z] [TTS] Chunk 1 | Attempt 0",
+        "[2026-05-19T22:22:41.378Z] [TTS] Chunk 2 | Attempt 0",
+        "[2026-05-19T22:23:20.148Z] [TTS] Chunk 3 | Attempt 0",
+        "[2026-05-19T22:24:36.484Z] [PUBLISH] Triggering automatic YouTube publication...",
+        "[2026-05-19T22:24:40.676Z] [PUBLISH] Success: vcQoDw2rDAo"
+      ],
+      "runtime_traces": {
+        "emotion_avg": {
+          "valence": 0.27,
+          "arousal": 0.01999999999999999,
+          "softness": 1,
+          "atmosphere": "お仕事や学校で疲れきって帰ってきた夜の静かなリビング、包容力あふれるお姉さんが膝枕をして、頭を優しく撫でながらとろけるように甘やかしてくれる空間"
+        },
+        "chunk_count": 4,
+        "total_scores": [
+          0.9101796407185628,
+          0.9378531073446328,
+          1,
+          0.8888888888888888
+        ]
+      }
+    }
+  },
+  "environment": {
+    "node_version": "v24.3.0",
+    "platform": "linux",
+    "cwd": "/home/kafka/projects/yt4"
+  }
+}

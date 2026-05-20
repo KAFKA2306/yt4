@@ -1,0 +1,67 @@
+{
+  "version": "2.0.0",
+  "timestamp": "2026-05-19T11:08:33.811Z",
+  "sessionId": "session-elixln",
+  "identity": {
+    "id": "chihiro-01",
+    "name": "千尋",
+    "voice_id": "おっとりと優しく包容力がありながら、聞き手を自分だけのものにしたいという微かな独占欲を帯びた女性の声。耳元でとろけるような甘く非常に柔らかいウィスパーボイス。"
+  },
+  "inputs": {
+    "0001_situation.json": "9376b2d954dd095a95675105d716dd22d617f7ba2bd413d6fe833c0978b31d66",
+    "thumbnail.png": "02aaa065e156d9c1f732674073116e5b441bb975cf1abe4d812dac534cb8dc72"
+  },
+  "outputs": {
+    "025_session-elixln.wav": "6b14e6e299849c00fde7dea68b22051b972e11cff7f3d24035e45e7a4793113e",
+    "025_session-elixln.json": "e4afe2c9b420e7c034ce0052e1019289a379925e832ae2416c30ec17e011b117",
+    "025_session-elixln.mp4": "c2e61e8f70463ab3c2222c4644785298dde2d6b8ec771d0e44cc936f619092d7"
+  },
+  "verification": {
+    "asr_score": 0.8918918918918919,
+    "status": "PASS",
+    "production_state": "UPLOAD_CONFIRMED",
+    "remote_proof": {
+      "platform": "youtube",
+      "videoId": "y9111HsUOx4",
+      "visibility": "public",
+      "raw_response_hash": "a7790a9f67878d1c45751a2dced76972568ef14ecb3b7d4d49a35d1fa056fc32"
+    },
+    "evidence": {
+      "machine_logs": [
+        "[2026-05-19T11:03:58.673Z] [RESONANCE] Starting session session-elixln",
+        "[2026-05-19T11:03:58.682Z] [TTS] Chunk 0 | Attempt 0",
+        "[2026-05-19T11:04:36.524Z] [TTS] Chunk 1 | Attempt 0",
+        "[2026-05-19T11:05:12.587Z] [TTS] Chunk 2 | Attempt 0",
+        "[2026-05-19T11:05:48.316Z] [TTS] Chunk 3 | Attempt 0",
+        "[2026-05-19T11:06:22.169Z]  [RETRY] ASR Score too low: 0.8333333333333334",
+        "[2026-05-19T11:06:22.172Z] [TTS] Chunk 3 | Attempt 1",
+        "[2026-05-19T11:06:58.373Z]  [RETRY] ASR Score too low: 0.8333333333333334",
+        "[2026-05-19T11:06:58.376Z] [TTS] Chunk 3 | Attempt 2",
+        "[2026-05-19T11:07:34.972Z] [TTS] Chunk 4 | Attempt 0",
+        "[2026-05-19T11:08:29.492Z] [PUBLISH] Triggering automatic YouTube publication...",
+        "[2026-05-19T11:08:33.777Z] [PUBLISH] Success: y9111HsUOx4"
+      ],
+      "runtime_traces": {
+        "emotion_avg": {
+          "valence": 0.27,
+          "arousal": 0.039999999999999994,
+          "softness": 1,
+          "atmosphere": "静かな寝室、キミには私しかいないよねと優しく語りかけられ、絶対的な安心感と優しい独占欲に包まれる甘い時間"
+        },
+        "chunk_count": 5,
+        "total_scores": [
+          0.8918918918918919,
+          0.9054726368159204,
+          0.9122807017543859,
+          0.9545454545454546,
+          1
+        ]
+      }
+    }
+  },
+  "environment": {
+    "node_version": "v24.3.0",
+    "platform": "linux",
+    "cwd": "/home/kafka/projects/yt4"
+  }
+}

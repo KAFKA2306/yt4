@@ -1,0 +1,65 @@
+{
+  "version": "2.0.0",
+  "timestamp": "2026-05-19T10:45:47.844Z",
+  "sessionId": "session-h8j74",
+  "identity": {
+    "id": "rika-01",
+    "name": "凛夏",
+    "voice_id": "凛としたクールで不愛想な響きでありながら、熱を出した聞き手をとことん甘やかそうとする愛情に満ちた女性の声。雨の音に溶け込むような、低周波で非常に優しく心地よい極上のウィスパーボイス。"
+  },
+  "inputs": {
+    "0001_situation.json": "dbc129d2e2125dc0530ea10173f3223cca8757846367a28221a38ed5f7a8a738",
+    "thumbnail.png": "b473507438d84c4e9eb04506fc62a9cdfa2fd3bbb48b7e03ead6c962341156d0"
+  },
+  "outputs": {
+    "024_session-h8j74.wav": "4cf1994addf0af0c2441389d010f2ae2d8908055b86c80dd1bffceecdb6ab7ff",
+    "024_session-h8j74.json": "ce398a812481d30d1933123217382d88d247297beb27732761cd660fc4f2c586",
+    "024_session-h8j74.mp4": "727707f2b9fabab54e181020d30a9073a95beca67fab312485200b5090364f23"
+  },
+  "verification": {
+    "asr_score": 0.8601036269430051,
+    "status": "PASS",
+    "production_state": "UPLOAD_CONFIRMED",
+    "remote_proof": {
+      "platform": "youtube",
+      "videoId": "D4zHaJVegpU",
+      "visibility": "public",
+      "raw_response_hash": "df96b2a5cfb2faed13d403eaa6a93105b5663fa1ebda33c8618c17cab7e63efe"
+    },
+    "evidence": {
+      "machine_logs": [
+        "[2026-05-19T10:41:41.404Z] [RESONANCE] Starting session session-h8j74",
+        "[2026-05-19T10:41:41.411Z] [TTS] Chunk 0 | Attempt 0",
+        "[2026-05-19T10:42:17.514Z] [TTS] Chunk 1 | Attempt 0",
+        "[2026-05-19T10:42:53.524Z]  [RETRY] ASR Score too low: 0.8205128205128205",
+        "[2026-05-19T10:42:53.528Z] [TTS] Chunk 1 | Attempt 1",
+        "[2026-05-19T10:43:30.767Z] [TTS] Chunk 2 | Attempt 0",
+        "[2026-05-19T10:44:09.428Z] [TTS] Chunk 3 | Attempt 0",
+        "[2026-05-19T10:44:46.870Z] [TTS] Chunk 4 | Attempt 0",
+        "[2026-05-19T10:45:44.295Z] [PUBLISH] Triggering automatic YouTube publication...",
+        "[2026-05-19T10:45:47.809Z] [PUBLISH] Success: D4zHaJVegpU"
+      ],
+      "runtime_traces": {
+        "emotion_avg": {
+          "valence": 0.27,
+          "arousal": 0.01999999999999999,
+          "softness": 1,
+          "atmosphere": "雨の流れる窓際、冷えた体を温める毛布の擦れる音と、ぶっきらぼうな幼馴染の吐息が交錯する薄暗い部屋の静寂"
+        },
+        "chunk_count": 5,
+        "total_scores": [
+          0.8741721854304636,
+          0.8601036269430051,
+          0.8613138686131386,
+          0.8786127167630058,
+          0.8611111111111112
+        ]
+      }
+    }
+  },
+  "environment": {
+    "node_version": "v24.3.0",
+    "platform": "linux",
+    "cwd": "/home/kafka/projects/yt4"
+  }
+}

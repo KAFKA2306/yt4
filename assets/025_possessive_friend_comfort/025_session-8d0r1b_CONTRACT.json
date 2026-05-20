@@ -1,0 +1,68 @@
+{
+  "version": "2.0.0",
+  "timestamp": "2026-05-19T11:03:48.113Z",
+  "sessionId": "session-8d0r1b",
+  "identity": {
+    "id": "chihiro-01",
+    "name": "千尋",
+    "voice_id": "おっとりと優しく包容力がありながら、聞き手を自分だけのものにしたいという微かな独占欲を帯びた女性の声。耳元でとろけるような甘く非常に柔らかいウィスパーボイス。"
+  },
+  "inputs": {
+    "0001_situation.json": "455fff4b5b89ec3eb866c8f17136dd2dc8e64b8a6f76631c4a8cc5353aed1bcc",
+    "thumbnail.png": "02aaa065e156d9c1f732674073116e5b441bb975cf1abe4d812dac534cb8dc72"
+  },
+  "outputs": {
+    "025_session-8d0r1b.wav": "5961afa7657f113d01320f457afa4e32d74f3f1b7e4881f15897fc1e9f68470a",
+    "025_session-8d0r1b.json": "2c4adc2956c7208422e6410c784c3c22979f3c19bf1ab4057e5a121a42d05f0f"
+  },
+  "verification": {
+    "asr_score": 0.8361581920903954,
+    "status": "QUALITY_FAIL",
+    "production_state": "LOCAL_FAIL",
+    "evidence": {
+      "machine_logs": [
+        "[2026-05-19T10:56:30.341Z] [RESONANCE] Starting session session-8d0r1b",
+        "[2026-05-19T10:56:30.349Z] [TTS] Chunk 0 | Attempt 0",
+        "[2026-05-19T10:57:09.125Z] [TTS] Chunk 1 | Attempt 0",
+        "[2026-05-19T10:57:45.042Z] [TTS] Chunk 2 | Attempt 0",
+        "[2026-05-19T10:58:21.460Z]  [RETRY] ASR Score too low: 0.7692307692307693",
+        "[2026-05-19T10:58:21.462Z] [TTS] Chunk 2 | Attempt 1",
+        "[2026-05-19T10:58:57.605Z]  [RETRY] ASR Score too low: 0.7796610169491526",
+        "[2026-05-19T10:58:57.608Z] [TTS] Chunk 2 | Attempt 2",
+        "[2026-05-19T10:59:31.831Z]  [RETRY] ASR Score too low: 0.7928994082840237",
+        "[2026-05-19T10:59:31.833Z] [TTS] Chunk 2 | Attempt 3",
+        "[2026-05-19T11:00:09.202Z]  [RETRY] ASR Score too low: 0.8409090909090909",
+        "[2026-05-19T11:00:09.207Z] [TTS] Chunk 2 | Attempt 4",
+        "[2026-05-19T11:00:48.435Z]  [RETRY] ASR Score too low: 0.7909604519774012",
+        "[2026-05-19T11:00:48.439Z] [TTS] Chunk 2 | Attempt 5",
+        "[2026-05-19T11:01:24.347Z] [TTS] Chunk 3 | Attempt 0",
+        "[2026-05-19T11:01:58.907Z]  [RETRY] ASR Score too low: 0.8333333333333334",
+        "[2026-05-19T11:01:58.910Z] [TTS] Chunk 3 | Attempt 1",
+        "[2026-05-19T11:02:35.382Z]  [RETRY] ASR Score too low: 0.8333333333333334",
+        "[2026-05-19T11:02:35.384Z] [TTS] Chunk 3 | Attempt 2",
+        "[2026-05-19T11:03:11.473Z] [TTS] Chunk 4 | Attempt 0"
+      ],
+      "runtime_traces": {
+        "emotion_avg": {
+          "valence": 0.27,
+          "arousal": 0.039999999999999994,
+          "softness": 1,
+          "atmosphere": "静かな寝室、キミには私しかいないよねと優しく語りかけられ、絶対的な安心感と優しい独占欲に包まれる甘い時間"
+        },
+        "chunk_count": 5,
+        "total_scores": [
+          0.8918918918918919,
+          0.9054726368159204,
+          0.8361581920903954,
+          0.9545454545454546,
+          1
+        ]
+      }
+    }
+  },
+  "environment": {
+    "node_version": "v24.3.0",
+    "platform": "linux",
+    "cwd": "/home/kafka/projects/yt4"
+  }
+}

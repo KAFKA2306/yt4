@@ -1,0 +1,59 @@
+{
+  "version": "2.0.0",
+  "timestamp": "2026-05-19T22:52:32.035Z",
+  "sessionId": "session-ysf75l",
+  "identity": {
+    "id": "saori-01",
+    "name": "沙織",
+    "voice_id": "少しツンとしたクールな響きでありながら、内側に抑えきれない優しさと恥ずかしさが滲む、少し低めの澄んだ女性の声。耳元に近づくにつれて、急激にささやき声になり、照れを含んだ甘いトーンへとグラデーションしていくトーン。"
+  },
+  "inputs": {
+    "0001_situation.json": "9dc0d57bf3100781d2d276311e5213e86cd7ad8a0ffc377a90437faa6b1dbcdf",
+    "thumbnail.png": "98620a4abf2a827c6fdd0231421a498506d05c132ba4a1f92a37af4ab3ba0614"
+  },
+  "outputs": {
+    "027_session-ysf75l.wav": "e2728bc1d27ab32fb77d44d3c70371388dafa9ac3a24e56af71449bd662c131b",
+    "027_session-ysf75l.json": "3a335d404849a80b157bfcb4261356773bbd1a770e08403bc470d1849018e7a7",
+    "027_session-ysf75l.mp4": "9bb40e6a4a2526a2452388477cdf564f06b550be11320bab1a49f7bdb1a98af9"
+  },
+  "verification": {
+    "asr_score": 0.8941176470588236,
+    "status": "PASS",
+    "production_state": "REMOTE_UNVERIFIED",
+    "evidence": {
+      "machine_logs": [
+        "[2026-05-19T22:48:18.235Z] [RESONANCE] Starting session session-ysf75l",
+        "[2026-05-19T22:48:18.250Z] [TTS] Chunk 0 | Attempt 0",
+        "[2026-05-19T22:49:19.440Z] [TTS] Chunk 1 | Attempt 0",
+        "[2026-05-19T22:50:29.215Z] [TTS] Chunk 2 | Attempt 0",
+        "[2026-05-19T22:51:15.132Z] [TTS] Chunk 3 | Attempt 0"
+      ],
+      "runtime_traces": {
+        "emotion_avg": {
+          "valence": 0.29999999999999993,
+          "arousal": 0,
+          "softness": 1,
+          "atmosphere": "深夜の静まり返ったオフィス、残業中に机に突っ伏して眠ってしまったキミに、温かいコーヒーを淹れてくれて、照れながらも優しく寄り添って看病してくれる不器用な同僚の温もり"
+        },
+        "chunk_count": 4,
+        "total_scores": [
+          0.8941176470588236,
+          0.9132947976878613,
+          0.9634146341463414,
+          0.9513513513513514
+        ],
+        "speaker_scores": [
+          0.9385734796524048,
+          0.9085968732833862,
+          0.8229666948318481,
+          0.8667200803756714
+        ]
+      }
+    }
+  },
+  "environment": {
+    "node_version": "v24.3.0",
+    "platform": "linux",
+    "cwd": "/home/kafka/projects/yt4"
+  }
+}

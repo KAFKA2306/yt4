@@ -1,0 +1,59 @@
+{
+  "version": "2.0.0",
+  "timestamp": "2026-05-19T22:57:14.023Z",
+  "sessionId": "session-rlyg1g",
+  "identity": {
+    "id": "misaki-01",
+    "name": "美咲",
+    "voice_id": "包容力と母性を感じさせる、優しく穏やかで落ち着いた女性の声。耳元で囁くささやき声が非常に美しく、吐息の量が多く、聞いているだけで自律神経が安らぐトーン。"
+  },
+  "inputs": {
+    "0001_situation.json": "37708a063233fead0957b82142dec6bd93502b107c8cb56d02cb407443451de7",
+    "thumbnail.png": "2e7e26b353e4ebebc667d116a39604f2db9a1b12646e1af99d4c71eb9f4f2774"
+  },
+  "outputs": {
+    "026_session-rlyg1g.wav": "2fa64297037c2b5d86bed5ea8460df7ea721b67cd568ca184171771d1ebd969d",
+    "026_session-rlyg1g.json": "e4715c2dc08dca412528265e50457c2690a8e6bc29a4060b18bb1668292f537b",
+    "026_session-rlyg1g.mp4": "8d53d59c12f1d2e85e46fb2c47b9376db37ede5a3ec2ae780e48c23201d1442d"
+  },
+  "verification": {
+    "asr_score": 0.9285714285714286,
+    "status": "PASS",
+    "production_state": "REMOTE_UNVERIFIED",
+    "evidence": {
+      "machine_logs": [
+        "[2026-05-19T22:52:36.220Z] [RESONANCE] Starting session session-rlyg1g",
+        "[2026-05-19T22:52:36.232Z] [TTS] Chunk 0 | Attempt 0",
+        "[2026-05-19T22:53:29.255Z] [TTS] Chunk 1 | Attempt 0",
+        "[2026-05-19T22:54:17.963Z] [TTS] Chunk 2 | Attempt 0",
+        "[2026-05-19T22:55:09.027Z] [TTS] Chunk 3 | Attempt 0"
+      ],
+      "runtime_traces": {
+        "emotion_avg": {
+          "valence": 0.27,
+          "arousal": 0.01999999999999999,
+          "softness": 1,
+          "atmosphere": "お仕事や学校で疲れきって帰ってきた夜の静かなリビング、包容力あふれるお姉さんが膝枕をして、頭を優しく撫でながらとろけるように甘やかしてくれる空間"
+        },
+        "chunk_count": 4,
+        "total_scores": [
+          0.9285714285714286,
+          0.9782608695652174,
+          1,
+          0.9438202247191011
+        ],
+        "speaker_scores": [
+          0.8208649158477783,
+          0.839398980140686,
+          0.8794336318969727,
+          0.9052219390869141
+        ]
+      }
+    }
+  },
+  "environment": {
+    "node_version": "v24.3.0",
+    "platform": "linux",
+    "cwd": "/home/kafka/projects/yt4"
+  }
+}
