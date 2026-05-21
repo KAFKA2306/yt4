@@ -1,0 +1,70 @@
+{
+  "version": "2.0.0",
+  "timestamp": "2026-05-21T01:42:18.844Z",
+  "sessionId": "session-21x19ri",
+  "identity": {
+    "id": "kotone-01",
+    "name": "琴音",
+    "voice_id": "おっとりと優しく包容力のある女性の声。落ち着いた少し低めのトーンで、聞き手に絶大な安心感と母性を感じさせるウィスパー混じりの柔らかい口調。"
+  },
+  "inputs": {
+    "0001_situation.json": "f3d71f0994b8ad9f232fe1a0e9e1eae5be41c14744a20f1bda0bd71c72b71312",
+    "thumbnail.png": "1f5ace74c6381967ae127f184203519109384a2bc7a3a148e117f8881580c272"
+  },
+  "outputs": {
+    "022_session-21x19ri.wav": "974bdbaa569418510b1a9cd02365f308d1ae2961c0c45904f6b3808a53d39974",
+    "022_session-21x19ri.json": "8d8c10ad0bf69ef301eaa808552977b2e1f3f887cd06fe4869487e0a479100d2",
+    "022_session-21x19ri.mp4": "790c1650f0b9f84e78c1639094c0cd2dc7dab1287b702264002ae6d904e883de"
+  },
+  "verification": {
+    "asr_score": 0.8947368421052632,
+    "status": "PASS",
+    "production_state": "UPLOAD_CONFIRMED",
+    "remote_proof": {
+      "platform": "youtube",
+      "videoId": "T_mVF-E3pbg",
+      "visibility": "public",
+      "raw_response_hash": "38bf686e651ffcedd23032ceb36efa969d72dcbf891b9d83e55f6defd800de96"
+    },
+    "evidence": {
+      "machine_logs": [
+        "[2026-05-21T01:36:34.395Z] [RESONANCE] Starting session session-21x19ri",
+        "[2026-05-21T01:36:34.404Z] [TTS] Chunk 0 | Attempt 0",
+        "[2026-05-21T01:37:11.442Z] [TTS] Chunk 1 | Attempt 0",
+        "[2026-05-21T01:37:46.999Z] [TTS] Chunk 2 | Attempt 0",
+        "[2026-05-21T01:38:23.524Z]  [RETRY] ASR Score too low: 0.8369565217391305",
+        "[2026-05-21T01:38:23.527Z] [TTS] Chunk 2 | Attempt 1",
+        "[2026-05-21T01:38:57.995Z] [TTS] Chunk 3 | Attempt 0",
+        "[2026-05-21T01:39:33.870Z] [TTS] Chunk 4 | Attempt 0",
+        "[2026-05-21T01:40:09.703Z] [TTS] Chunk 5 | Attempt 0",
+        "[2026-05-21T01:40:44.987Z] [TTS] Chunk 6 | Attempt 0",
+        "[2026-05-21T01:42:14.858Z] [PUBLISH] Triggering automatic YouTube publication...",
+        "[2026-05-21T01:42:18.808Z] [PUBLISH] Success: T_mVF-E3pbg"
+      ],
+      "runtime_traces": {
+        "emotion_avg": {
+          "valence": 0.47,
+          "arousal": 0.01999999999999999,
+          "softness": 1,
+          "atmosphere": "風邪で熱を出した薄暗いベッドサイド、おっとり幼馴染が近くで見守ってくれている優しい静寂"
+        },
+        "chunk_count": 7,
+        "total_scores": [
+          0.9265536723163842,
+          0.9733333333333334,
+          0.8947368421052632,
+          0.9842931937172775,
+          0.9032258064516129,
+          0.9385474860335196,
+          1
+        ],
+        "speaker_scores": []
+      }
+    }
+  },
+  "environment": {
+    "node_version": "v24.3.0",
+    "platform": "linux",
+    "cwd": "/home/kafka/projects/yt4"
+  }
+}

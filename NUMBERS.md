@@ -34,3 +34,6 @@
 | 2026-05-19 | 024 | session-x4m0lt | 13 | 5 | 0.79 | 0 | LOCAL_FAIL |
 | 2026-05-19 | 023 | session-d0d0tp | 15 | 5 | 0.85 | 0 | REMOTE_UNVERIFIED |
 | 2026-05-19 | 021 | session-ez6af | 19 | 6 | 0.86 | 0 | REMOTE_UNVERIFIED |
+| 2026-05-20 | 020 | session-zx7ih7 | 57 | 12 | 0.87 | 0 | REMOTE_UNVERIFIED |
+| 2026-05-21 | 022 | session-0ek61d | 20 | 7 | 0.89 | 0 | REMOTE_UNVERIFIED |
+| 2026-05-21 | 022 | session-21x19ri | 20 | 7 | 0.89 | 0 | UPLOAD_CONFIRMED |
