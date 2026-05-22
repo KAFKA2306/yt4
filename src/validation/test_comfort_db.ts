@@ -1,4 +1,7 @@
-import { ASMRScriptAuditSchema, type ASMRScriptAudit } from "../domain/comfort_db";
+import {
+	type ASMRScriptAudit,
+	ASMRScriptAuditSchema,
+} from "../domain/comfort_db";
 import { ComfortDatabase } from "../io/comfort_db_io";
 
 const testData: ASMRScriptAudit = {
@@ -17,7 +20,7 @@ const testData: ASMRScriptAudit = {
 		completion_rate: 1.0,
 		source_type: "Docs",
 		license_terms: "CC-BY",
-		is_human_original: true
+		is_human_original: true,
 	},
 	acoustic: {
 		script_id: "test-01",
@@ -30,7 +33,7 @@ const testData: ASMRScriptAudit = {
 		proximity_events_count: 3,
 		sudden_peak_count: 0,
 		background_noise_tolerance: 0.7,
-		sfx_instructions: ["water_dripping", "cloth_rubbing"]
+		sfx_instructions: ["water_dripping", "cloth_rubbing"],
 	},
 	dialogue: {
 		script_id: "test-01",
@@ -42,7 +45,7 @@ const testData: ASMRScriptAudit = {
 		ellipsis_density: 0.4,
 		breath_pause_frequency: 3.5,
 		reassurance_phrases: ["大丈夫だよ", "ここにいるからね", "よしよし"],
-		tactile_semantics: ["看病", "おでこピタ", "呼吸", "布"]
+		tactile_semantics: ["看病", "おでこピタ", "呼吸", "布"],
 	},
 	safety: {
 		script_id: "test-01",
@@ -54,7 +57,7 @@ const testData: ASMRScriptAudit = {
 		listener_agency_preserved: true,
 		emotional_safety_score: 0.95,
 		coercion_signals: [],
-		ethical_boundary_notes: "完全全年齢向け、極めて安全なケアプロトコル"
+		ethical_boundary_notes: "完全全年齢向け、極めて安全なケアプロトコル",
 	},
 	market: {
 		script_id: "test-01",
@@ -64,12 +67,13 @@ const testData: ASMRScriptAudit = {
 		sleep_fall_asleep_comment_ratio: 0.35,
 		retention_proxy_score: 0.88,
 		popularity_score: 92.5,
-		sentiment_comfort_ratio: 0.96
+		sentiment_comfort_ratio: 0.96,
 	},
 	raw: {
 		script_id: "test-01",
-		raw_text: "（扉が静かに開く音）入るよ〜？……やっぱり、すごくしんどそうだね……。おでこ、冷やそうね。",
-		provenance_type: "DirectScript"
+		raw_text:
+			"（扉が静かに開く音）入るよ〜？……やっぱり、すごくしんどそうだね……。おでこ、冷やそうね。",
+		provenance_type: "DirectScript",
 	},
 	primitives: [
 		{
@@ -77,23 +81,23 @@ const testData: ASMRScriptAudit = {
 			sequence_index: 0,
 			archetype: "listener_status_check",
 			raw_text: "やっぱり、すごくしんどそうだね……。",
-			silence_duration: 6.0
+			silence_duration: 6.0,
 		},
 		{
 			script_id: "test-01",
 			sequence_index: 1,
 			archetype: "tactile_reassurance",
 			raw_text: "おでこ、冷やそうね。",
-			silence_duration: 8.0
-		}
+			silence_duration: 8.0,
+		},
 	],
 	sleep_risk: {
 		script_id: "test-01",
 		sleep_interruption_risk: 0.05,
 		auditory_overstimulation: 0.1,
 		emotional_dependency_risk: 0.25,
-		repeat_listening_tolerance: 0.95
-	}
+		repeat_listening_tolerance: 0.95,
+	},
 };
 
 const parsed = ASMRScriptAuditSchema.parse(testData);
@@ -120,7 +124,10 @@ if (parsedRetrieved.primitives[0].archetype !== "listener_status_check") {
 	throw new Error("Interaction primitives archetype mismatch");
 }
 
-if (!parsedRetrieved.sleep_risk || parsedRetrieved.sleep_risk.sleep_interruption_risk !== 0.05) {
+if (
+	!parsedRetrieved.sleep_risk ||
+	parsedRetrieved.sleep_risk.sleep_interruption_risk !== 0.05
+) {
 	throw new Error("Sleep risk audit metrics mismatch");
 }
 
