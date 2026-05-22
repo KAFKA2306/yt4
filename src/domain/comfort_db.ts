@@ -15,7 +15,7 @@ export const ScriptCoreSchema = z.object({
 	completion_rate: z.number().min(0).max(1),
 	source_type: z.enum(["PDF", "Docs", "RedditSelf", "Scriptbin", "Other"]),
 	license_terms: z.string().default("Unknown"),
-	is_human_original: z.boolean().default(true)
+	is_human_original: z.boolean().default(true),
 });
 
 export const AcousticFeatureSchema = z.object({
@@ -29,7 +29,7 @@ export const AcousticFeatureSchema = z.object({
 	proximity_events_count: z.number().int().nonnegative(),
 	sudden_peak_count: z.number().int().nonnegative(),
 	background_noise_tolerance: z.number().min(0).max(1),
-	sfx_instructions: z.array(z.string()).default([])
+	sfx_instructions: z.array(z.string()).default([]),
 });
 
 export const DialogueFeatureSchema = z.object({
@@ -42,7 +42,7 @@ export const DialogueFeatureSchema = z.object({
 	ellipsis_density: z.number().min(0).max(1),
 	breath_pause_frequency: z.number().nonnegative(),
 	reassurance_phrases: z.array(z.string()).default([]),
-	tactile_semantics: z.array(z.string()).default([])
+	tactile_semantics: z.array(z.string()).default([]),
 });
 
 export const SafetyAuditSchema = z.object({
@@ -55,7 +55,7 @@ export const SafetyAuditSchema = z.object({
 	listener_agency_preserved: z.boolean(),
 	emotional_safety_score: z.number().min(0).max(1),
 	coercion_signals: z.array(z.string()).default([]),
-	ethical_boundary_notes: z.string().optional()
+	ethical_boundary_notes: z.string().optional(),
 });
 
 export const MarketMetricSchema = z.object({
@@ -66,7 +66,7 @@ export const MarketMetricSchema = z.object({
 	sleep_fall_asleep_comment_ratio: z.number().min(0).max(1),
 	retention_proxy_score: z.number().min(0).max(1),
 	popularity_score: z.number().nonnegative(),
-	sentiment_comfort_ratio: z.number().min(0).max(1)
+	sentiment_comfort_ratio: z.number().min(0).max(1),
 });
 
 export const RawScriptSchema = z.object({
@@ -75,16 +75,21 @@ export const RawScriptSchema = z.object({
 	asr_transcript: z.string().optional(),
 	character_error_rate: z.number().min(0).max(1).optional(),
 	provenance_type: z.enum(["DirectScript", "AsrTranscription", "Hybrid"]),
-	temporal_structure_embedding: z.array(z.number()).optional()
+	temporal_structure_embedding: z.array(z.number()).optional(),
 });
 
 export const InteractionPrimitiveSchema = z.object({
 	id: z.string().optional(),
 	script_id: z.string(),
 	sequence_index: z.number().int().nonnegative(),
-	archetype: z.enum(["listener_status_check", "proximity_shift", "tactile_reassurance", "silence_architecture"]),
+	archetype: z.enum([
+		"listener_status_check",
+		"proximity_shift",
+		"tactile_reassurance",
+		"silence_architecture",
+	]),
 	raw_text: z.string(),
-	silence_duration: z.number().nonnegative()
+	silence_duration: z.number().nonnegative(),
 });
 
 export const SleepRiskAuditSchema = z.object({
@@ -92,7 +97,7 @@ export const SleepRiskAuditSchema = z.object({
 	sleep_interruption_risk: z.number().min(0).max(1),
 	auditory_overstimulation: z.number().min(0).max(1),
 	emotional_dependency_risk: z.number().min(0).max(1),
-	repeat_listening_tolerance: z.number().min(0).max(1)
+	repeat_listening_tolerance: z.number().min(0).max(1),
 });
 
 export const ASMRScriptAuditSchema = z.object({
@@ -103,7 +108,7 @@ export const ASMRScriptAuditSchema = z.object({
 	market: MarketMetricSchema,
 	raw: RawScriptSchema,
 	primitives: z.array(InteractionPrimitiveSchema).optional(),
-	sleep_risk: SleepRiskAuditSchema.optional()
+	sleep_risk: SleepRiskAuditSchema.optional(),
 });
 
 export type ScriptCore = z.infer<typeof ScriptCoreSchema>;
@@ -115,4 +120,3 @@ export type RawScript = z.infer<typeof RawScriptSchema>;
 export type InteractionPrimitive = z.infer<typeof InteractionPrimitiveSchema>;
 export type SleepRiskAudit = z.infer<typeof SleepRiskAuditSchema>;
 export type ASMRScriptAudit = z.infer<typeof ASMRScriptAuditSchema>;
-
