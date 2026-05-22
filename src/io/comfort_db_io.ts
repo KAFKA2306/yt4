@@ -1,16 +1,15 @@
 import { Database } from "bun:sqlite";
 import type {
-	ASMRScriptAudit,
-	ScriptCore,
 	AcousticFeature,
+	ASMRScriptAudit,
 	DialogueFeature,
-	SafetyAudit,
+	InteractionPrimitive,
 	MarketMetric,
 	RawScript,
-	InteractionPrimitive,
-	SleepRiskAudit
+	SafetyAudit,
+	ScriptCore,
+	SleepRiskAudit,
 } from "../domain/comfort_db";
-
 
 export class ComfortDatabase {
 	private db: Database;
@@ -140,7 +139,6 @@ export class ComfortDatabase {
 		`);
 	}
 
-
 	public saveScript(audit: ASMRScriptAudit): void {
 		const tx = this.db.transaction(() => {
 			this.saveCore(audit.core);
@@ -158,7 +156,6 @@ export class ComfortDatabase {
 		});
 		tx();
 	}
-
 
 	private saveCore(core: ScriptCore): void {
 		this.db.run(
@@ -184,8 +181,8 @@ export class ComfortDatabase {
 				core.completion_rate,
 				core.source_type,
 				core.license_terms,
-				core.is_human_original ? 1 : 0
-			]
+				core.is_human_original ? 1 : 0,
+			],
 		);
 	}
 
@@ -210,8 +207,8 @@ export class ComfortDatabase {
 				acoustic.proximity_events_count,
 				acoustic.sudden_peak_count,
 				acoustic.background_noise_tolerance,
-				JSON.stringify(acoustic.sfx_instructions)
-			]
+				JSON.stringify(acoustic.sfx_instructions),
+			],
 		);
 	}
 
@@ -234,8 +231,8 @@ export class ComfortDatabase {
 				dialogue.ellipsis_density,
 				dialogue.breath_pause_frequency,
 				JSON.stringify(dialogue.reassurance_phrases),
-				JSON.stringify(dialogue.tactile_semantics)
-			]
+				JSON.stringify(dialogue.tactile_semantics),
+			],
 		);
 	}
 
@@ -259,8 +256,8 @@ export class ComfortDatabase {
 				safety.listener_agency_preserved ? 1 : 0,
 				safety.emotional_safety_score,
 				JSON.stringify(safety.coercion_signals),
-				safety.ethical_boundary_notes ?? null
-			]
+				safety.ethical_boundary_notes ?? null,
+			],
 		);
 	}
 
@@ -281,8 +278,8 @@ export class ComfortDatabase {
 				market.sleep_fall_asleep_comment_ratio,
 				market.retention_proxy_score,
 				market.popularity_score,
-				market.sentiment_comfort_ratio
-			]
+				market.sentiment_comfort_ratio,
+			],
 		);
 	}
 
@@ -300,13 +297,20 @@ export class ComfortDatabase {
 				raw.asr_transcript ?? null,
 				raw.character_error_rate ?? null,
 				raw.provenance_type,
-				raw.temporal_structure_embedding ? JSON.stringify(raw.temporal_structure_embedding) : null
-			]
+				raw.temporal_structure_embedding
+					? JSON.stringify(raw.temporal_structure_embedding)
+					: null,
+			],
 		);
 	}
 
-	private savePrimitives(scriptId: string, primitives: InteractionPrimitive[]): void {
-		this.db.run("DELETE FROM interaction_primitives WHERE script_id = ?", [scriptId]);
+	private savePrimitives(
+		scriptId: string,
+		primitives: InteractionPrimitive[],
+	): void {
+		this.db.run("DELETE FROM interaction_primitives WHERE script_id = ?", [
+			scriptId,
+		]);
 		for (const p of primitives) {
 			this.db.run(
 				`
@@ -319,8 +323,8 @@ export class ComfortDatabase {
 					p.sequence_index,
 					p.archetype,
 					p.raw_text,
-					p.silence_duration
-				]
+					p.silence_duration,
+				],
 			);
 		}
 	}
@@ -338,40 +342,59 @@ export class ComfortDatabase {
 				risk.sleep_interruption_risk,
 				risk.auditory_overstimulation,
 				risk.emotional_dependency_risk,
-				risk.repeat_listening_tolerance
-			]
+				risk.repeat_listening_tolerance,
+			],
 		);
 	}
 
-
 	public getScript(id: string): ASMRScriptAudit | null {
-		const coreRow = this.db.query("SELECT * FROM scripts_core WHERE id = ?").get(id) as any;
+		const coreRow = this.db
+			.query("SELECT * FROM scripts_core WHERE id = ?")
+			.get(id) as any;
 		if (!coreRow) return null;
 
-		const acousticRow = this.db.query("SELECT * FROM acoustic_features WHERE script_id = ?").get(id) as any;
-		const dialogueRow = this.db.query("SELECT * FROM dialogue_features WHERE script_id = ?").get(id) as any;
-		const safetyRow = this.db.query("SELECT * FROM safety_audits WHERE script_id = ?").get(id) as any;
-		const marketRow = this.db.query("SELECT * FROM market_metrics WHERE script_id = ?").get(id) as any;
-		const rawRow = this.db.query("SELECT * FROM raw_scripts WHERE script_id = ?").get(id) as any;
+		const acousticRow = this.db
+			.query("SELECT * FROM acoustic_features WHERE script_id = ?")
+			.get(id) as any;
+		const dialogueRow = this.db
+			.query("SELECT * FROM dialogue_features WHERE script_id = ?")
+			.get(id) as any;
+		const safetyRow = this.db
+			.query("SELECT * FROM safety_audits WHERE script_id = ?")
+			.get(id) as any;
+		const marketRow = this.db
+			.query("SELECT * FROM market_metrics WHERE script_id = ?")
+			.get(id) as any;
+		const rawRow = this.db
+			.query("SELECT * FROM raw_scripts WHERE script_id = ?")
+			.get(id) as any;
 
-		const primitiveRows = this.db.query("SELECT * FROM interaction_primitives WHERE script_id = ? ORDER BY sequence_index ASC").all(id) as any[];
-		const primitives: InteractionPrimitive[] = primitiveRows.map(r => ({
+		const primitiveRows = this.db
+			.query(
+				"SELECT * FROM interaction_primitives WHERE script_id = ? ORDER BY sequence_index ASC",
+			)
+			.all(id) as any[];
+		const primitives: InteractionPrimitive[] = primitiveRows.map((r) => ({
 			id: r.id.toString(),
 			script_id: r.script_id,
 			sequence_index: r.sequence_index,
 			archetype: r.archetype as any,
 			raw_text: r.raw_text,
-			silence_duration: r.silence_duration
+			silence_duration: r.silence_duration,
 		}));
 
-		const sleepRiskRow = this.db.query("SELECT * FROM sleep_risk_audits WHERE script_id = ?").get(id) as any;
-		const sleepRisk: SleepRiskAudit | undefined = sleepRiskRow ? {
-			script_id: sleepRiskRow.script_id,
-			sleep_interruption_risk: sleepRiskRow.sleep_interruption_risk,
-			auditory_overstimulation: sleepRiskRow.auditory_overstimulation,
-			emotional_dependency_risk: sleepRiskRow.emotional_dependency_risk,
-			repeat_listening_tolerance: sleepRiskRow.repeat_listening_tolerance
-		} : undefined;
+		const sleepRiskRow = this.db
+			.query("SELECT * FROM sleep_risk_audits WHERE script_id = ?")
+			.get(id) as any;
+		const sleepRisk: SleepRiskAudit | undefined = sleepRiskRow
+			? {
+					script_id: sleepRiskRow.script_id,
+					sleep_interruption_risk: sleepRiskRow.sleep_interruption_risk,
+					auditory_overstimulation: sleepRiskRow.auditory_overstimulation,
+					emotional_dependency_risk: sleepRiskRow.emotional_dependency_risk,
+					repeat_listening_tolerance: sleepRiskRow.repeat_listening_tolerance,
+				}
+			: undefined;
 
 		return {
 			core: {
@@ -389,7 +412,7 @@ export class ComfortDatabase {
 				completion_rate: coreRow.completion_rate,
 				source_type: coreRow.source_type,
 				license_terms: coreRow.license_terms,
-				is_human_original: coreRow.is_human_original === 1
+				is_human_original: coreRow.is_human_original === 1,
 			},
 			acoustic: {
 				script_id: acousticRow.script_id,
@@ -402,7 +425,7 @@ export class ComfortDatabase {
 				proximity_events_count: acousticRow.proximity_events_count,
 				sudden_peak_count: acousticRow.sudden_peak_count,
 				background_noise_tolerance: acousticRow.background_noise_tolerance,
-				sfx_instructions: JSON.parse(acousticRow.sfx_instructions)
+				sfx_instructions: JSON.parse(acousticRow.sfx_instructions),
 			},
 			dialogue: {
 				script_id: dialogueRow.script_id,
@@ -414,7 +437,7 @@ export class ComfortDatabase {
 				ellipsis_density: dialogueRow.ellipsis_density,
 				breath_pause_frequency: dialogueRow.breath_pause_frequency,
 				reassurance_phrases: JSON.parse(dialogueRow.reassurance_phrases),
-				tactile_semantics: JSON.parse(dialogueRow.tactile_semantics)
+				tactile_semantics: JSON.parse(dialogueRow.tactile_semantics),
 			},
 			safety: {
 				script_id: safetyRow.script_id,
@@ -426,17 +449,18 @@ export class ComfortDatabase {
 				listener_agency_preserved: safetyRow.listener_agency_preserved === 1,
 				emotional_safety_score: safetyRow.emotional_safety_score,
 				coercion_signals: JSON.parse(safetyRow.coercion_signals),
-				ethical_boundary_notes: safetyRow.ethical_boundary_notes ?? undefined
+				ethical_boundary_notes: safetyRow.ethical_boundary_notes ?? undefined,
 			},
 			market: {
 				script_id: marketRow.script_id,
 				fill_count: marketRow.fill_count,
 				total_views: marketRow.total_views,
 				comment_count: marketRow.comment_count,
-				sleep_fall_asleep_comment_ratio: marketRow.sleep_fall_asleep_comment_ratio,
+				sleep_fall_asleep_comment_ratio:
+					marketRow.sleep_fall_asleep_comment_ratio,
 				retention_proxy_score: marketRow.retention_proxy_score,
 				popularity_score: marketRow.popularity_score,
-				sentiment_comfort_ratio: marketRow.sentiment_comfort_ratio
+				sentiment_comfort_ratio: marketRow.sentiment_comfort_ratio,
 			},
 			raw: {
 				script_id: rawRow.script_id,
@@ -446,12 +470,11 @@ export class ComfortDatabase {
 				provenance_type: rawRow.provenance_type,
 				temporal_structure_embedding: rawRow.temporal_structure_embedding
 					? JSON.parse(rawRow.temporal_structure_embedding)
-					: undefined
+					: undefined,
 			},
 			primitives: primitives.length > 0 ? primitives : undefined,
-			sleep_risk: sleepRisk
+			sleep_risk: sleepRisk,
 		};
-
 	}
 
 	public close(): void {
