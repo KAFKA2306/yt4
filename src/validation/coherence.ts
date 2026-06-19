@@ -14,6 +14,7 @@ export async function verifyCoherence(): Promise<CoherenceResult> {
 	const findings: CoherenceResult["findings"] = [];
 	const glob = new Bun.Glob("src/**/*.ts");
 	const tryCatchPattern = /try\s*\{/;
+	const todoPattern = /(?:\/\/|\/\*|\*)\s*(TODO|FIXME)\b/;
 
 	const configPath = "codd.yaml";
 	let config: any = {};
@@ -38,7 +39,7 @@ export async function verifyCoherence(): Promise<CoherenceResult> {
 			}
 		}
 
-		if (content.includes("TODO") || content.includes("FIXME")) {
+		if (todoPattern.test(content)) {
 			findings.push({
 				node: "Zero-Fat",
 				file,
