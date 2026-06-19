@@ -193,7 +193,6 @@ export class Orchestrator {
 				const speakerResult = await verifySpeaker(referenceAudio, p);
 				speakerSim = speakerResult.similarity;
 				speakerPass = speakerResult.is_consistent;
-				speakerScores.push(speakerSim);
 			}
 
 			const asrPass = !asrResult.is_damaged;
@@ -265,6 +264,9 @@ export class Orchestrator {
 
 			audioParts.push(p);
 			verifiedLines.push(...chunk);
+			if (hasRef) {
+				speakerScores.push(speakerSim);
+			}
 
 			if (asrResult.segments.length > 0) {
 				const chunkText = chunk.map((l) => l.text).join("");
