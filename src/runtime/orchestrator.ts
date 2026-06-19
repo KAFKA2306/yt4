@@ -434,12 +434,21 @@ export class Orchestrator {
 					},
 				});
 				state = "UPLOAD_CONFIRMED";
+				const liveVisibility = await this.publisher.getVideoVisibility(
+					receipt.video_id,
+				);
+				if (liveVisibility !== "public") {
+					throw new Error(
+						`YouTube visibility mismatch: expected public, got ${liveVisibility}`,
+					);
+				}
+				state = "YOUTUBE_FETCH_CONFIRMED";
 				remoteProof = {
 					videoId: receipt.video_id,
-					visibility: receipt.privacy_status,
+					visibility: liveVisibility,
 					rawResponse: receipt.raw_response,
 				};
-				logger(`[PUBLISH] Success: ${receipt.video_id}`);
+				logger(`[PUBLISH] Success: ${receipt.video_id} (${liveVisibility})`);
 			}
 		}
 
