@@ -2,16 +2,23 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { certifyContract } from "../validation/contract";
 import { validateASR, verifySpeaker } from "../validation/engine";
+import { QualityJudge } from "../validation/judge";
 import { ProsodyValidator } from "../validation/prosody";
 import { AuditLogger } from "./audit_logger";
 import { composeVideo } from "./composer";
 import { IdentityEngine } from "./identity";
 import { Publisher } from "./publisher";
 import { PulseManager } from "./pulse";
+import { RepairEngine } from "./repair";
 
 import { generateScriptFromIntent } from "./script_gen";
 import { synthesizeVoice } from "./tts";
-import type { EmotionalState, ProductionState, ScriptLine } from "./types";
+import type {
+	AuditTrace,
+	EmotionalState,
+	ProductionState,
+	ScriptLine,
+} from "./types";
 import {
 	chunkLines,
 	concatAudio,
@@ -21,7 +28,9 @@ import {
 
 export class Orchestrator {
 	private audit: AuditLogger;
+	private judge = new QualityJudge();
 	private publisher: Publisher;
+	private repair = new RepairEngine();
 	private runtimeConfig: {
 		chunk_length: number;
 		seed_base: number;
@@ -146,8 +155,22 @@ export class Orchestrator {
 		const speakerScores: number[] = [];
 		let currentOffset = 0;
 		const initialChunks = chunkLines(lines, this.runtimeConfig.chunk_length);
-		const workQueue: { lines: ScriptLine[]; attempt: number }[] =
-			initialChunks.map((c) => ({ lines: c, attempt: 0 }));
+		let nextWorkIndex = initialChunks.length;
+		const workQueue: {
+			lines: ScriptLine[];
+			attempt: number;
+			workIndex: number;
+			overrides: {
+				temperature?: number;
+				seed_offset?: number;
+				softness_delta?: number;
+			};
+		}[] = initialChunks.map((c, idx) => ({
+			lines: c,
+			attempt: 0,
+			workIndex: idx,
+			overrides: {},
+		}));
 
 		let chunkCounter = 0;
 		while (workQueue.length > 0) {
@@ -155,26 +178,52 @@ export class Orchestrator {
 			if (!work) break;
 			const chunk = work.lines;
 			const attempt = work.attempt;
+			const workIndex = work.workIndex;
+			const currentOverrides = work.overrides;
 
 			const targetEmotion = await pulse.observe(
-				chunkCounter / initialChunks.length,
+				Math.min(chunkCounter / initialChunks.length, 1),
 			);
 			const emotion = idEngine.smooth(currentEmotion, targetEmotion as any);
 
-			const p = path.join(this.assetDir, `${prefix}_p${chunkCounter}.wav`);
+			const p = path.join(
+				this.assetDir,
+				`${prefix}_p${workIndex}_v${attempt}.wav`,
+			);
 			const cleanText = chunk
 				.map((l) => l.text.replace(/（.*?）|\(.*?\)/g, ""))
 				.join(" ");
 			const promptText = cleanText;
 
-			const temp = this.runtimeConfig.temperature;
-			const seed = this.runtimeConfig.seed_base + chunkCounter + attempt * 100;
+			const temp =
+				currentOverrides.temperature ?? this.runtimeConfig.temperature;
+			const seed =
+				this.runtimeConfig.seed_base +
+				workIndex +
+				(currentOverrides.seed_offset || 0);
 			const hasRef = fs.existsSync(referenceAudio);
+			const baseEmotion = chunk[0].emotion ?? currentEmotion;
+			const effectiveEmotion = baseEmotion
+				? {
+						...baseEmotion,
+						softness: Math.max(
+							0,
+							Math.min(
+								1,
+								(baseEmotion.softness ?? 0.8) +
+									(currentOverrides.softness_delta || 0),
+							),
+						),
+					}
+				: baseEmotion;
 
-			logger(`[TTS] Chunk ${chunkCounter} | Attempt ${attempt}`);
+			logger(`[TTS] Chunk ${workIndex} | Attempt ${attempt}`);
 			await synthesizeVoice({
 				text: cleanText,
-				caption: generateCaption(this.config.identity.voice_id, emotion),
+				caption: generateCaption(
+					this.config.identity.voice_id,
+					effectiveEmotion,
+				),
 				outputPath: p,
 				seed,
 				temperature: temp,
@@ -188,27 +237,23 @@ export class Orchestrator {
 			const asrResult = await validateASR(p, chunk);
 			const prosodyResult = await prosody.analyze(p);
 			let speakerSim = 1.0;
-			let speakerPass = true;
 			if (hasRef) {
 				const speakerResult = await verifySpeaker(referenceAudio, p);
 				speakerSim = speakerResult.similarity;
-				speakerPass = speakerResult.is_consistent;
 			}
 
-			const asrPass = !asrResult.is_damaged;
-			const prosodyPass = prosodyResult.silence_ratio <= 0.12;
-			const status = asrPass && speakerPass && prosodyPass ? "PASS" : "FAIL";
-			let reason = "NONE";
-			if (!asrPass) {
-				reason =
-					asrResult.failure_type !== "NONE"
-						? asrResult.failure_type
-						: "ACOUSTIC_DAMAGE";
-			} else if (!speakerPass) {
-				reason = "SPEAKER_DRIFT";
-			} else if (!prosodyPass) {
-				reason = "SILENCE_OR_TOO_SOFT";
-			}
+			const metrics: AuditTrace["metrics"] = {
+				cer: asrResult.score,
+				hallucinations: asrResult.hallucinations.length,
+				f0: prosodyResult.f0_mean,
+				energy: prosodyResult.energy_mean,
+				speaker_sim: speakerSim,
+				silence_ratio: prosodyResult.silence_ratio,
+			};
+			const rawTrace: Partial<AuditTrace> = { metrics };
+			const judgment = await this.judge.classify(rawTrace);
+			const status = judgment.status;
+			const reason = judgment.fail_types.join(", ") || "NONE";
 
 			this.audit.log({
 				timestamp: new Date().toISOString(),
@@ -218,44 +263,58 @@ export class Orchestrator {
 				wavHash: AuditLogger.calculateHash(fs.readFileSync(p)),
 				promptHash: AuditLogger.calculateHash(promptText),
 				seed,
-				metrics: {
-					cer: asrResult.score,
-					hallucinations: 0,
-					speaker_sim: speakerSim,
-					f0: prosodyResult.f0_mean,
-					energy: prosodyResult.energy_mean,
-					silence_ratio: prosodyResult.silence_ratio,
-				},
+				metrics,
 				status,
 				reason,
 			});
 
-			if (
-				(asrResult.is_damaged || !speakerPass || !prosodyPass) &&
-				attempt < this.runtimeConfig.max_retries
-			) {
-				if (asrResult.is_damaged) {
-					logger(` [RETRY] ASR Score too low: ${asrResult.score}`);
-				} else if (!speakerPass) {
-					logger(
-						` [RETRY] Speaker similarity too low: ${speakerSim.toFixed(4)}`,
+			if (status !== "PASS" && attempt < this.runtimeConfig.max_retries) {
+				if (judgment.repair_candidate) {
+					if (judgment.repair_candidate === "refresh_reference") {
+						fs.copyFileSync(p, referenceAudio);
+						logger(" [REPAIR] Reference audio refreshed.");
+					}
+					const repairResult = this.repair.apply(
+						chunk,
+						judgment.repair_candidate,
+						attempt + 1,
 					);
+					if (repairResult.modifiedChunks.length > 1) {
+						const nextWorkItems = repairResult.modifiedChunks.map(
+							(lines, offset) => ({
+								lines,
+								attempt: attempt + 1,
+								workIndex: nextWorkIndex + offset,
+								overrides: repairResult.overrides,
+							}),
+						);
+						nextWorkIndex += repairResult.modifiedChunks.length;
+						for (let idx = nextWorkItems.length - 1; idx >= 0; idx--) {
+							workQueue.unshift(nextWorkItems[idx]);
+						}
+					} else {
+						workQueue.unshift({
+							lines: repairResult.modifiedChunks[0],
+							attempt: attempt + 1,
+							workIndex: nextWorkIndex++,
+							overrides: repairResult.overrides,
+						});
+					}
 				} else {
-					logger(
-						` [RETRY] Silence ratio too high: ${(
-							prosodyResult.silence_ratio * 100
-						).toFixed(1)}%`,
-					);
+					logger(` [RETRY] ${reason}`);
+					workQueue.unshift({
+						lines: chunk,
+						attempt: attempt + 1,
+						workIndex,
+						overrides: {
+							seed_offset: (attempt + 1) * 100,
+						},
+					});
 				}
-				if (!asrResult.is_damaged && !speakerPass) {
-					fs.copyFileSync(p, referenceAudio);
-					logger(" [REPAIR] Reference audio refreshed.");
-				}
-				workQueue.unshift({ lines: chunk, attempt: attempt + 1 });
 				continue;
 			}
 
-			if (asrResult.is_damaged || !speakerPass || !prosodyPass) {
+			if (status !== "PASS") {
 				state = "LOCAL_FAIL";
 				throw new Error(
 					`CRITICAL: Chunk ${chunkCounter} failed after ${this.runtimeConfig.max_retries} attempts.`,
