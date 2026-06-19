@@ -1,5 +1,6 @@
 import * as path from "node:path";
 import { validateASR } from "./engine";
+import { ASR_THRESHOLD } from "./thresholds";
 
 async function main() {
 	const [audio, text] = process.argv.slice(2);
@@ -11,7 +12,7 @@ async function main() {
 	const report = await validateASR(
 		path.resolve(audio),
 		[{ text, pause_after: 0 }],
-		0.85,
+		ASR_THRESHOLD,
 	);
 	if (report.is_damaged) {
 		console.error(`[FAIL] ${JSON.stringify(report)}`);

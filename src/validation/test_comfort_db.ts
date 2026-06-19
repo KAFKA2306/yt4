@@ -102,7 +102,7 @@ const testData: ASMRScriptAudit = {
 
 const parsed = ASMRScriptAuditSchema.parse(testData);
 
-const db = new ComfortDatabase("data/comfort_interface_test.db");
+const db = new ComfortDatabase(":memory:");
 db.saveScript(parsed);
 
 const retrieved = db.getScript("test-01");

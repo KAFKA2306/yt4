@@ -2,6 +2,7 @@ import * as crypto from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import type { AuditStatus, ProductionState } from "../runtime/types";
+import { ASR_THRESHOLD, SPEAKER_THRESHOLD } from "./thresholds";
 
 export interface CompletionClaim {
 	version: string;
@@ -68,8 +69,9 @@ export function certifyContract(params: {
 
 	let status: AuditStatus = "UNVERIFIED";
 	if (
-		params.asrScore < 0.85 ||
-		(params.speakerScore !== undefined && params.speakerScore < 0.8)
+		params.asrScore < ASR_THRESHOLD ||
+		(params.speakerScore !== undefined &&
+			params.speakerScore < SPEAKER_THRESHOLD)
 	) {
 		status = "QUALITY_FAIL";
 	} else {
@@ -118,6 +120,20 @@ export function verifyContract(
 	claim: CompletionClaim,
 	baseDir: string,
 ): { status: AuditStatus; reason?: string } {
+	for (const [name, expectedHash] of Object.entries(claim.inputs)) {
+		const p = path.join(baseDir, name);
+		const actualHash = hashFile(p);
+		if (actualHash === "MISSING") {
+			return { status: "QUALITY_FAIL", reason: `Input Missing: ${name}` };
+		}
+		if (actualHash !== expectedHash) {
+			return {
+				status: "QUALITY_FAIL",
+				reason: `Integrity Breach: input ${name} (Hash Mismatch)`,
+			};
+		}
+	}
+
 	for (const [name, expectedHash] of Object.entries(claim.outputs)) {
 		const p = path.join(baseDir, name);
 		const actualHash = hashFile(p);

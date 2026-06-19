@@ -1,18 +1,13 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import * as yaml from "yaml";
 import { certifyContract } from "../validation/contract";
-import {
-	analyzeProsody,
-	validateASR,
-	verifySpeaker,
-} from "../validation/engine";
+import { validateASR, verifySpeaker } from "../validation/engine";
+import { ASR_THRESHOLD } from "../validation/thresholds";
 import { AuditLogger } from "./audit_logger";
 import { composeVideo } from "./composer";
 import { IdentityEngine } from "./identity";
 import { Publisher } from "./publisher";
 import { PulseManager } from "./pulse";
-import { type FailureReason, RepairEngine } from "./repair";
 
 import { generateScriptFromIntent } from "./script_gen";
 import { synthesizeVoice } from "./tts";
@@ -26,7 +21,6 @@ import {
 
 export class Orchestrator {
 	private audit: AuditLogger;
-	private repair: RepairEngine;
 	private publisher: Publisher;
 	private runtimeConfig: {
 		chunk_length: number;
@@ -58,28 +52,42 @@ export class Orchestrator {
 			};
 		},
 	) {
-		const defaultConfig = yaml.parse(
-			fs.readFileSync(path.join(process.cwd(), "config/default.yaml"), "utf-8"),
+		const runtimeInput = config.runtime;
+		if (!runtimeInput) {
+			throw new Error("CRITICAL: runtime config missing in asset config.");
+		}
+		const requiredKeys: (keyof NonNullable<typeof runtimeInput>)[] = [
+			"chunk_length",
+			"seed_base",
+			"temperature",
+			"num_steps",
+			"seconds",
+			"duration_scale",
+			"no_ref",
+			"max_retries",
+		];
+		const missing = requiredKeys.filter(
+			(key) => runtimeInput[key] === undefined,
 		);
+		if (missing.length > 0) {
+			throw new Error(
+				`CRITICAL: runtime config missing required fields: ${missing.join(", ")}`,
+			);
+		}
+		const runtime = runtimeInput as Required<typeof runtimeInput>;
 
 		this.runtimeConfig = {
-			chunk_length:
-				config.runtime?.chunk_length ?? defaultConfig.runtime.chunk_length,
-			seed_base: config.runtime?.seed_base ?? defaultConfig.runtime.seed_base,
-			temperature:
-				config.runtime?.temperature ?? defaultConfig.runtime.temperature,
-			num_steps: config.runtime?.num_steps ?? defaultConfig.runtime.num_steps,
-			seconds: config.runtime?.seconds ?? defaultConfig.runtime.seconds,
-			duration_scale:
-				config.runtime?.duration_scale ??
-				defaultConfig.runtime.duration_scale ??
-				1.0,
-			no_ref: config.runtime?.no_ref ?? defaultConfig.runtime.no_ref,
-			max_retries: config.runtime?.max_retries ?? 3,
+			chunk_length: runtime.chunk_length,
+			seed_base: runtime.seed_base,
+			temperature: runtime.temperature,
+			num_steps: runtime.num_steps,
+			seconds: runtime.seconds,
+			duration_scale: runtime.duration_scale,
+			no_ref: runtime.no_ref,
+			max_retries: runtime.max_retries,
 		};
 
 		this.audit = new AuditLogger(path.join(this.assetDir, "audit.jsonl"));
-		this.repair = new RepairEngine();
 		this.publisher = new Publisher(this.assetDir);
 	}
 
@@ -142,7 +150,8 @@ export class Orchestrator {
 
 		let chunkCounter = 0;
 		while (workQueue.length > 0) {
-			const work = workQueue.shift()!;
+			const work = workQueue.shift();
+			if (!work) break;
 			const chunk = work.lines;
 			const attempt = work.attempt;
 
@@ -155,6 +164,7 @@ export class Orchestrator {
 			const cleanText = chunk
 				.map((l) => l.text.replace(/（.*?）|\(.*?\)/g, ""))
 				.join(" ");
+			const promptText = cleanText;
 
 			const temp = this.runtimeConfig.temperature;
 			const seed = this.runtimeConfig.seed_base + chunkCounter + attempt * 100;
@@ -184,10 +194,14 @@ export class Orchestrator {
 				speakerScores.push(speakerSim);
 			}
 
-			const status = asrResult.score >= 0.85 && speakerPass ? "PASS" : "FAIL";
+			const asrPass = !asrResult.is_damaged;
+			const status = asrPass && speakerPass ? "PASS" : "FAIL";
 			let reason = "NONE";
-			if (asrResult.score < 0.85) {
-				reason = "ACOUSTIC_DAMAGE";
+			if (!asrPass) {
+				reason =
+					asrResult.failure_type !== "NONE"
+						? asrResult.failure_type
+						: "ACOUSTIC_DAMAGE";
 			} else if (!speakerPass) {
 				reason = "SPEAKER_DRIFT";
 			}
@@ -197,8 +211,8 @@ export class Orchestrator {
 				assetId,
 				sessionId,
 				chunkIndex: chunkCounter,
-				wavHash: "",
-				promptHash: "",
+				wavHash: AuditLogger.calculateHash(fs.readFileSync(p)),
+				promptHash: AuditLogger.calculateHash(promptText),
 				seed,
 				metrics: {
 					cer: asrResult.score,
@@ -210,10 +224,10 @@ export class Orchestrator {
 			});
 
 			if (
-				(asrResult.score < 0.85 || !speakerPass) &&
+				(asrResult.is_damaged || !speakerPass) &&
 				attempt < this.runtimeConfig.max_retries
 			) {
-				if (asrResult.score < 0.85) {
+				if (asrResult.is_damaged) {
 					logger(` [RETRY] ASR Score too low: ${asrResult.score}`);
 				} else {
 					logger(
@@ -257,7 +271,7 @@ export class Orchestrator {
 		state = "GENERATED";
 		const minAsrScore =
 			acceptedScores.length > 0 ? Math.min(...acceptedScores) : 0;
-		if (minAsrScore >= 0.85) {
+		if (acceptedScores.length > 0 && minAsrScore >= ASR_THRESHOLD) {
 			state = "AUDIO_VALIDATED";
 		} else {
 			state = "LOCAL_FAIL";
@@ -327,7 +341,7 @@ export class Orchestrator {
 
 			if (
 				process.env.YOUTUBE_PUBLISH_AUTO === "true" &&
-				effectiveAsrScore >= 0.85
+				effectiveAsrScore >= ASR_THRESHOLD
 			) {
 				logger("[PUBLISH] Triggering automatic YouTube publication...");
 				state = "UPLOAD_ATTEMPTED";
@@ -353,8 +367,9 @@ export class Orchestrator {
 		}
 
 		const outputPaths = [audio, transcriptPath];
-		if (state === "REMOTE_UNVERIFIED" || state.startsWith("UPLOAD")) {
-			outputPaths.push(path.join(this.assetDir, `${prefix}.mp4`));
+		const finalVideo = path.join(this.assetDir, `${prefix}.mp4`);
+		if (fs.existsSync(finalVideo)) {
+			outputPaths.push(finalVideo);
 		}
 
 		const contract = certifyContract({

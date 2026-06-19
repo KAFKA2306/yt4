@@ -34,7 +34,7 @@ export class OfflinePipeline {
 		for (let i = 0; i < chunks.length; i++) {
 			let attempt = 0;
 			let passed = false;
-			const currentChunk = chunks[i];
+			let currentChunk = chunks[i];
 			let currentOverrides: any = {};
 
 			while (attempt < config.runtime.max_retries && !passed) {
@@ -42,18 +42,31 @@ export class OfflinePipeline {
 					this.assetDir,
 					`${config.identity.id}_${sessionId}_p${i}_v${attempt}.wav`,
 				);
+				const seed =
+					config.runtime.seed_base + i + (currentOverrides.seed_offset || 0);
+				const baseEmotion = currentChunk[0].emotion as any;
+				const effectiveEmotion = baseEmotion
+					? {
+							...baseEmotion,
+							softness: Math.max(
+								0,
+								Math.min(
+									1,
+									(baseEmotion.softness ?? 0.8) +
+										(currentOverrides.softness_delta || 0),
+								),
+							),
+						}
+					: baseEmotion;
 				const caption =
-					generateCaption(
-						config.identity.voice_id,
-						currentChunk[0].emotion as any,
-					) + (currentOverrides.caption_suffix || "");
+					generateCaption(config.identity.voice_id, effectiveEmotion) +
+					(currentOverrides.caption_suffix || "");
 
 				await synthesizeVoice({
 					text: currentChunk.map((l) => l.text).join(" "),
 					caption,
 					outputPath: p,
-					seed:
-						config.runtime.seed_base + i + (currentOverrides.seed_offset || 0),
+					seed,
 					temperature:
 						currentOverrides.temperature ?? config.runtime.temperature,
 					num_steps: config.runtime.num_steps,
@@ -89,7 +102,7 @@ export class OfflinePipeline {
 					promptHash: AuditLogger.calculateHash(
 						currentChunk.map((l) => l.text).join(" "),
 					),
-					seed: config.runtime.seed_base + i,
+					seed,
 					metrics: rawTrace.metrics as any,
 					transcription: asrResult.transcription,
 					status: judgment.status,
@@ -111,6 +124,11 @@ export class OfflinePipeline {
 							judgment.repair_candidate,
 							attempt + 1,
 						);
+						if (repairResult.modifiedChunks.length > 1) {
+							chunks[i] = repairResult.modifiedChunks[0];
+							chunks.splice(i + 1, 0, ...repairResult.modifiedChunks.slice(1));
+							currentChunk = chunks[i];
+						}
 						currentOverrides = repairResult.overrides;
 					}
 					attempt++;

@@ -39,6 +39,7 @@ def main():
     config = json.loads(sys.argv[1])
     audio_path = config.get("audio_path")
     expected_lines = config.get("expected_lines", [])
+    threshold = float(config["threshold"])
 
     model_size = config.get("model_size", "small")
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -57,7 +58,7 @@ def main():
     score, hallucinations, missing = calculate_metrics(full_expected, clean_trans)
     
     failure_type = "NONE"
-    if score < 0.85:
+    if score < threshold:
         if rms < 0.01:
             failure_type = "SILENCE_OR_TOO_SOFT"
         elif len(hallucinations) > 5 and score < 0.5:

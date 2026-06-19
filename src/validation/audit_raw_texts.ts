@@ -25,16 +25,19 @@ const lengthList = lengths.map((row) => row.len as number);
 
 const sum = lengthList.reduce((a, b) => a + b, 0);
 const avg = sum / (lengthList.length || 1);
-const max = Math.max(...lengthList);
-const min = Math.min(...lengthList);
+const max = lengthList.length > 0 ? Math.max(...lengthList) : 0;
+const min = lengthList.length > 0 ? Math.min(...lengthList) : 0;
+const lossRate = total > 0 ? ((emptyCount / total) * 100).toFixed(2) : "0.00";
+const ingestRate =
+	total > 0 ? (((total - emptyCount) / total) * 100).toFixed(2) : "0.00";
 
 console.log(`\n[1. Content Completeness Metrics]`);
 console.log(`- Total Raw Script Records Checked:   ${total}`);
 console.log(
-	`- Empty or Null Content Scripts:      ${emptyCount} (Loss Rate: ${((emptyCount / total) * 100).toFixed(2)}%)`,
+	`- Empty or Null Content Scripts:      ${emptyCount} (Loss Rate: ${lossRate}%)`,
 );
 console.log(
-	`- Successfully Ingested Scripts Rate: ${(((total - emptyCount) / total) * 100).toFixed(2)}% (Target: 100.00%)`,
+	`- Successfully Ingested Scripts Rate: ${ingestRate}% (Target: 100.00%)`,
 );
 
 console.log(`\n[2. Script Text Volume Distribution]`);

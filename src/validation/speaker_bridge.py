@@ -9,6 +9,7 @@ def main():
     config = json.loads(sys.argv[1])
     source_path = config.get("source_path")
     target_path = config.get("target_path")
+    threshold = float(config["threshold"])
 
     # Use ECAPA-TDNN for speaker verification
     classifier = EncoderClassifier.from_hparams(
@@ -30,7 +31,7 @@ def main():
 
     report = {
         "similarity": similarity,
-        "status": "PASS" if similarity > 0.85 else "FAIL"
+        "status": "PASS" if similarity > threshold else "FAIL"
     }
 
     print(f"REPORT:{json.dumps(report, ensure_ascii=False)}")

@@ -14,11 +14,12 @@ const nsfwCount = db
 const sfwCount = db
 	.query("SELECT COUNT(*) as count FROM scripts_core WHERE is_nsfw = 0")
 	.get() as any;
+const scriptTotal = Number(totalCount?.count || 0);
 
 console.log(`\n[1. Basic Volumetrics]`);
-console.log(`- Total Unique Scripts Collected: ${totalCount?.count}`);
-console.log(`- SFW (Safe For Work) Scripts:    ${sfwCount?.count}`);
-console.log(`- NSFW Scripts:                  ${nsfwCount?.count}`);
+console.log(`- Total Unique Scripts Collected: ${scriptTotal}`);
+console.log(`- SFW (Safe For Work) Scripts:    ${sfwCount?.count || 0}`);
+console.log(`- NSFW Scripts:                  ${nsfwCount?.count || 0}`);
 
 // 2. プラットフォーム & ソース種別
 console.log(`\n[2. Source Platforms]`);
@@ -57,26 +58,35 @@ const stats = db
 		AVG(a.panning_cue_count) as avg_panning
 	FROM acoustic_features a
 	JOIN dialogue_features d ON a.script_id = d.script_id
-`)
+	`)
 	.get() as any;
 
+const fmtPct = (value: unknown) => {
+	const n = Number(value);
+	return Number.isFinite(n) ? `${(n * 100).toFixed(2)}%` : "0.00%";
+};
+const fmtNum = (value: unknown) => {
+	const n = Number(value);
+	return Number.isFinite(n) ? n.toFixed(2) : "0.00";
+};
+
 console.log(
-	`- Average ASMR trigger density (whisper/breath cues): ${(stats?.avg_asmr * 100).toFixed(2)}% (Max: ${(stats?.max_asmr * 100).toFixed(2)}%)`,
+	`- Average ASMR trigger density (whisper/breath cues): ${fmtPct(stats?.avg_asmr)} (Max: ${fmtPct(stats?.max_asmr)})`,
 );
 console.log(
-	`- Average Silence ratio (pauses & quiet breathing):  ${(stats?.avg_silence * 100).toFixed(2)}%`,
+	`- Average Silence ratio (pauses & quiet breathing):  ${fmtPct(stats?.avg_silence)}`,
 );
 console.log(
-	`- Average Reassurance Density (comfort phrase rate): ${(stats?.avg_reassurance * 100).toFixed(2)}% (Max: ${(stats?.max_reassurance * 100).toFixed(2)}%)`,
+	`- Average Reassurance Density (comfort phrase rate): ${fmtPct(stats?.avg_reassurance)} (Max: ${fmtPct(stats?.max_reassurance)})`,
 );
 console.log(
-	`- Average Listener direct name/pet name mentions:     ${Number(stats?.avg_name_mentions).toFixed(2)} times/script`,
+	`- Average Listener direct name/pet name mentions:     ${fmtNum(stats?.avg_name_mentions)} times/script`,
 );
 console.log(
-	`- Average Proximity shifts (ear whisper cues):         ${Number(stats?.avg_proximity).toFixed(2)} times/script`,
+	`- Average Proximity shifts (ear whisper cues):         ${fmtNum(stats?.avg_proximity)} times/script`,
 );
 console.log(
-	`- Average Panning shifts (stereo movement cues):       ${Number(stats?.avg_panning).toFixed(2)} times/script`,
+	`- Average Panning shifts (stereo movement cues):       ${fmtNum(stats?.avg_panning)} times/script`,
 );
 
 // 5. 最も人気のある evergreen 台本トップ 10

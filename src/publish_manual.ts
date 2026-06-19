@@ -3,8 +3,18 @@ import * as path from "node:path";
 import { Publisher } from "./runtime/publisher";
 
 async function main() {
-	const assetDir = path.resolve(process.cwd(), "assets/010_devoted_maid_lilia");
-	const uploadJsonPath = path.join(assetDir, "0017_session-kf42n_UPLOAD.json");
+	const assetArg = process.argv[2];
+	const uploadArg = process.argv[3];
+	const videoArg = process.argv[4];
+	const imageArg = process.argv[5];
+	if (!assetArg || !uploadArg || !videoArg || !imageArg) {
+		console.error(
+			"Usage: bun src/publish_manual.ts <asset_dir> <upload_json> <video> <image>",
+		);
+		process.exit(1);
+	}
+	const assetDir = path.resolve(process.cwd(), assetArg);
+	const uploadJsonPath = path.join(assetDir, uploadArg);
 
 	if (!fs.existsSync(uploadJsonPath)) {
 		throw new Error(`Upload manifest not found: ${uploadJsonPath}`);
@@ -13,8 +23,8 @@ async function main() {
 	const upload = JSON.parse(fs.readFileSync(uploadJsonPath, "utf-8"));
 	const publisher = new Publisher(assetDir);
 
-	const videoPath = path.join(assetDir, "0017_session-kf42n.mp4");
-	const imagePath = path.join(assetDir, "thumbnail-v2.png");
+	const videoPath = path.join(assetDir, videoArg);
+	const imagePath = path.join(assetDir, imageArg);
 
 	console.log(`[MANUAL PUBLISH] Starting upload for ${videoPath}`);
 

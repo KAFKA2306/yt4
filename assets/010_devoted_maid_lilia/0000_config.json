@@ -17,7 +17,8 @@
     "seed_base": 777,
     "temperature": 0.7,
     "num_steps": 50,
-    "seconds": 80.0,
+    "seconds": 80,
+    "duration_scale": 1,
     "no_ref": true,
     "max_retries": 3
   }

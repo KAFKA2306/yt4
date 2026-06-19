@@ -13,10 +13,23 @@ export class ProsodyValidator {
 		return new Promise((res) => {
 			const p = spawn("uv", ["run", bridge, config]);
 			let data = "";
+			let stdout = "";
 			p.stdout.on("data", (d) => {
-				if (d.toString().includes("REPORT:"))
-					data = d.toString().split("REPORT:")[1].split("DONE")[0].trim();
+				const s = d.toString();
+				stdout += s;
+				process.stdout.write(d);
+				const reportStart = stdout.indexOf("REPORT:");
+				const doneStart = stdout.indexOf(
+					"DONE",
+					reportStart >= 0 ? reportStart : 0,
+				);
+				if (reportStart >= 0 && doneStart >= 0) {
+					data = stdout.slice(reportStart + 7, doneStart).trim();
+				}
 			});
+			p.on("error", () =>
+				res({ f0_mean: 0, energy_mean: 0, silence_ratio: 1 }),
+			);
 			p.on("close", () => {
 				if (!data) return res({ f0_mean: 0, energy_mean: 0, silence_ratio: 1 });
 				const r = JSON.parse(data);

@@ -25,12 +25,14 @@ function parseGender(title: string): "M4A" | "F4M" | "All" | "Unknown" {
 	)
 		return "All";
 	if (upper.includes("F4M")) return "F4M";
-	if (upper.includes("M4F")) return "M4A";
+	// We do not have a dedicated female-listener bucket in the schema, so avoid
+	// misclassifying M4F as a male-targeted script.
+	if (upper.includes("M4F")) return "Unknown";
 	return "Unknown";
 }
 
 function parseRelationship(title: string, text: string): string {
-	const lower = (title + " " + text).toLowerCase();
+	const lower = `${title} ${text}`.toLowerCase();
 	if (lower.includes("vampire")) return "Vampire/Ally";
 	if (lower.includes("childhood friend") || lower.includes("childhood"))
 		return "Childhood Friend";

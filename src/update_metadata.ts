@@ -3,8 +3,16 @@ import * as path from "node:path";
 import { Publisher } from "./runtime/publisher";
 
 async function main() {
-	const assetDir = path.resolve(process.cwd(), "assets/010_devoted_maid_lilia");
-	const uploadJsonPath = path.join(assetDir, "0017_session-kf42n_UPLOAD.json");
+	const assetArg = process.argv[2];
+	const uploadArg = process.argv[3];
+	if (!assetArg || !uploadArg) {
+		console.error(
+			"Usage: bun src/update_metadata.ts <asset_dir> <upload_json>",
+		);
+		process.exit(1);
+	}
+	const assetDir = path.resolve(process.cwd(), assetArg);
+	const uploadJsonPath = path.join(assetDir, uploadArg);
 
 	if (!fs.existsSync(uploadJsonPath)) {
 		throw new Error(`Upload manifest not found: ${uploadJsonPath}`);

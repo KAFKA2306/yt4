@@ -1,9 +1,12 @@
-import { resolve, join } from "node:path";
 import { existsSync, readFileSync } from "node:fs";
+import { join, resolve } from "node:path";
 import { Orchestrator } from "./src/runtime/orchestrator";
 
 async function main() {
-	const assetDirName = process.argv[2] || "008_yandere_maid_management";
+	const assetDirName = process.argv[2];
+	if (!assetDirName) {
+		throw new Error("Usage: bun index.ts <asset_dir_name>");
+	}
 	const assetDir = resolve(process.cwd(), "assets", assetDirName);
 	const configPath = join(assetDir, "0000_config.json");
 

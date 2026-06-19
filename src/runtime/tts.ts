@@ -28,10 +28,30 @@ export async function synthesizeVoice(o: {
 	});
 	return new Promise((res, rej) => {
 		const p = spawn("uv", ["run", bridge, config]);
+		let stdout = "";
+		let donePath = "";
+
 		p.stdout.on("data", (d) => {
-			if (d.toString().includes("DONE:"))
-				res(d.toString().split("DONE:")[1].trim());
+			stdout += d.toString();
+			const marker = stdout.indexOf("DONE:");
+			if (marker >= 0) {
+				donePath = stdout
+					.slice(marker + 5)
+					.trim()
+					.split(/\r?\n/, 1)[0];
+			}
 		});
-		p.on("close", (c) => (c === 0 ? null : rej(new Error(`TTS: ${c}`))));
+		p.stderr.on("data", (d) => {
+			process.stderr.write(d);
+		});
+		p.on("error", (err) => rej(err));
+		p.on("close", (c) => {
+			if (c === 0 && donePath) return res(donePath);
+			return rej(
+				new Error(
+					`TTS bridge failed (code ${c}); stdout=${stdout.slice(0, 500)}`,
+				),
+			);
+		});
 	});
 }

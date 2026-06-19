@@ -58,15 +58,15 @@ async function main() {
 	for (const f of files) {
 		const match = f.match(/_p(\d+)_/);
 		if (match) {
-			const idx = parseInt(match[1]);
+			const idx = Number.parseInt(match[1], 10);
 			const vMatch = f.match(/_v(\d+)/);
-			const version = vMatch ? parseInt(vMatch[1]) : 0;
+			const version = vMatch ? Number.parseInt(vMatch[1], 10) : 0;
 			if (!chunkFiles.has(idx)) {
 				chunkFiles.set(idx, f);
 			} else {
-				const existing = chunkFiles.get(idx)!;
-				const eV = existing.match(/_v(\d+)/)
-					? parseInt(existing.match(/_v(\d+)/)![1])
+				const existing = chunkFiles.get(idx);
+				const eV = existing?.match(/_v(\d+)/)
+					? Number.parseInt(existing.match(/_v(\d+)/)?.[1] ?? "0", 10)
 					: 0;
 				if (version > eV) chunkFiles.set(idx, f);
 			}

@@ -13,7 +13,7 @@ export interface CoherenceResult {
 export async function verifyCoherence(): Promise<CoherenceResult> {
 	const findings: CoherenceResult["findings"] = [];
 	const glob = new Bun.Glob("src/**/*.ts");
-	const tryCatchPattern = /try\s*\{/g;
+	const tryCatchPattern = /try\s*\{/;
 
 	const configPath = "codd.yaml";
 	let config: any = {};
@@ -38,14 +38,11 @@ export async function verifyCoherence(): Promise<CoherenceResult> {
 			}
 		}
 
-		if (
-			content.includes(["TO", "DO"].join("")) ||
-			content.includes(["FIX", "ME"].join(""))
-		) {
+		if (content.includes("TODO") || content.includes("FIXME")) {
 			findings.push({
 				node: "Zero-Fat",
 				file,
-				message: `Unresolved ${["TO", "DO"].join("")}/${["FIX", "ME"].join("")} detected. Codebase must be zero-fat.`,
+				message: "Unresolved TODO/FIXME detected. Codebase must be zero-fat.",
 				severity: "LOW",
 			});
 		}

@@ -1,7 +1,6 @@
 import * as fs from "node:fs";
-import * as path from "node:path";
 import { google } from "googleapis";
-import type { ProductionState, YouTubeVisibility } from "./types";
+import type { YouTubeVisibility } from "./types";
 
 export interface PublishReceipt {
 	status: "uploaded";
@@ -14,9 +13,11 @@ export interface PublishReceipt {
 }
 
 export class Publisher {
-	private youtube = google.youtube("v3");
-
-	constructor(private assetDir: string) {}
+	constructor(assetDir: string) {
+		if (!fs.existsSync(assetDir)) {
+			throw new Error(`Asset directory not found: ${assetDir}`);
+		}
+	}
 
 	async publish(params: {
 		videoPath: string;

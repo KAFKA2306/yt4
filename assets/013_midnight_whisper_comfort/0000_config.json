@@ -14,9 +14,14 @@
   "runtime": {
     "chunk_length": 750,
     "seed_base": 2306,
+    "temperature": 0.7,
+    "num_steps": 32,
+    "seconds": null,
+    "duration_scale": 1,
+    "no_ref": true,
+    "max_retries": 3,
     "pause_min": 5,
     "pause_max": 10,
-    "max_retries": 3,
     "asr_threshold": 0.55
   }
 }

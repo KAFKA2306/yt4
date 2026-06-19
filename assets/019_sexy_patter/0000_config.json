@@ -11,5 +11,15 @@
     }
   },
   "script_path": "0001_situation.json",
-  "image_path": "../001amaamaoneesan/0001_thumbnail.png"
+  "image_path": "../001amaamaoneesan/0001_thumbnail.png",
+  "runtime": {
+    "chunk_length": 200,
+    "seed_base": 2306,
+    "temperature": 0.7,
+    "num_steps": 32,
+    "seconds": null,
+    "duration_scale": 1,
+    "no_ref": true,
+    "max_retries": 3
+  }
 }

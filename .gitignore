@@ -5,6 +5,7 @@ transcripts/
 *.mp4
 *.wav
 ps.txt
+assets/011_repair_test/
 
 # Dependencies
 node_modules/

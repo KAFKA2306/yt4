@@ -1,5 +1,5 @@
-import { existsSync, readdirSync, readFileSync } from "fs";
-import { join } from "path";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import {
 	type ASMRScriptAudit,
 	ASMRScriptAuditSchema,
@@ -17,12 +17,22 @@ const directories = readdirSync(assetsDir, { withFileTypes: true })
 
 let importCount = 0;
 
+function inferRelationshipType(dir: string): string {
+	if (dir.includes("neighbor")) return "GrumpyNeighbor";
+	if (dir.includes("colleague")) return "SternColleague";
+	if (dir.includes("older_sister")) return "CaringOlderSister";
+	if (dir.includes("possessive_friend")) return "PossessiveFriend";
+	if (dir.includes("childhood_friend")) return "ChildhoodFriend";
+	if (dir.includes("maid")) return "DevotedMaid";
+	if (dir.includes("miko")) return "EnergeticMiko";
+	if (dir.includes("morning")) return "MorningComfort";
+	return "ComfortingFriend";
+}
+
 for (const dir of directories) {
 	const dirPath = join(assetsDir, dir);
 	const files = readdirSync(dirPath);
-	const contractFiles = files.filter(
-		(f) => f.endsWith("_CONTRACT.json") && !f.includes("ca68ba"),
-	);
+	const contractFiles = files.filter((f) => f.endsWith("_CONTRACT.json"));
 
 	for (const contractFile of contractFiles) {
 		const contractPath = join(dirPath, contractFile);
@@ -45,16 +55,27 @@ for (const dir of directories) {
 			const videoId = contract.verification.remote_proof.videoId;
 			console.log(`✅ YouTube投稿済みであることを確認 (VideoID: ${videoId})`);
 
-			// situation.jsonを読み込み、interaction_primitives データを構築する
-			const situationPath = join(dirPath, "0001_situation.json");
-			if (!existsSync(situationPath)) {
+			// contract.inputs に記録された台本ファイルを優先し、なければ一般的な命名を試す
+			const scriptCandidates = [
+				...Object.keys(contract.inputs || {}).filter((file) =>
+					file.endsWith(".json"),
+				),
+				"generated_script.json",
+				"0001_situation.json",
+			].filter((file, idx, arr) => arr.indexOf(file) === idx);
+			const scriptFile = scriptCandidates.find((file) =>
+				existsSync(join(dirPath, file)),
+			);
+			if (!scriptFile) {
 				console.log(
-					`⚠️ situation.json が存在しないためインポートをスキップします`,
+					`⚠️ 台本ファイルが見つからないためインポートをスキップします`,
 				);
 				continue;
 			}
 
-			const situation = JSON.parse(readFileSync(situationPath, "utf-8"));
+			const situation = JSON.parse(
+				readFileSync(join(dirPath, scriptFile), "utf-8"),
+			);
 
 			// 1. Core メタデータ
 			const scriptId = contract.identity.id || `published-${videoId}`;
@@ -102,7 +123,7 @@ for (const dir of directories) {
 					sequence_index: idx,
 					archetype,
 					raw_text: text.replace(/（[^）]+）/g, "").trim(), // カッコ書きの指示（SE等）を取り除き、クリーンなセリフテキストにする
-					silence_duration: segment.pause || 5.0,
+					silence_duration: segment.pause ?? 5.0,
 				};
 			});
 
@@ -134,9 +155,7 @@ for (const dir of directories) {
 					platform: "YouTube",
 					is_nsfw: false,
 					listener_gender: "M4A",
-					relationship_type: dir.includes("neighbor")
-						? "GrumpyNeighbor"
-						: "ChildhoodFriend",
+					relationship_type: inferRelationshipType(dir),
 					speaking_roles: 1,
 					narration_ratio: 0.0,
 					completion_rate: 1.0,

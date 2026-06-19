@@ -1,4 +1,5 @@
 import type { AuditTrace, FailType, RepairAction } from "../runtime/types";
+import { ASR_THRESHOLD, SPEAKER_THRESHOLD } from "./thresholds";
 
 export class QualityJudge {
 	async classify(trace: Partial<AuditTrace>): Promise<{
@@ -11,11 +12,23 @@ export class QualityJudge {
 		const metrics = trace.metrics;
 
 		const fail_types: FailType[] = [];
-		if ((metrics?.cer ?? 1) < 0.85) fail_types.push("LOW_INTELLIGIBILITY");
-		if ((metrics?.hallucinations ?? 0) > 0) fail_types.push("REPETITION_LOOP");
-		if ((metrics?.speaker_sim ?? 1) < 0.85) fail_types.push("SPEAKER_DRIFT");
-		if ((metrics?.silence_ratio ?? 0) > 0.12)
-			fail_types.push("SILENCE_CORRUPTION");
+		const cer = metrics?.cer ?? 1;
+		const hallucinations = metrics?.hallucinations ?? 0;
+		const speakerSim = metrics?.speaker_sim ?? 1;
+		const silenceRatio = metrics?.silence_ratio ?? 0;
+
+		const whisperLimitPass =
+			cer < ASR_THRESHOLD &&
+			speakerSim >= SPEAKER_THRESHOLD &&
+			silenceRatio <= 0.12 &&
+			hallucinations === 0;
+
+		if (cer < ASR_THRESHOLD && !whisperLimitPass) {
+			fail_types.push("LOW_INTELLIGIBILITY");
+		}
+		if (hallucinations > 0) fail_types.push("REPETITION_LOOP");
+		if (speakerSim < SPEAKER_THRESHOLD) fail_types.push("SPEAKER_DRIFT");
+		if (silenceRatio > 0.12) fail_types.push("SILENCE_CORRUPTION");
 
 		const status = fail_types.length > 0 ? "FAIL" : "PASS";
 

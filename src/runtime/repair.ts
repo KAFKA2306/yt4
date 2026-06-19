@@ -27,6 +27,28 @@ export class RepairEngine {
 		switch (reason) {
 			case "ACOUSTIC_DAMAGE":
 				overrides.temperature = Math.max(0.1, 0.5 - attempt * 0.1);
+				overrides.softness_delta = -0.1 * attempt;
+				return {
+					modifiedChunks: chunk.length > 1 ? this.split(chunk) : [chunk],
+					overrides,
+				};
+
+			case "lower_temperature":
+				overrides.temperature = Math.max(0.1, 0.5 - attempt * 0.1);
+				return {
+					modifiedChunks: chunk.length > 1 ? this.split(chunk) : [chunk],
+					overrides,
+				};
+
+			case "refresh_reference":
+				overrides.temperature = Math.max(0.1, 0.45 - attempt * 0.05);
+				overrides.softness_delta = -0.05 * attempt;
+				return {
+					modifiedChunks: chunk.length > 1 ? this.split(chunk) : [chunk],
+					overrides,
+				};
+
+			case "split_chunk":
 				return {
 					modifiedChunks: chunk.length > 1 ? this.split(chunk) : [chunk],
 					overrides,

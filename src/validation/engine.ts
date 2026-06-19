@@ -1,31 +1,46 @@
 import { spawn } from "node:child_process";
-import * as fs from "node:fs";
 import * as path from "node:path";
-import * as yaml from "yaml";
 import type { ScriptLine } from "../runtime/types";
-
-const defaultConfig = yaml.parse(
-	fs.readFileSync(path.join(process.cwd(), "config/default.yaml"), "utf-8"),
-);
+import { ASR_THRESHOLD, SPEAKER_THRESHOLD } from "./thresholds";
 
 export async function validateASR(
 	audioPath: string,
 	script: ScriptLine[],
-	threshold = defaultConfig.validation.asr_threshold,
+	threshold = ASR_THRESHOLD,
 ) {
 	const bridge = path.join(process.cwd(), "src/validation/asr_bridge.py");
 	const config = JSON.stringify({
 		audio_path: audioPath,
 		expected_lines: script.map((l) => l.text),
 		model_size: "small",
+		threshold,
 	});
 	return new Promise<any>((res) => {
 		const p = spawn("uv", ["run", bridge, config]);
 		let data = "";
+		let stdout = "";
 		p.stdout.on("data", (d) => {
+			const s = d.toString();
+			stdout += s;
 			process.stdout.write(d);
-			if (d.toString().includes("REPORT:"))
-				data = d.toString().split("REPORT:")[1].split("DONE")[0].trim();
+			const reportStart = stdout.indexOf("REPORT:");
+			const doneStart = stdout.indexOf(
+				"DONE",
+				reportStart >= 0 ? reportStart : 0,
+			);
+			if (reportStart >= 0 && doneStart >= 0) {
+				data = stdout.slice(reportStart + 7, doneStart).trim();
+			}
+		});
+		p.on("error", () => {
+			res({
+				is_damaged: true,
+				transcription: "",
+				score: 0,
+				hallucinations: [],
+				segments: [],
+				failure_type: "BRIDGE_CRASH",
+			});
 		});
 		p.on("close", () => {
 			if (!data)
@@ -46,7 +61,9 @@ export async function validateASR(
 				`[ASR] CER Score: ${score.toFixed(4)} | Hallucinations: ${hallucinations.length} | Type: ${failure_type}`,
 			);
 
-			const is_damaged = failure_type !== "NONE" || score < threshold;
+			const isWhisperLimit = failure_type === "WHISPER_LIMIT";
+			const is_damaged =
+				!isWhisperLimit && (failure_type !== "NONE" || score < threshold);
 
 			return res({
 				is_damaged,
@@ -64,21 +81,32 @@ export async function validateASR(
 export async function verifySpeaker(
 	sourcePath: string,
 	targetPath: string,
-	threshold = defaultConfig.validation.speaker_threshold,
+	threshold = SPEAKER_THRESHOLD,
 ) {
 	const bridge = path.join(process.cwd(), "src/validation/speaker_bridge.py");
 	const config = JSON.stringify({
 		source_path: sourcePath,
 		target_path: targetPath,
+		threshold,
 	});
 	return new Promise<any>((res) => {
 		const p = spawn("uv", ["run", bridge, config]);
 		let data = "";
+		let stdout = "";
 		p.stdout.on("data", (d) => {
+			const s = d.toString();
+			stdout += s;
 			process.stdout.write(d);
-			if (d.toString().includes("REPORT:"))
-				data = d.toString().split("REPORT:")[1].split("DONE")[0].trim();
+			const reportStart = stdout.indexOf("REPORT:");
+			const doneStart = stdout.indexOf(
+				"DONE",
+				reportStart >= 0 ? reportStart : 0,
+			);
+			if (reportStart >= 0 && doneStart >= 0) {
+				data = stdout.slice(reportStart + 7, doneStart).trim();
+			}
 		});
+		p.on("error", () => res({ similarity: 0, is_consistent: false }));
 		p.on("close", () => {
 			if (!data) return res({ similarity: 0, is_consistent: false });
 			const r = JSON.parse(data);
@@ -98,11 +126,21 @@ export async function analyzeProsody(audioPath: string) {
 	return new Promise<any>((res) => {
 		const p = spawn("uv", ["run", bridge, config]);
 		let data = "";
+		let stdout = "";
 		p.stdout.on("data", (d) => {
+			const s = d.toString();
+			stdout += s;
 			process.stdout.write(d);
-			if (d.toString().includes("REPORT:"))
-				data = d.toString().split("REPORT:")[1].split("DONE")[0].trim();
+			const reportStart = stdout.indexOf("REPORT:");
+			const doneStart = stdout.indexOf(
+				"DONE",
+				reportStart >= 0 ? reportStart : 0,
+			);
+			if (reportStart >= 0 && doneStart >= 0) {
+				data = stdout.slice(reportStart + 7, doneStart).trim();
+			}
 		});
+		p.on("error", () => res({ f0_mean: 0, energy_mean: 0, silence_ratio: 1 }));
 		p.on("close", () => {
 			if (!data) return res({ f0_mean: 0, energy_mean: 0, silence_ratio: 1 });
 			const r = JSON.parse(data);

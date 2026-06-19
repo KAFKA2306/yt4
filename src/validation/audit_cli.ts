@@ -45,7 +45,10 @@ async function main() {
 
 		if (isLive && claim.verification.remote_proof && status === "PASS") {
 			try {
-				const actualVisibility = await publisher!.getVideoVisibility(
+				if (!publisher) {
+					throw new Error("Live audit requested without a YouTube publisher.");
+				}
+				const actualVisibility = await publisher.getVideoVisibility(
 					claim.verification.remote_proof.videoId,
 				);
 				if (actualVisibility !== "public") {
