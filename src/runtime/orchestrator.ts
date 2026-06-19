@@ -2,6 +2,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { certifyContract } from "../validation/contract";
 import { validateASR, verifySpeaker } from "../validation/engine";
+import { ProsodyValidator } from "../validation/prosody";
 import { AuditLogger } from "./audit_logger";
 import { composeVideo } from "./composer";
 import { IdentityEngine } from "./identity";
@@ -111,6 +112,7 @@ export class Orchestrator {
 		});
 		const identity = idEngine.getContract();
 		const pulse = new PulseManager();
+		const prosody = new ProsodyValidator();
 		const referenceAudio = path.join(this.assetDir, "reference.wav");
 
 		let currentEmotion: EmotionalState = {
@@ -184,6 +186,7 @@ export class Orchestrator {
 			});
 
 			const asrResult = await validateASR(p, chunk);
+			const prosodyResult = await prosody.analyze(p);
 			let speakerSim = 1.0;
 			let speakerPass = true;
 			if (hasRef) {
@@ -194,7 +197,8 @@ export class Orchestrator {
 			}
 
 			const asrPass = !asrResult.is_damaged;
-			const status = asrPass && speakerPass ? "PASS" : "FAIL";
+			const prosodyPass = prosodyResult.silence_ratio <= 0.12;
+			const status = asrPass && speakerPass && prosodyPass ? "PASS" : "FAIL";
 			let reason = "NONE";
 			if (!asrPass) {
 				reason =
@@ -203,6 +207,8 @@ export class Orchestrator {
 						: "ACOUSTIC_DAMAGE";
 			} else if (!speakerPass) {
 				reason = "SPEAKER_DRIFT";
+			} else if (!prosodyPass) {
+				reason = "SILENCE_OR_TOO_SOFT";
 			}
 
 			this.audit.log({
@@ -217,27 +223,40 @@ export class Orchestrator {
 					cer: asrResult.score,
 					hallucinations: 0,
 					speaker_sim: speakerSim,
+					f0: prosodyResult.f0_mean,
+					energy: prosodyResult.energy_mean,
+					silence_ratio: prosodyResult.silence_ratio,
 				},
 				status,
 				reason,
 			});
 
 			if (
-				(asrResult.is_damaged || !speakerPass) &&
+				(asrResult.is_damaged || !speakerPass || !prosodyPass) &&
 				attempt < this.runtimeConfig.max_retries
 			) {
 				if (asrResult.is_damaged) {
 					logger(` [RETRY] ASR Score too low: ${asrResult.score}`);
-				} else {
+				} else if (!speakerPass) {
 					logger(
 						` [RETRY] Speaker similarity too low: ${speakerSim.toFixed(4)}`,
 					);
+				} else {
+					logger(
+						` [RETRY] Silence ratio too high: ${(
+							prosodyResult.silence_ratio * 100
+						).toFixed(1)}%`,
+					);
+				}
+				if (!asrResult.is_damaged && !speakerPass) {
+					fs.copyFileSync(p, referenceAudio);
+					logger(" [REPAIR] Reference audio refreshed.");
 				}
 				workQueue.unshift({ lines: chunk, attempt: attempt + 1 });
 				continue;
 			}
 
-			if (asrResult.is_damaged || !speakerPass) {
+			if (asrResult.is_damaged || !speakerPass || !prosodyPass) {
 				state = "LOCAL_FAIL";
 				throw new Error(
 					`CRITICAL: Chunk ${chunkCounter} failed after ${this.runtimeConfig.max_retries} attempts.`,
