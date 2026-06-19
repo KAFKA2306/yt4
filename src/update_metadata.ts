@@ -57,11 +57,22 @@ Scenario: Resonant Archive
 		},
 	});
 
+	const liveVisibility = await publisher.getVideoVisibility(videoId);
+	if (liveVisibility !== "public") {
+		throw new Error(
+			`YouTube visibility mismatch: expected public, got ${liveVisibility}`,
+		);
+	}
+
 	// Update local UPLOAD.json
 	upload.metadata.title = newTitle;
 	upload.metadata.description = newDescription;
+	upload.metadata.visibility = liveVisibility.toUpperCase();
+	upload.remote_proof = `https://www.youtube.com/watch?v=${videoId}`;
 	fs.writeFileSync(uploadJsonPath, JSON.stringify(upload, null, 2));
-	console.log("[SUCCESS] Metadata updated locally and on YouTube.");
+	console.log(
+		`[SUCCESS] Metadata updated locally and on YouTube (${liveVisibility}).`,
+	);
 }
 
 main().catch((err) => {

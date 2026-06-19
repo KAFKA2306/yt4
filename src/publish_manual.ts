@@ -39,12 +39,21 @@ async function main() {
 		},
 	});
 
-	console.log(`[SUCCESS] Video ID: ${receipt.video_id}`);
+	const liveVisibility = await publisher.getVideoVisibility(receipt.video_id);
+	if (liveVisibility !== "public") {
+		throw new Error(
+			`YouTube visibility mismatch: expected public, got ${liveVisibility}`,
+		);
+	}
+
+	console.log(`[SUCCESS] Video ID: ${receipt.video_id} (${liveVisibility})`);
 
 	// Update UPLOAD.json with video_id
 	upload.status = "PUBLISHED";
 	upload.video_id = receipt.video_id;
 	upload.published_at = receipt.published_at;
+	upload.remote_proof = `https://www.youtube.com/watch?v=${receipt.video_id}`;
+	upload.metadata.visibility = liveVisibility.toUpperCase();
 	fs.writeFileSync(uploadJsonPath, JSON.stringify(upload, null, 2));
 }
 
