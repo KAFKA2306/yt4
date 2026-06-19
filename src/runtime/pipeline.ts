@@ -130,6 +130,10 @@ export class OfflinePipeline {
 				} else {
 					console.log(`  [CHUNK ${i}] FAIL: ${judgment.fail_types.join(", ")}`);
 					if (judgment.repair_candidate) {
+						if (judgment.repair_candidate === "refresh_reference") {
+							fs.copyFileSync(p, referenceAudio);
+							console.log("  [REPAIR] Reference audio refreshed.");
+						}
 						const repairResult = this.repair.apply(
 							currentChunk,
 							judgment.repair_candidate,
