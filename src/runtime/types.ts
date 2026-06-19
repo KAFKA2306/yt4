@@ -40,10 +40,12 @@ export type FailType =
 
 export type RepairAction =
 	| "regenerate_chunk"
+	| "ACOUSTIC_DAMAGE"
 	| "split_chunk"
 	| "shorten_context"
 	| "refresh_reference"
 	| "lower_temperature"
+	| "SILENCE_OR_TOO_SOFT"
 	| "rerun_alignment";
 
 export type AuditStatus =

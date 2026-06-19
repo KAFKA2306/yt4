@@ -34,7 +34,9 @@ export class QualityJudge {
 
 		let repair: RepairAction | undefined;
 		if (fail_types.includes("SPEAKER_DRIFT")) repair = "refresh_reference";
-		else if (fail_types.includes("REPETITION_LOOP")) repair = "split_chunk";
+		else if (fail_types.includes("SILENCE_CORRUPTION"))
+			repair = "SILENCE_OR_TOO_SOFT";
+		else if (fail_types.includes("REPETITION_LOOP")) repair = "ACOUSTIC_DAMAGE";
 		else if (fail_types.includes("LOW_INTELLIGIBILITY"))
 			repair = "lower_temperature";
 
