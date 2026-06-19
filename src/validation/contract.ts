@@ -51,6 +51,7 @@ export function certifyContract(params: {
 	inputPaths: string[];
 	outputPaths: string[];
 	asrScore: number;
+	asrPassed?: boolean;
 	speakerScore?: number;
 	logs: string[];
 	traces?: Record<string, any>;
@@ -69,7 +70,8 @@ export function certifyContract(params: {
 
 	let status: AuditStatus = "UNVERIFIED";
 	if (
-		params.asrScore < ASR_THRESHOLD ||
+		params.asrPassed === false ||
+		(params.asrPassed !== true && params.asrScore < ASR_THRESHOLD) ||
 		(params.speakerScore !== undefined &&
 			params.speakerScore < SPEAKER_THRESHOLD)
 	) {

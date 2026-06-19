@@ -2,7 +2,6 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { certifyContract } from "../validation/contract";
 import { validateASR, verifySpeaker } from "../validation/engine";
-import { ASR_THRESHOLD } from "../validation/thresholds";
 import { AuditLogger } from "./audit_logger";
 import { composeVideo } from "./composer";
 import { IdentityEngine } from "./identity";
@@ -268,16 +267,10 @@ export class Orchestrator {
 			chunkCounter++;
 		}
 
-		state = "GENERATED";
-		const minAsrScore =
+		const asrValidated = acceptedScores.length > 0;
+		state = asrValidated ? "AUDIO_VALIDATED" : "LOCAL_FAIL";
+		const effectiveAsrScore =
 			acceptedScores.length > 0 ? Math.min(...acceptedScores) : 0;
-		if (acceptedScores.length > 0 && minAsrScore >= ASR_THRESHOLD) {
-			state = "AUDIO_VALIDATED";
-		} else {
-			state = "LOCAL_FAIL";
-		}
-
-		const effectiveAsrScore = minAsrScore;
 		const transcriptPath = path.join(this.assetDir, `${prefix}.json`);
 		fs.writeFileSync(
 			transcriptPath,
@@ -339,10 +332,7 @@ export class Orchestrator {
 		if (state === "VIDEO_RENDERED") {
 			state = "REMOTE_UNVERIFIED";
 
-			if (
-				process.env.YOUTUBE_PUBLISH_AUTO === "true" &&
-				effectiveAsrScore >= ASR_THRESHOLD
-			) {
+			if (process.env.YOUTUBE_PUBLISH_AUTO === "true") {
 				logger("[PUBLISH] Triggering automatic YouTube publication...");
 				state = "UPLOAD_ATTEMPTED";
 				const finalVideo = path.join(this.assetDir, `${prefix}.mp4`);
@@ -382,6 +372,7 @@ export class Orchestrator {
 			inputPaths: [fullScriptPath, fullImagePath],
 			outputPaths,
 			asrScore: effectiveAsrScore,
+			asrPassed: asrValidated,
 			speakerScore:
 				speakerScores.length > 0 ? Math.min(...speakerScores) : undefined,
 			logs: runtimeLogs,
