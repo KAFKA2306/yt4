@@ -7,7 +7,12 @@ import { SpeakerValidator } from "../validation/speaker";
 import { AuditLogger } from "./audit_logger";
 import { RepairEngine } from "./repair";
 import { synthesizeVoice } from "./tts";
-import type { AuditTrace, ProductionConfig, ScriptLine } from "./types";
+import type {
+	AuditTrace,
+	EmotionalState,
+	ProductionConfig,
+	ScriptLine,
+} from "./types";
 import { chunkLines, generateCaption } from "./utils";
 
 export class OfflinePipeline {
@@ -28,6 +33,12 @@ export class OfflinePipeline {
 		);
 		const chunks = chunkLines(script, config.runtime.chunk_length);
 		const referenceAudio = path.join(this.assetDir, "reference.wav");
+		let currentEmotion: EmotionalState = chunks[0]?.[0]?.emotion ?? {
+			valence: 0,
+			arousal: 0,
+			softness: 0.8,
+			atmosphere: "late-night-calm",
+		};
 
 		console.log(`[PIPELINE] Starting Batch Generation: ${config.identity.id}`);
 
@@ -44,7 +55,7 @@ export class OfflinePipeline {
 				);
 				const seed =
 					config.runtime.seed_base + i + (currentOverrides.seed_offset || 0);
-				const baseEmotion = currentChunk[0].emotion as any;
+				const baseEmotion = currentChunk[0].emotion ?? currentEmotion;
 				const effectiveEmotion = baseEmotion
 					? {
 							...baseEmotion,
@@ -134,6 +145,8 @@ export class OfflinePipeline {
 					attempt++;
 				}
 			}
+
+			currentEmotion = currentChunk[0]?.emotion ?? currentEmotion;
 
 			if (!passed) {
 				throw new Error(
