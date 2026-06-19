@@ -237,6 +237,13 @@ export class Orchestrator {
 				continue;
 			}
 
+			if (asrResult.is_damaged || !speakerPass) {
+				state = "LOCAL_FAIL";
+				throw new Error(
+					`CRITICAL: Chunk ${chunkCounter} failed after ${this.runtimeConfig.max_retries} attempts.`,
+				);
+			}
+
 			audioParts.push(p);
 			verifiedLines.push(...chunk);
 
