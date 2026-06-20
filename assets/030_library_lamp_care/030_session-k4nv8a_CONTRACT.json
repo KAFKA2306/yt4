@@ -1,0 +1,64 @@
+{
+  "version": "2.0.0",
+  "timestamp": "2026-06-20T04:58:49.340Z",
+  "sessionId": "session-k4nv8a",
+  "identity": {
+    "id": "library-lamp-01",
+    "name": "紗夜",
+    "voice_id": "知的で穏やか、閉館前の図書室の空気に溶けるような女性の声。ページをめくる音と相性がよく、少しだけ笑うと安心感が深まる。静かな励ましが得意な、やわらかい澄んだトーン。"
+  },
+  "inputs": {
+    "0001_situation.json": "1c71f8d9dfe033e9453a4aa33da48259d81981ffad3998845ce825c55971cc62",
+    "thumbnail.png": "2e7e26b353e4ebebc667d116a39604f2db9a1b12646e1af99d4c71eb9f4f2774"
+  },
+  "outputs": {
+    "030_session-k4nv8a.wav": "882908d21c06b0f60cf51081b07bdb875e70a34c6b38d1aa9d023d8cae6c83e6",
+    "030_session-k4nv8a.json": "bc70052ce049fb228485095eb3727332e7591cfff6178621a43932d8059be90e",
+    "030_session-k4nv8a.mp4": "57130e3be45837ba141b4228150b55ec8bcb71dced3a6233157f4e090bc3070a"
+  },
+  "verification": {
+    "asr_score": 0.9383886255924171,
+    "status": "PASS",
+    "production_state": "REMOTE_UNVERIFIED",
+    "evidence": {
+      "machine_logs": [
+        "[2026-06-20T04:54:02.885Z] [RESONANCE] Starting session session-k4nv8a",
+        "[2026-06-20T04:54:02.891Z] [TTS] Chunk 0 | Attempt 0",
+        "[2026-06-20T04:54:45.475Z] [TTS] Chunk 1 | Attempt 0",
+        "[2026-06-20T04:55:28.550Z] [TTS] Chunk 2 | Attempt 0",
+        "[2026-06-20T04:56:10.903Z] [TTS] Chunk 3 | Attempt 0",
+        "[2026-06-20T04:56:53.606Z]  [REPAIR] Reference audio refreshed.",
+        "[2026-06-20T04:56:53.608Z] [TTS] Chunk 4 | Attempt 1",
+        "[2026-06-20T04:57:35.704Z] [TTS] Chunk 5 | Attempt 1"
+      ],
+      "runtime_traces": {
+        "emotion_avg": {
+          "valence": 0.27,
+          "arousal": 0,
+          "softness": 1,
+          "atmosphere": "閉館前の図書室。机のランプが一つだけ灯る閲覧席で、勉強に疲れた気持ちをほぐしながら、静かに前向きさを取り戻していく場所"
+        },
+        "chunk_count": 4,
+        "total_scores": [
+          0.9833333333333333,
+          0.9560975609756097,
+          0.9383886255924171,
+          0.941747572815534,
+          0.9734513274336283
+        ],
+        "speaker_scores": [
+          0.8512691855430603,
+          0.8962838649749756,
+          0.8942023515701294,
+          0.8462017774581909,
+          0.871361494064331
+        ]
+      }
+    }
+  },
+  "environment": {
+    "node_version": "v24.3.0",
+    "platform": "linux",
+    "cwd": "/home/kafka/projects/yt4"
+  }
+}

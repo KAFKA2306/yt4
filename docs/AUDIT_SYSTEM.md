@@ -30,7 +30,7 @@
 - **検証項目**:
   - **ASR Verification**: Whisper による書き起こしとスクリプトの CER (Character Error Rate) が閾値（0.85）を超えているか。
   - **Speaker Consistency**: 参照音声（reference.wav）と生成音声の声紋一致度。
-  - **Prosody Analysis**: F0（基本周波数）やエネルギー分布、無音区間の割合が許容範囲内か。
+  - **Prosody Analysis**: F0（基本周波数）やエネルギー分布、無音区間の割合が設定された閾値内か。
   - **LLM Judge**: `judge.ts` が上記メトリクスを総合判断し、再生成（Repair）が必要な失敗（SPEAKER_DRIFT, REPETITION_LOOP 等）を特定する。
 
 ### D. リモート証跡監査 (Remote Proof Audit)

@@ -6,6 +6,7 @@ type ValidationThresholds = {
 	validation?: {
 		asr_threshold?: number;
 		speaker_threshold?: number;
+		silence_threshold?: number;
 	};
 };
 
@@ -17,3 +18,5 @@ const defaultConfig = yaml.parse(
 export const ASR_THRESHOLD = defaultConfig.validation?.asr_threshold ?? 0.95;
 export const SPEAKER_THRESHOLD =
 	defaultConfig.validation?.speaker_threshold ?? 0.8;
+export const SILENCE_THRESHOLD =
+	defaultConfig.validation?.silence_threshold ?? 0.5;

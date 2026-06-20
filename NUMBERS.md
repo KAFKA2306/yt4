@@ -37,3 +37,6 @@
 | 2026-05-20 | 020 | session-zx7ih7 | 57 | 12 | 0.87 | 0 | REMOTE_UNVERIFIED |
 | 2026-05-21 | 022 | session-0ek61d | 20 | 7 | 0.89 | 0 | REMOTE_UNVERIFIED |
 | 2026-05-21 | 022 | session-21x19ri | 20 | 7 | 0.89 | 0 | UPLOAD_CONFIRMED |
+| 2026-06-20 | 029 | session-urv05i | 10 | 5 | 0.86 | 0 | REMOTE_UNVERIFIED |
+| 2026-06-20 | 030 | session-k4nv8a | 10 | 4 | 0.94 | 0 | REMOTE_UNVERIFIED |
+| 2026-06-20 | 031 | session-nwelfl | 10 | 4 | 0.90 | 0 | REMOTE_UNVERIFIED |

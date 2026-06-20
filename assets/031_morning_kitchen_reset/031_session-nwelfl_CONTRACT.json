@@ -1,0 +1,64 @@
+{
+  "version": "2.0.0",
+  "timestamp": "2026-06-20T05:03:31.732Z",
+  "sessionId": "session-nwelfl",
+  "identity": {
+    "id": "morning-kitchen-01",
+    "name": "陽菜",
+    "voice_id": "朝の台所に明るく馴染む、やわらかく包容力のある女性の声。眠気の残る耳にすっと入ってくるのに、ちゃんと元気をくれる。ほんの少し甘さを含んだ、起き抜けの味方みたいなトーン。"
+  },
+  "inputs": {
+    "0001_situation.json": "0b9b651b210dca0badf18ed772106eda4a427b4a89d3f68e9eb62b5ecdc5d699",
+    "thumbnail.png": "8031d285456d82becdad2fc1e98a00f68518b3588f937f4d6be89b7a215582d4"
+  },
+  "outputs": {
+    "031_session-nwelfl.wav": "da36e4df0905a7d955d35045b2d95390061d97c762ab6eb6b108e1a7b4b8e5c2",
+    "031_session-nwelfl.json": "59010bce4f39a5be6d3793bfdd2d2ea294f97a78fbe0336339749dd0e703c630",
+    "031_session-nwelfl.mp4": "927c95147e60e9c32d8f67228b0fbd1f89371ec825d0ecb879299a288379eada"
+  },
+  "verification": {
+    "asr_score": 0.9047619047619048,
+    "status": "PASS",
+    "production_state": "REMOTE_UNVERIFIED",
+    "evidence": {
+      "machine_logs": [
+        "[2026-06-20T04:59:04.658Z] [RESONANCE] Starting session session-nwelfl",
+        "[2026-06-20T04:59:04.666Z] [TTS] Chunk 0 | Attempt 0",
+        "[2026-06-20T04:59:46.616Z]  [REPAIR] Reference audio refreshed.",
+        "[2026-06-20T04:59:46.620Z] [TTS] Chunk 4 | Attempt 1",
+        "[2026-06-20T05:00:26.946Z] [TTS] Chunk 5 | Attempt 1",
+        "[2026-06-20T05:01:01.765Z] [TTS] Chunk 1 | Attempt 0",
+        "[2026-06-20T05:01:44.274Z] [TTS] Chunk 2 | Attempt 0",
+        "[2026-06-20T05:02:23.621Z] [TTS] Chunk 3 | Attempt 0"
+      ],
+      "runtime_traces": {
+        "emotion_avg": {
+          "valence": 0.27,
+          "arousal": 0,
+          "softness": 1,
+          "atmosphere": "まだ少し眠い朝の台所。湯気の立つマグと、トーストの香りと、支度を整えながら一日をやさしく起動させる時間"
+        },
+        "chunk_count": 4,
+        "total_scores": [
+          0.9428571428571428,
+          0.9047619047619048,
+          0.9369369369369369,
+          0.9485294117647058,
+          0.9583333333333334
+        ],
+        "speaker_scores": [
+          0.946160614490509,
+          0.9434831738471985,
+          0.946586549282074,
+          0.9193975925445557,
+          0.9511133432388306
+        ]
+      }
+    }
+  },
+  "environment": {
+    "node_version": "v24.3.0",
+    "platform": "linux",
+    "cwd": "/home/kafka/projects/yt4"
+  }
+}

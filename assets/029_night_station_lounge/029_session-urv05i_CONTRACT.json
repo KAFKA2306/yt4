@@ -1,0 +1,62 @@
+{
+  "version": "2.0.0",
+  "timestamp": "2026-06-20T04:51:23.411Z",
+  "sessionId": "session-urv05i",
+  "identity": {
+    "id": "nocturne-station-01",
+    "name": "澪",
+    "voice_id": "少し低めで落ち着いた、深夜の駅前ラウンジに似合う大人の女性の声。雨上がりの空気みたいに静かで、少しだけ甘い安心感がある。耳元ではっとするほど近く、でも決して急かさない包容力のあるトーン。"
+  },
+  "inputs": {
+    "0001_situation.json": "329d7f9e906959a09c2d867d7ba8752e22e08fc7435cd44e7691d9960ffcbe58",
+    "thumbnail.png": "b473507438d84c4e9eb04506fc62a9cdfa2fd3bbb48b7e03ead6c962341156d0"
+  },
+  "outputs": {
+    "029_session-urv05i.wav": "b35e8700b3650bb7b3f61e82fae9aa6f06e7b3eae0cf973e003d30f2bd1c9719",
+    "029_session-urv05i.json": "fd50981cb3d17534bfb1c10a62f8274bafb5e68b5a9721ed645595808853244b",
+    "029_session-urv05i.mp4": "f0290b3383725c43b9cecf39eb652bc912d96d95d2357fecc1de6646f73cc7fe"
+  },
+  "verification": {
+    "asr_score": 0.8627450980392157,
+    "status": "PASS",
+    "production_state": "REMOTE_UNVERIFIED",
+    "evidence": {
+      "machine_logs": [
+        "[2026-06-20T04:47:44.601Z] [RESONANCE] Starting session session-urv05i",
+        "[2026-06-20T04:47:44.608Z] [TTS] Chunk 0 | Attempt 0",
+        "[2026-06-20T04:48:22.863Z] [TTS] Chunk 1 | Attempt 0",
+        "[2026-06-20T04:49:04.218Z] [TTS] Chunk 2 | Attempt 0",
+        "[2026-06-20T04:49:44.897Z] [TTS] Chunk 3 | Attempt 0",
+        "[2026-06-20T04:50:26.816Z] [TTS] Chunk 4 | Attempt 0"
+      ],
+      "runtime_traces": {
+        "emotion_avg": {
+          "valence": 0.27,
+          "arousal": 0.03,
+          "softness": 1,
+          "atmosphere": "終電を逃したあと、駅前の小さなラウンジ席で、濡れたコートを乾かしながら、冷えた心と身体をゆっくり温める深夜の避難所"
+        },
+        "chunk_count": 5,
+        "total_scores": [
+          0.9846153846153847,
+          0.8627450980392157,
+          0.9629629629629629,
+          1,
+          0.9318181818181818
+        ],
+        "speaker_scores": [
+          0.9412453174591064,
+          0.8854739665985107,
+          0.907096803188324,
+          0.8648674488067627,
+          0.9235026836395264
+        ]
+      }
+    }
+  },
+  "environment": {
+    "node_version": "v24.3.0",
+    "platform": "linux",
+    "cwd": "/home/kafka/projects/yt4"
+  }
+}

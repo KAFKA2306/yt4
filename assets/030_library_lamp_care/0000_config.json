@@ -1,0 +1,30 @@
+{
+  "identity": {
+    "id": "library-lamp-01",
+    "name": "紗夜",
+    "voice_id": "知的で穏やか、閉館前の図書室の空気に溶けるような女性の声。ページをめくる音と相性がよく、少しだけ笑うと安心感が深まる。静かな励ましが得意な、やわらかい澄んだトーン。",
+    "preferred_atmosphere": "閉館前の図書室。机のランプが一つだけ灯る閲覧席で、勉強に疲れた気持ちをほぐしながら、静かに前向きさを取り戻していく場所",
+    "invariants": {
+      "max_arousal": 0.28,
+      "min_softness": 0.9,
+      "max_emotion_delta": 0.08
+    },
+    "overrides": {
+      "pacing_base": 0.68,
+      "hesitation_frequency": 0.3,
+      "breathing_frequency": 0.28
+    }
+  },
+  "image_path": "thumbnail.png",
+  "script_path": "0001_situation.json",
+  "runtime": {
+    "chunk_length": 120,
+    "seed_base": 3001,
+    "temperature": 0.37,
+    "num_steps": 32,
+    "seconds": null,
+    "duration_scale": 1,
+    "no_ref": true,
+    "max_retries": 5
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "identity": {
+    "id": "nocturne-station-01",
+    "name": "澪",
+    "voice_id": "少し低めで落ち着いた、深夜の駅前ラウンジに似合う大人の女性の声。雨上がりの空気みたいに静かで、少しだけ甘い安心感がある。耳元ではっとするほど近く、でも決して急かさない包容力のあるトーン。",
+    "preferred_atmosphere": "終電を逃したあと、駅前の小さなラウンジ席で、濡れたコートを乾かしながら、冷えた心と身体をゆっくり温める深夜の避難所",
+    "invariants": {
+      "max_arousal": 0.4,
+      "min_softness": 0.72,
+      "max_emotion_delta": 0.09
+    },
+    "overrides": {
+      "pacing_base": 0.86,
+      "hesitation_frequency": 0.12,
+      "breathing_frequency": 0.18
+    }
+  },
+  "image_path": "thumbnail.png",
+  "script_path": "0001_situation.json",
+  "runtime": {
+    "chunk_length": 80,
+    "seed_base": 2901,
+    "temperature": 0.42,
+    "num_steps": 32,
+    "seconds": null,
+    "duration_scale": 1,
+    "no_ref": true,
+    "max_retries": 5
+  }
+}

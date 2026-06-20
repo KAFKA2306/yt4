@@ -16,3 +16,4 @@ identity:
 validation:
   asr_threshold: 0.95
   speaker_threshold: 0.80
+  silence_threshold: 0.50

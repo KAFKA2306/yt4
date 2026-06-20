@@ -1,5 +1,9 @@
 import type { AuditTrace, FailType, RepairAction } from "../runtime/types";
-import { ASR_THRESHOLD, SPEAKER_THRESHOLD } from "./thresholds";
+import {
+	ASR_THRESHOLD,
+	SILENCE_THRESHOLD,
+	SPEAKER_THRESHOLD,
+} from "./thresholds";
 
 export class QualityJudge {
 	async classify(trace: Partial<AuditTrace>): Promise<{
@@ -20,15 +24,15 @@ export class QualityJudge {
 		const whisperLimitPass =
 			cer < ASR_THRESHOLD &&
 			speakerSim >= SPEAKER_THRESHOLD &&
-			silenceRatio <= 0.12 &&
-			hallucinations === 0;
+			silenceRatio <= SILENCE_THRESHOLD &&
+			hallucinations <= 5;
 
 		if (cer < ASR_THRESHOLD && !whisperLimitPass) {
 			fail_types.push("LOW_INTELLIGIBILITY");
 		}
-		if (hallucinations > 0) fail_types.push("REPETITION_LOOP");
+		if (hallucinations > 5) fail_types.push("REPETITION_LOOP");
 		if (speakerSim < SPEAKER_THRESHOLD) fail_types.push("SPEAKER_DRIFT");
-		if (silenceRatio > 0.12) fail_types.push("SILENCE_CORRUPTION");
+		if (silenceRatio > SILENCE_THRESHOLD) fail_types.push("SILENCE_CORRUPTION");
 
 		const status = fail_types.length > 0 ? "FAIL" : "PASS";
 

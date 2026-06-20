@@ -1,0 +1,30 @@
+{
+  "identity": {
+    "id": "morning-kitchen-01",
+    "name": "陽菜",
+    "voice_id": "朝の台所に明るく馴染む、やわらかく包容力のある女性の声。眠気の残る耳にすっと入ってくるのに、ちゃんと元気をくれる。ほんの少し甘さを含んだ、起き抜けの味方みたいなトーン。",
+    "preferred_atmosphere": "まだ少し眠い朝の台所。湯気の立つマグと、トーストの香りと、支度を整えながら一日をやさしく起動させる時間",
+    "invariants": {
+      "max_arousal": 0.34,
+      "min_softness": 0.86,
+      "max_emotion_delta": 0.1
+    },
+    "overrides": {
+      "pacing_base": 0.75,
+      "hesitation_frequency": 0.2,
+      "breathing_frequency": 0.32
+    }
+  },
+  "image_path": "thumbnail.png",
+  "script_path": "0001_situation.json",
+  "runtime": {
+    "chunk_length": 120,
+    "seed_base": 3101,
+    "temperature": 0.4,
+    "num_steps": 32,
+    "seconds": null,
+    "duration_scale": 1,
+    "no_ref": true,
+    "max_retries": 5
+  }
+}
