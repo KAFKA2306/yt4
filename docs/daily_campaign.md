@@ -3,15 +3,10 @@
 Run the current daily batch with:
 
 ```bash
-while IFS='=' read -r key value; do
-  case "$key" in
-    ''|'#'*) continue ;;
-  esac
-  export "$key=$value"
-done < config/.env.yawa
-export YOUTUBE_PUBLISH_AUTO=true
-bun src/run_campaign.ts campaigns/daily_situation_voice_campaign.json
+task campaign:daily
 ```
+
+The same task is also scheduled through GitHub Actions once a day.
 
 The manifest currently includes:
 - `029_night_station_lounge`

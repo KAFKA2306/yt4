@@ -1,0 +1,46 @@
+name: Daily Situation Voice Campaign
+
+on:
+  schedule:
+    - cron: "0 18 * * *"
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
+      YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+      YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+      YOUTUBE_PROJECT_ID: ${{ secrets.YOUTUBE_PROJECT_ID }}
+      YOUTUBE_EXPECTED_CHANNEL_TITLE: ${{ secrets.YOUTUBE_EXPECTED_CHANNEL_TITLE }}
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+      YOUTUBE_PUBLISH_AUTO: "true"
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install Task
+        run: |
+          curl -sL https://taskfile.dev/install.sh | sh -s -- -d -b "$HOME/.local/bin"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Materialize env file
+        run: |
+          mkdir -p config
+          umask 077
+          cat > config/.env.yawa <<EOF
+          YOUTUBE_CLIENT_ID=${YOUTUBE_CLIENT_ID}
+          YOUTUBE_CLIENT_SECRET=${YOUTUBE_CLIENT_SECRET}
+          YOUTUBE_REFRESH_TOKEN=${YOUTUBE_REFRESH_TOKEN}
+          YOUTUBE_PROJECT_ID=${YOUTUBE_PROJECT_ID}
+          YOUTUBE_EXPECTED_CHANNEL_TITLE=${YOUTUBE_EXPECTED_CHANNEL_TITLE}
+          EOF
+
+      - name: Run daily campaign
+        run: task campaign:daily
