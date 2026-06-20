@@ -3,6 +3,9 @@
 	"module": "index.ts",
 	"type": "module",
 	"private": true,
+	"scripts": {
+		"campaign:daily": "bun src/run_campaign.ts campaigns/daily_situation_voice_campaign.json"
+	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.15",
 		"@types/bun": "latest"
