@@ -9,19 +9,72 @@ export async function generateScriptFromIntent(
 	console.log(`[SHOGUN] お題受領: 「${intent}」`);
 	console.log("[KARO] はっ！合議を開始いたします。");
 
+	const themeMatch = intent.match(/^theme:(.+)$/m);
+	const explicitTheme = themeMatch?.[1]?.trim();
 	const normalized = intent.toLowerCase();
 	const theme =
-		normalized.includes("rain") || normalized.includes("雨")
-			? "rain"
-			: normalized.includes("office") || normalized.includes("残業")
-				? "office"
-				: normalized.includes("morning") || normalized.includes("朝")
-					? "morning"
-					: normalized.includes("ear") || normalized.includes("耳")
-						? "ear"
-						: normalized.includes("maid") || normalized.includes("メイド")
-							? "maid"
-							: "calm";
+		explicitTheme === "rain" ||
+		explicitTheme === "office" ||
+		explicitTheme === "morning" ||
+		explicitTheme === "ear" ||
+		explicitTheme === "maid" ||
+		explicitTheme === "study" ||
+		explicitTheme === "station" ||
+		explicitTheme === "sleep" ||
+		explicitTheme === "care" ||
+		explicitTheme === "cafe" ||
+		explicitTheme === "coding" ||
+		explicitTheme === "news" ||
+		explicitTheme === "calm"
+			? explicitTheme
+			: normalized.includes("rain") || normalized.includes("雨")
+				? "rain"
+				: normalized.includes("office") || normalized.includes("残業")
+					? "office"
+					: normalized.includes("morning") || normalized.includes("朝")
+						? "morning"
+						: normalized.includes("ear") || normalized.includes("耳")
+							? "ear"
+							: normalized.includes("maid") || normalized.includes("メイド")
+								? "maid"
+								: normalized.includes("study") ||
+										normalized.includes("library") ||
+										normalized.includes("book")
+									? "study"
+									: normalized.includes("train") ||
+											normalized.includes("station") ||
+											normalized.includes("commute")
+										? "station"
+										: normalized.includes("sleep") ||
+												normalized.includes("bed") ||
+												normalized.includes("dream")
+											? "sleep"
+											: normalized.includes("care") ||
+													normalized.includes("clean") ||
+													normalized.includes("hair")
+												? "care"
+												: normalized.includes("cafe") ||
+														normalized.includes("coffee shop")
+													? "cafe"
+													: normalized.includes("github") ||
+															normalized.includes("code") ||
+															normalized.includes("developer") ||
+															normalized.includes("repo") ||
+															normalized.includes("typescript") ||
+															normalized.includes("rust") ||
+															normalized.includes("python")
+														? "coding"
+														: normalized.includes("news") ||
+																normalized.includes("launch") ||
+																normalized.includes("startup") ||
+																normalized.includes("research") ||
+																normalized.includes("browser") ||
+																normalized.includes("release")
+															? "news"
+															: "calm";
+
+	const trendMatch = intent.match(/^trend:(.+)$/m);
+	const title = (trendMatch?.[1] ?? intent).trim();
 
 	const scripts: Record<
 		string,
@@ -59,6 +112,53 @@ export async function generateScriptFromIntent(
 			middle: "お題に沿って、世話の手順をひとつずつ丁寧に重ねていきます。",
 			close: "……はい、これで完了です。どうぞ安心してお休みください。",
 		},
+		study: {
+			atmosphere: "quiet-study-room",
+			opening: "……机に向かう前に、肩だけ先に下ろしておきましょう。",
+			middle:
+				"難しいところはあとで戻れるように、ひとつずつ印をつけていきます。",
+			close: "……えらいです。今日はここまで進めた分だけ、ちゃんと残っています。",
+		},
+		station: {
+			atmosphere: "late-night-station",
+			opening: "……終電の気配がある夜でも、ここでは急がなくて大丈夫です。",
+			middle: "改札の音や足音は遠くに置いて、今の呼吸だけを整えましょう。",
+			close: "……よし。帰り道の不安は、もう少し静かになりましたね。",
+		},
+		sleep: {
+			atmosphere: "sleepy-night",
+			opening: "……眠気が強い夜は、頑張るより先に、力を抜くほうが上手です。",
+			middle: "まぶたが重くなるまで、音の隙間を少しずつ柔らかくしていきます。",
+			close: "……そのままでいいです。あとは、夢のほうに任せましょう。",
+		},
+		care: {
+			atmosphere: "gentle-care",
+			opening: "……今日は、整えることより、先にほどくことを優先しましょう。",
+			middle: "手間のかかるところは、私が静かに引き受けます。",
+			close: "……大丈夫。もう少し休めば、身体も気持ちも戻ってきます。",
+		},
+		cafe: {
+			atmosphere: "quiet-cafe",
+			opening: "……湯気の立つ飲み物が、少しだけ気持ちを落ち着けてくれます。",
+			middle: "甘さも苦さも、今日はやさしいほうへ寄せておきますね。",
+			close: "……ふふ。ここから先は、静かなカフェ時間にしましょう。",
+		},
+		coding: {
+			atmosphere: "midnight-coding-desk",
+			opening:
+				"……コードの熱が少し高いですね。まずは肩を落として、目を休めましょう。",
+			middle: "画面の前で固まった呼吸をほどいて、ひとつずつ整え直します。",
+			close:
+				"……よし。今日はここまでで十分です。続きは明日の自分に任せましょう。",
+		},
+		news: {
+			atmosphere: "quiet-newsroom",
+			opening:
+				"……今日の話題は少し多いですね。必要なところだけを静かに拾っていきましょう。",
+			middle:
+				"情報の波に流されないように、耳元ではゆっくりした声だけを残します。",
+			close: "……大丈夫。ニュースのざわめきは、ここでは少し遠くに置けます。",
+		},
 		calm: {
 			atmosphere: "late-night-calm",
 			opening: "……今日は、静かな落ち着きが必要なお題ですね。",
@@ -68,7 +168,6 @@ export async function generateScriptFromIntent(
 	};
 
 	const scene = scripts[theme];
-	const title = intent.trim();
 
 	return [
 		{

@@ -6,6 +6,8 @@ Run the current daily batch with:
 task campaign:daily
 ```
 
+Each run rotates through live daily trend sources. It prefers `r/ASMRScriptHaven` and `r/asmr`, then falls back to GitHub Trending and Hacker News when needed, and generates fresh scripts from whichever source is active that day before publishing.
+
 The same task is also scheduled through GitHub Actions once a day.
 
 The manifest currently includes:

@@ -1,8 +1,14 @@
 {
-  "name": "daily_situation_voice_campaign",
-  "asset_dirs": [
-    "029_night_station_lounge",
-    "030_library_lamp_care",
-    "031_morning_kitchen_reset"
-  ]
+	"name": "daily_situation_voice_campaign",
+	"trend": {
+		"subreddits": ["ASMRScriptHaven", "asmr"],
+		"limit": 10,
+		"time_window": "day",
+		"source_priority": ["reddit", "github", "hackernews"]
+	},
+	"asset_dirs": [
+		"029_night_station_lounge",
+		"030_library_lamp_care",
+		"031_morning_kitchen_reset"
+	]
 }
