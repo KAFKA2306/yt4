@@ -39,6 +39,7 @@
 - **検証項目**:
   - **Visibility Enforcement**: 公開設定が原則 `public` になっているか。
   - **Bounded Honesty**: ローカルのコントラクトに記録された `videoId` が、実際にプラットフォーム上で期待されるメタデータ（タイトル、公開設定）と一致するか。
+  - **Discord Announcement**: 公開投稿の URL が `DISCORD_WEBHOOK_URL` 経由で Discord に通知されるか。
 
 ---
 

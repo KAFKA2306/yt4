@@ -1,5 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { DiscordNotifier } from "./runtime/discord";
 import { Publisher } from "./runtime/publisher";
 
 async function main() {
@@ -22,12 +23,14 @@ async function main() {
 
 	const upload = JSON.parse(fs.readFileSync(uploadJsonPath, "utf-8"));
 	const publisher = new Publisher(assetDir);
+	const discord = new DiscordNotifier();
 
 	const videoPath = path.join(assetDir, videoArg);
 	const imagePath = path.join(assetDir, imageArg);
 
 	console.log(`[MANUAL PUBLISH] Starting upload for ${videoPath}`);
 
+	discord.assertConfigured();
 	const receipt = await publisher.publish({
 		videoPath,
 		imagePath,
@@ -47,6 +50,12 @@ async function main() {
 	}
 
 	console.log(`[SUCCESS] Video ID: ${receipt.video_id} (${liveVisibility})`);
+	await discord.notifyPublishedUrl({
+		url: `https://www.youtube.com/watch?v=${receipt.video_id}`,
+		title: upload.metadata.title,
+		assetId: upload.asset_id || path.basename(assetDir).split("_")[0],
+		sessionId: upload.session_id || upload.sessionId || "unknown",
+	});
 
 	// Update UPLOAD.json with video_id
 	upload.status = "PUBLISHED";

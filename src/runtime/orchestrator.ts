@@ -6,6 +6,7 @@ import { QualityJudge } from "../validation/judge";
 import { ProsodyValidator } from "../validation/prosody";
 import { AuditLogger } from "./audit_logger";
 import { composeVideo } from "./composer";
+import { DiscordNotifier } from "./discord";
 import { IdentityEngine } from "./identity";
 import { Publisher } from "./publisher";
 import { PulseManager } from "./pulse";
@@ -28,6 +29,7 @@ import {
 
 export class Orchestrator {
 	private audit: AuditLogger;
+	private discord = new DiscordNotifier();
 	private judge = new QualityJudge();
 	private publisher: Publisher;
 	private repair = new RepairEngine();
@@ -422,6 +424,7 @@ export class Orchestrator {
 			if (process.env.YOUTUBE_PUBLISH_AUTO === "true") {
 				logger("[PUBLISH] Triggering automatic YouTube publication...");
 				state = "UPLOAD_ATTEMPTED";
+				this.discord.assertConfigured();
 				const finalVideo = path.join(this.assetDir, `${prefix}.mp4`);
 				const receipt = await this.publisher.publish({
 					videoPath: finalVideo,
@@ -442,6 +445,13 @@ export class Orchestrator {
 						`YouTube visibility mismatch: expected public, got ${liveVisibility}`,
 					);
 				}
+				const publicUrl = `https://www.youtube.com/watch?v=${receipt.video_id}`;
+				await this.discord.notifyPublishedUrl({
+					url: publicUrl,
+					title: `【ASMR】${identity.name} | ${currentEmotion.atmosphere}`,
+					assetId,
+					sessionId,
+				});
 				state = "YOUTUBE_FETCH_CONFIRMED";
 				remoteProof = {
 					videoId: receipt.video_id,

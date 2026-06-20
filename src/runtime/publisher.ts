@@ -32,6 +32,12 @@ export class Publisher {
 	}): Promise<PublishReceipt> {
 		const auth = this.createYouTubeClient();
 		const youtube = google.youtube({ version: "v3", auth });
+		const visibility = (params.metadata.visibility || "public").toLowerCase();
+		if (visibility !== "public") {
+			throw new Error(
+				`Publishing requires public visibility, got ${visibility}.`,
+			);
+		}
 
 		await this.verifyYouTubeChannel(youtube);
 
@@ -46,7 +52,7 @@ export class Publisher {
 					categoryId: params.metadata.category_id || "24",
 				},
 				status: {
-					privacyStatus: params.metadata.visibility || "public",
+					privacyStatus: visibility,
 					selfDeclaredMadeForKids: false,
 				},
 			},
@@ -103,6 +109,12 @@ export class Publisher {
 	}) {
 		const auth = this.createYouTubeClient();
 		const youtube = google.youtube({ version: "v3", auth });
+		const visibility = (params.metadata.visibility || "public").toLowerCase();
+		if (visibility !== "public") {
+			throw new Error(
+				`Publishing requires public visibility, got ${visibility}.`,
+			);
+		}
 
 		await youtube.videos.update({
 			part: ["snippet", "status"],
@@ -115,7 +127,7 @@ export class Publisher {
 					categoryId: params.metadata.category_id || "24",
 				},
 				status: {
-					privacyStatus: params.metadata.visibility || "public",
+					privacyStatus: visibility,
 				},
 			},
 		});
