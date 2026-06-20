@@ -3,7 +3,14 @@
 Run the current daily batch with:
 
 ```bash
-YOUTUBE_PUBLISH_AUTO=true DISCORD_WEBHOOK_URL=... bun src/run_campaign.ts campaigns/daily_situation_voice_campaign.json
+while IFS='=' read -r key value; do
+  case "$key" in
+    ''|'#'*) continue ;;
+  esac
+  export "$key=$value"
+done < config/.env.yawa
+export YOUTUBE_PUBLISH_AUTO=true
+bun src/run_campaign.ts campaigns/daily_situation_voice_campaign.json
 ```
 
 The manifest currently includes:
@@ -11,4 +18,4 @@ The manifest currently includes:
 - `030_library_lamp_care`
 - `031_morning_kitchen_reset`
 
-Each asset is rendered through the normal `Orchestrator`, so public upload checks and Discord URL notifications remain enforced.
+Each asset is rendered through the normal `Orchestrator`, so public upload checks remain enforced. Discord notifications are optional and will be skipped when no webhook is configured.

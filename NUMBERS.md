@@ -40,3 +40,6 @@
 | 2026-06-20 | 029 | session-urv05i | 10 | 5 | 0.86 | 0 | REMOTE_UNVERIFIED |
 | 2026-06-20 | 030 | session-k4nv8a | 10 | 4 | 0.94 | 0 | REMOTE_UNVERIFIED |
 | 2026-06-20 | 031 | session-nwelfl | 10 | 4 | 0.90 | 0 | REMOTE_UNVERIFIED |
+| 2026-06-20 | 029 | session-rktpds | 10 | 5 | 0.86 | 0 | YOUTUBE_FETCH_CONFIRMED |
+| 2026-06-20 | 030 | session-ft8nc8 | 10 | 4 | 0.92 | 0 | YOUTUBE_FETCH_CONFIRMED |
+| 2026-06-20 | 031 | session-q67l0h | 10 | 4 | 0.94 | 0 | YOUTUBE_FETCH_CONFIRMED |

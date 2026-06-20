@@ -5,10 +5,12 @@ export class DiscordNotifier {
 
 	assertConfigured() {
 		if (!this.webhookUrl) {
-			throw new Error(
-				"DISCORD_WEBHOOK_URL is required for publish notifications.",
+			console.warn(
+				"[DISCORD] DISCORD_WEBHOOK_URL not set; publish notifications will be skipped.",
 			);
+			return false;
 		}
+		return true;
 	}
 
 	async notifyPublishedUrl(params: {
@@ -17,7 +19,9 @@ export class DiscordNotifier {
 		assetId: string;
 		sessionId: string;
 	}) {
-		this.assertConfigured();
+		if (!this.assertConfigured()) {
+			return;
+		}
 
 		const content = [
 			"New public YouTube post published.",

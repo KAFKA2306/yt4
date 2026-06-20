@@ -1,0 +1,67 @@
+{
+  "version": "2.0.0",
+  "timestamp": "2026-06-20T05:21:07.793Z",
+  "sessionId": "session-q67l0h",
+  "identity": {
+    "id": "morning-kitchen-01",
+    "name": "陽菜",
+    "voice_id": "朝の台所に明るく馴染む、やわらかく包容力のある女性の声。眠気の残る耳にすっと入ってくるのに、ちゃんと元気をくれる。ほんの少し甘さを含んだ、起き抜けの味方みたいなトーン。"
+  },
+  "inputs": {
+    "0001_situation.json": "0b9b651b210dca0badf18ed772106eda4a427b4a89d3f68e9eb62b5ecdc5d699",
+    "thumbnail.png": "8031d285456d82becdad2fc1e98a00f68518b3588f937f4d6be89b7a215582d4"
+  },
+  "outputs": {
+    "031_session-q67l0h.wav": "e4c802ed1df727d350e8980d43d15997793ebbc603e5abd38a1f4da0f5e0b297",
+    "031_session-q67l0h.json": "e3271d46511e65afcb29347ae201ac28d0563269530260f662bd3529058db900",
+    "031_session-q67l0h.mp4": "1a7b3b55e95d1b625f78f818bd8f5eb9184d8247b0734ed47eca649e2df07e03"
+  },
+  "verification": {
+    "asr_score": 0.9369369369369369,
+    "status": "PASS",
+    "production_state": "YOUTUBE_FETCH_CONFIRMED",
+    "remote_proof": {
+      "platform": "youtube",
+      "videoId": "scpXX4oYnVw",
+      "visibility": "public",
+      "raw_response_hash": "ef371f7c42d8fb4b80c8150d8be52fd5cae46ca8cb4222318d6270d72ef86cf3"
+    },
+    "evidence": {
+      "machine_logs": [
+        "[2026-06-20T05:17:42.127Z] [RESONANCE] Starting session session-q67l0h",
+        "[2026-06-20T05:17:42.131Z] [TTS] Chunk 0 | Attempt 0",
+        "[2026-06-20T05:18:25.579Z] [TTS] Chunk 1 | Attempt 0",
+        "[2026-06-20T05:19:07.855Z] [TTS] Chunk 2 | Attempt 0",
+        "[2026-06-20T05:19:51.548Z] [TTS] Chunk 3 | Attempt 0",
+        "[2026-06-20T05:21:03.330Z] [PUBLISH] Triggering automatic YouTube publication...",
+        "[2026-06-20T05:21:07.770Z] [PUBLISH] Success: scpXX4oYnVw (public)"
+      ],
+      "runtime_traces": {
+        "emotion_avg": {
+          "valence": 0.27,
+          "arousal": 0.01999999999999999,
+          "softness": 1,
+          "atmosphere": "まだ少し眠い朝の台所。湯気の立つマグと、トーストの香りと、支度を整えながら一日をやさしく起動させる時間"
+        },
+        "chunk_count": 4,
+        "total_scores": [
+          0.9369369369369369,
+          0.9369369369369369,
+          0.9485294117647058,
+          0.9583333333333334
+        ],
+        "speaker_scores": [
+          0.9720887541770935,
+          0.946586549282074,
+          0.9193975925445557,
+          0.9511133432388306
+        ]
+      }
+    }
+  },
+  "environment": {
+    "node_version": "v24.3.0",
+    "platform": "linux",
+    "cwd": "/home/kafka/projects/yt4"
+  }
+}
