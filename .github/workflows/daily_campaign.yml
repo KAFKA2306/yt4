@@ -5,6 +5,10 @@ on:
     - cron: "0 18 * * *"
   workflow_dispatch:
 
+concurrency:
+  group: daily-situation-voice-campaign
+  cancel-in-progress: false
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -16,6 +20,7 @@ jobs:
       YOUTUBE_EXPECTED_CHANNEL_TITLE: ${{ secrets.YOUTUBE_EXPECTED_CHANNEL_TITLE }}
       DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
       YOUTUBE_PUBLISH_AUTO: "true"
+    timeout-minutes: 180
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -24,11 +29,6 @@ jobs:
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-
-      - name: Install Task
-        run: |
-          curl -sL https://taskfile.dev/install.sh | sh -s -- -d -b "$HOME/.local/bin"
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
       - name: Materialize env file
         run: |
@@ -43,4 +43,4 @@ jobs:
           EOF
 
       - name: Run daily campaign
-        run: task campaign:daily
+        run: bun --env-file=config/.env.yawa src/run_campaign.ts campaigns/daily_situation_voice_campaign.json
