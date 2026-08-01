@@ -1,0 +1,30 @@
+{
+  "identity": {
+    "id": "byosan-finance-analyst-01",
+    "name": "秒算マネー",
+    "voice_id": "落ち着いた日本語の解説者。企業決算と会計を、数字を明瞭に区切りながら、断定と推定を混同せずに読み上げる。過度に煽らず、重要な数値は少し間を取り、専門用語は自然な速度で発音する。",
+    "preferred_atmosphere": "企業IRとSEC提出書類を照合する、静かで精密な決算分析",
+    "invariants": {
+      "max_arousal": 0.45,
+      "min_softness": 0.55,
+      "max_emotion_delta": 0.08
+    },
+    "overrides": {
+      "pacing_base": 0.93,
+      "hesitation_frequency": 0.02,
+      "breathing_frequency": 0.08
+    }
+  },
+  "image_path": "thumbnail.png",
+  "script_path": "0001_finance.json",
+  "runtime": {
+    "chunk_length": 145,
+    "seed_base": 3201,
+    "temperature": 0.34,
+    "num_steps": 28,
+    "seconds": null,
+    "duration_scale": 1.02,
+    "no_ref": true,
+    "max_retries": 3
+  }
+}
