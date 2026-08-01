@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="24" flood-color="#4c5b7d" flood-opacity="0.14"/>
+    </filter>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fbfaf7"/>
+      <stop offset="1" stop-color="#f4f6fb"/>
+    </linearGradient>
+    <linearGradient id="orange" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f3cfaa"/>
+      <stop offset="1" stop-color="#efb4c1"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#bg)"/>
+  <circle cx="1700" cy="130" r="220" fill="#b9a8e6" opacity="0.18"/>
+  <circle cx="1790" cy="940" r="310" fill="#b7dbc8" opacity="0.22"/>
+  <circle cx="180" cy="970" r="260" fill="#8fb5ec" opacity="0.16"/>
+
+  <g font-family="Noto Sans CJK JP, Noto Sans JP, sans-serif">
+    <text x="110" y="128" font-size="54" font-weight="800" fill="#243653" letter-spacing="2">AMAZON 2026 Q2</text>
+    <rect x="110" y="162" width="610" height="10" rx="5" fill="#8fb5ec"/>
+
+    <text x="110" y="285" font-size="86" font-weight="900" fill="#243653">純利益 626億ドル</text>
+    <text x="110" y="380" font-size="58" font-weight="800" fill="#596b8c">その増益、本業だけではない</text>
+
+    <g filter="url(#shadow)">
+      <rect x="110" y="455" width="790" height="300" rx="38" fill="#ffffff"/>
+      <text x="170" y="535" font-size="40" font-weight="700" fill="#596b8c">税引前 Other income, net</text>
+      <text x="170" y="650" font-size="104" font-weight="900" fill="#8b58c7">534億ドル</text>
+      <rect x="170" y="692" width="650" height="5" rx="3" fill="#ddd5ef"/>
+      <text x="170" y="735" font-size="34" font-weight="700" fill="#596b8c">税引前利益の約66%</text>
+    </g>
+
+    <g filter="url(#shadow)">
+      <rect x="965" y="215" width="835" height="540" rx="42" fill="#ffffff"/>
+      <rect x="1015" y="265" width="735" height="94" rx="24" fill="url(#orange)"/>
+      <text x="1382" y="330" text-anchor="middle" font-size="46" font-weight="900" fill="#8b3f24">主因：Anthropic評価益</text>
+
+      <text x="1035" y="447" font-size="38" font-weight="700" fill="#596b8c">優先株の上方評価</text>
+      <text x="1715" y="447" text-anchor="end" font-size="64" font-weight="900" fill="#25805b">約505億ドル</text>
+
+      <line x1="1035" y1="485" x2="1715" y2="485" stroke="#dce4ed" stroke-width="4"/>
+
+      <text x="1035" y="560" font-size="38" font-weight="700" fill="#596b8c">優先株価値相当</text>
+      <text x="1715" y="560" text-anchor="end" font-size="62" font-weight="900" fill="#e06522">約9.6%</text>
+
+      <text x="1035" y="655" font-size="38" font-weight="700" fill="#596b8c">転換社債を含む経済価値</text>
+      <text x="1715" y="655" text-anchor="end" font-size="62" font-weight="900" fill="#e06522">約19.7%</text>
+
+      <text x="1035" y="710" font-size="27" font-weight="600" fill="#8b6c62">※正式な完全希薄化後持分率ではない</text>
+    </g>
+
+    <g filter="url(#shadow)">
+      <rect x="110" y="815" width="1690" height="170" rx="34" fill="#243653"/>
+      <text x="165" y="888" font-size="42" font-weight="800" fill="#ffffff">GAAP EPS</text>
+      <text x="425" y="907" font-size="82" font-weight="900" fill="#ffffff">5.75</text>
+      <text x="620" y="888" font-size="42" font-weight="800" fill="#b9a8e6">→</text>
+      <text x="710" y="888" font-size="38" font-weight="700" fill="#dce4ed">評価益等除き推定</text>
+      <text x="1085" y="907" font-size="82" font-weight="900" fill="#f3cfaa">約2.0〜2.2</text>
+      <rect x="1465" y="846" width="280" height="92" rx="24" fill="#b7dbc8"/>
+      <text x="1605" y="884" text-anchor="middle" font-size="26" font-weight="800" fill="#245c46">本業も強い</text>
+      <text x="1605" y="922" text-anchor="middle" font-size="34" font-weight="900" fill="#245c46">AWS +37%</text>
+    </g>
+
+    <text x="1765" y="1034" text-anchor="end" font-size="32" font-weight="800" fill="#596b8c">秒算マネー</text>
+  </g>
+</svg>
