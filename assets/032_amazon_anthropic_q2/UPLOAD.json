@@ -1,0 +1,23 @@
+{
+  "asset_id": "032",
+  "request_id": "amazon-anthropic-q2-2026-v1",
+  "status": "READY",
+  "metadata": {
+    "title": "Amazon純利益626億ドル、その3分の2は何だったのか｜Anthropic評価益を分解",
+    "description": "Amazonの2026年Q2決算を、IRとSEC提出書類から定量分解します。\n\n主な論点\n・純利益626億ドル、GAAP EPS 5.75ドル\n・税引前Other income, net 534億ドル\n・Anthropic優先株の上方評価 約505億ドル\n・優先株925億ドル、転換社債979億ドル\n・約9.6%相当と約19.7%相当の意味の違い\n・評価益等を除いた推定EPS 約2.0〜2.2ドル\n・AWS売上高は前年同期比37%増、本業も強い\n\n正式な完全希薄化後持分率とownership capの値は非開示です。本動画では、帳簿上の公正価値をAnthropicのSeries H後評価額で割った「価値相当比率」と、正式な株式持分率を区別しています。\n\n一次資料\nAmazon Q2 2026 IR:\nhttps://ir.aboutamazon.com/news-release/news-release-details/2026/Amazon-com-Announces-Second-Quarter-Results/default.aspx\n\nAmazon Form 10-Q:\nhttps://www.sec.gov/Archives/edgar/data/1018724/000101872426000026/amzn-20260630.htm\n\nAnthropic Series G:\nhttps://www.anthropic.com/news/anthropic-raises-30-billion-series-g-funding-380-billion-post-money-valuation\n\nAnthropic Series H:\nhttps://www.anthropic.com/news/series-h\n\n#Amazon #Anthropic #AWS #決算 #生成AI #秒算マネー",
+    "tags": [
+      "Amazon",
+      "AMZN",
+      "Anthropic",
+      "AWS",
+      "決算",
+      "評価益",
+      "GAAP",
+      "SEC",
+      "生成AI",
+      "秒算マネー"
+    ],
+    "category_id": "27",
+    "visibility": "public"
+  }
+}
