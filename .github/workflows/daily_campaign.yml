@@ -33,6 +33,27 @@ jobs:
       - name: Set up uv
         uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
 
+      - name: Validate publication credentials
+        shell: bash
+        run: |
+          missing=0
+          for name in \
+            YOUTUBE_CLIENT_ID \
+            YOUTUBE_CLIENT_SECRET \
+            YOUTUBE_REFRESH_TOKEN \
+            YOUTUBE_PROJECT_ID \
+            YOUTUBE_EXPECTED_CHANNEL_TITLE \
+            DISCORD_WEBHOOK_URL
+          do
+            if [ -z "${!name:-}" ]; then
+              echo "::error title=Missing GitHub Actions secret::${name} is empty or unavailable"
+              missing=1
+            fi
+          done
+          if [ "$missing" -ne 0 ]; then
+            exit 1
+          fi
+
       - name: Materialize env file
         run: |
           mkdir -p config
