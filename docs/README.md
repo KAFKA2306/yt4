@@ -1,5 +1,7 @@
 # yt4 Documentation Index
 
+[![Daily Situation Voice Campaign](https://github.com/KAFKA2306/yt4/actions/workflows/daily_campaign.yml/badge.svg)](https://github.com/KAFKA2306/yt4/actions/workflows/daily_campaign.yml)
+
 本プロジェクトの設計、要件、および運用に関するドキュメントのインデックスです。
 
 ## 核心設計 (Core Design)
